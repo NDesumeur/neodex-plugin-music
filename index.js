@@ -142,7 +142,7 @@ body.vfs .muMini{display:none}
 .muTile:hover{background:color-mix(in srgb,var(--mcard) 70%,var(--mcard2))}
 .muTile .muStrip{height:3px;width:100%;flex:none}
 .muTile .muArt{margin:8px 0 4px}
-.muTile b,.muTile>span{width:100%;padding:0 8px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.muTile b,.muTile>span{width:100%;padding:0 8px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .muTile b,.muTile>span,.muTile em{line-height:1.2} .muTile b{font-size:12px} .muTile>span{color:var(--msub);font-size:11px}
 .muTileAct{display:flex;justify-content:space-around;width:100%;margin-top:auto}
 .muTileAct .muRowFav,.muTileAct .muRowDel{margin:0;padding:1px 10px 3px}
@@ -428,7 +428,7 @@ export default async function (ctx) {
             mh('div.muHead.muExtra', {text: 'BIBLIOTHÈQUE'}),
             mh('div.muExtra', {},
               sideBtn('search', 'Rechercher / importer', () => muSearchDialog()), sideBtn('note', 'Importer une playlist', () => $('muFile').click()),
-              sideBtn('compass', 'Artistes à découvrir', () => muDiscover()), sideBtn('shuffle', 'Lecture aléatoire', () => muShuffle()),
+              sideBtn('shuffle', 'Lecture aléatoire', () => muShuffle()),
               sideBtn('moon', 'Mode sommeil', () => muSleepDialog()), sideBtn('clock', 'Réveil musical', () => muWakeDialog()),
               sideBtn('bars', 'Statistiques', () => muStats()), sideBtn('trophy', 'Succès', () => muAchievements()),
               sideBtn('trash', 'Corbeille', () => muTrash()), sideBtn('gear', 'Options', () => muOptions()))),
@@ -1401,7 +1401,14 @@ export default async function (ctx) {
     muImporting = null;
   }
 
-  /* ---------- "Recommandé pour toi", "Artistes à découvrir", weekly playlists: YouTube Mix around the artists you like ---------- */
+  /* ---------- "Recommandé pour toi", weekly playlists: artists close to the ones you really listen to (Deezer's related artists, weighted by plays) ---------- */
+  const muTaste = (cur) => {  // tes artistes, du plus écouté au moins écouté : écoutes + 3 par favori + un bonus pour la musique en cours
+    const w = new Map(), add = (a, n) => { a = (a || '').trim(); if (a) w.set(a, (w.get(a) || 0) + n); };
+    for (const [a, n] of Object.entries(mu.stats.artists || {})) add(a, Math.min(n, 40));
+    for (const t of muPl('Favoris').tracks) add(t.author, 3);
+    if (cur) add(cur.author, 12);
+    return [...w].map(([artist, x]) => ({artist, w: x})).sort((p, q) => q.w - p.w);
+  };
   const muLibraryArtists = () => [...new Set(mu.playlists.flatMap(p => p.tracks.map(t => (t.author || '').trim().toLowerCase())).filter(Boolean))];
   function muScheduleReco() {
     clearTimeout(mp.recoTimer); const req = ++mp.recoReq;
@@ -1417,13 +1424,13 @@ export default async function (ctx) {
     muCaps ||= await neo.musicCaps().catch(() => muDefaultCaps);
     const cur = mp.cur || muPl(mp.pl).tracks.at(-1);
     if (!muCaps.ytdlp || !cur) return show('', '', '');
-    const seeds = [...new Set([cur.author, ...muPl('Favoris').tracks.map(t => t.author)].map(a => (a || '').trim()).filter(Boolean))].sort(() => Math.random() - .5);
+    const seeds = muTaste(cur).slice(0, 6);
     if (!seeds.length) return show('', '', '');
     const have = new Set([...muPl(mp.pl).tracks, ...muPl('Favoris').tracks].map(t => t.url).filter(Boolean));
     try {
-      const found = (await neo.musicMix(seeds.slice(0, 4), muLibraryArtists())).filter(e => e.url && !have.has(e.url)).sort(() => Math.random() - .5);
+      const found = (await neo.musicMix(seeds, muLibraryArtists())).filter(e => e.url && !have.has(e.url));  // classées par proximité avec tes goûts
       if (req !== mp.recoReq) return;
-      let pick = found[0];
+      let pick = found[Math.floor(Math.random() * Math.min(3, found.length))];  // au hasard, mais seulement parmi les 3 plus proches
       if (!pick) for (const s of seeds.slice(0, 3)) { pick = (await neo.musicSearch(s + ' official song', 8)).find(e => !have.has(e.url) && (!e.duration || (e.duration >= 90 && e.duration <= 600)) && !/reaction|interview|review|compilation|mix|playlist|full album|best of|top 10/i.test(e.title)); if (pick || req !== mp.recoReq) break; }
       if (!pick) return show('', '', '');
       show(pick.title, pick.url, await neo.musicCover(pick.thumbnail).catch(() => ''));
@@ -1434,33 +1441,20 @@ export default async function (ctx) {
     if (mp.pl === 'Favoris') return muNotify('warning', 'NeoMusic', 'Sélectionne une vraie playlist pour ajouter une musique.');
     muAddUrl(mp.recoUrl);
   }
-  async function muDiscover() {
-    const w = muWindow('Artistes à découvrir', 640);
-    const status = mh('p.muWNote', {text: 'Recherche en cours…'}), rows = mh('div.muRows');
-    w.body.append(muH('ARTISTES À DÉCOUVRIR'), muNote('De nouveaux artistes, proches de tes goûts, mais que tu n\'as pas encore dans ta bibliothèque.'), status, rows, mh('div.muWEnd', {}, muButton('FERMER', w.close, 'accent')));
-    if (!await muNeedYtdlp()) return status.textContent = 'Fonctionnalité indisponible (yt-dlp n\'est pas installé).';
-    const seeds = Object.entries(mu.stats.artists).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([a]) => a);
-    if (!seeds.length) return status.textContent = 'Écoute quelques musiques pour obtenir des recommandations basées sur tes goûts.';
-    try {
-      const res = await neo.musicMix(seeds, muLibraryArtists());
-      if (!res.length) return status.textContent = 'Aucun nouvel artiste similaire n\'a été trouvé pour l\'instant.';
-      status.textContent = `${res.length} artiste(s) à découvrir`;
-      rows.replaceChildren(...res.map(e => mh('div.muWRow', {}, mh('div', {}, mh('b', {text: e.artist}), mh('span', {text: e.title.length > 60 ? e.title.slice(0, 57) + '…' : e.title})),
-        muButton('＋ AJOUTER', () => { if (mp.pl === 'Favoris') return muNotify('warning', 'NeoMusic', 'Sélectionne une vraie playlist pour ajouter une musique.'); muAddUrl(e.url); }, 'accent'))));
-    } catch (e) { status.textContent = 'La recherche a échoué. Réessaie plus tard.'; muWarn('artistes', e); }
-  }
   async function muWeekly() {  // "Radar des sorties" and "Découvertes de la semaine", refilled once a week
     const wk = muWeek();
-    if (mu.settings.weeklyWeek === wk) return;
+    if (mu.settings.weeklyWeek === wk && mu.settings.weeklyAlgo === 2) return;  // weeklyAlgo : refait une fois les listes avec les nouveaux calculs
     muCaps ||= await neo.musicCaps().catch(() => muDefaultCaps);
     if (!muCaps.ytdlp) return;
-    const artists = [...new Set(muPl('Favoris').tracks.map(t => (t.author || '').trim()).filter(Boolean))];
-    if (!artists.length) return muStatus('Radar : ajoute des favoris avec un artiste');
-    mu.settings.weeklyWeek = wk; muSave();
+    const taste = muTaste(), artists = taste.map(x => x.artist);
+    if (!artists.length) return muStatus('Radar : ajoute des favoris ou écoute quelques musiques');
+    mu.settings.weeklyWeek = wk; mu.settings.weeklyAlgo = 2; muSave();
     muQueue(async () => {
       try {
-        await muFillWeekly('Radar des sorties', (await neo.musicWeekly(artists.slice(0, 8).map(a => a + ' new release'), true)).slice(0, 12));
-        await muFillWeekly('Découvertes de la semaine', (await neo.musicMix(artists.slice(0, 4), muLibraryArtists())).slice(0, 12));
+        let news = await neo.musicRadar(artists.slice(0, 10)).catch(() => []);
+        if (news.length < 3) news = [...news, ...await neo.musicWeekly(artists.slice(0, 6).map(a => a + ' new release'), true)];  // sans Deezer : la recherche YouTube d'avant
+        await muFillWeekly('Radar des sorties', news.slice(0, 12));
+        await muFillWeekly('Découvertes de la semaine', (await neo.musicMix(taste.slice(0, 8), muLibraryArtists())).slice(0, 12));
         muStatus('Playlists hebdomadaires mises à jour');
       } catch (e) { muStatus('Mise à jour hebdomadaire indisponible', T.DANGER); muWarn('hebdo', e); }
     });
