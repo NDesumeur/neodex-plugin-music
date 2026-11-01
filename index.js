@@ -322,7 +322,8 @@ div.muCheck pre,.muLogs{margin:6px 0 0;white-space:pre-wrap;word-break:break-wor
 .muPlay svg{filter:drop-shadow(0 0 8px color-mix(in srgb,var(--macc) 45%,transparent));transition:filter .15s,transform .1s}
 .muPlay:hover svg{filter:drop-shadow(0 0 14px color-mix(in srgb,var(--macc2) 60%,transparent));transform:scale(1.05)} .muPlay:active svg{transform:scale(.95)}
 .muSkip svg{transition:transform .1s} .muSkip:active svg{transform:scale(.9)}
-.muRowFav,.muRowDel{border-radius:50%;width:30px;height:30px;padding:0;display:grid;place-items:center} .muRowFav:hover,.muRowDel:hover{background:var(--mcard2)}
+.muRowDur{flex:none;align-self:center;min-width:44px;text-align:right;margin-left:8px;font-variant-numeric:tabular-nums} .muRowFav,.muRowDel{border-radius:50%;width:30px;height:30px;padding:0;display:grid;place-items:center}
+.mu.px .muRowFav,.mu.px .muRowDel{border-radius:0;width:32px;height:30px;background:var(--mcard2);box-shadow:inset 0 2px 0 rgba(255,255,255,.08),0 3px 0 rgba(0,0,0,.45);margin:0 4px 0 6px} .mu.px .muRowFav:hover,.mu.px .muRowDel:hover{background:color-mix(in srgb,var(--macc) 24%,var(--mcard2))} .mu.px .muRowFav:active,.mu.px .muRowDel:active{transform:translateY(3px);box-shadow:none} .mu.px .muRowFav{color:var(--mborder)} .mu.px .muRowFav.on{color:var(--mheart)} .mu.px .muRowDel:hover{color:var(--mdanger)} .muRowFav:hover,.muRowDel:hover{background:var(--mcard2)}
 .muTopBtn{border-radius:6px;margin:5px 6px 5px auto;width:36px}
 .muSelect,.muFilter,.muKey,.muDlgIn{border-radius:6px;border:1px solid color-mix(in srgb,var(--mborder) 60%,transparent);transition:border-color .12s}
 .muSelect:hover,.muFilter:hover,.muKey:hover{border-color:var(--mborder)}
@@ -683,12 +684,12 @@ export default async function (ctx) {
     if (mu.settings.releaseDate && /^\d{8}$/.test(t.publish_date || '')) extra.push('Sorti le ' + t.publish_date.replace(/(\d{4})(\d\d)(\d\d)/, '$3/$2/$1'));
     if (extra.length) sub += '  ·  ' + extra.join('  ·  ');
     const missing = t.file && mp.exists[t.file] === false && !t.url;
-    const favBtn = mh('button.muRowFav' + (fav ? '.on' : ''), {html: muIcon(fav ? 'heart' : 'heartO', 14), title: fav ? 'Retirer des favoris' : 'Ajouter aux favoris', onclick: e => { e.stopPropagation(); muFlash(e.currentTarget, T.HEART); muToggleFav(t); }});
-    const del = mh('button.muRowDel', {html: muIcon('close', 12), title: 'Supprimer', onclick: e => { e.stopPropagation(); muFlash(e.currentTarget, T.DANGER); muDeleteTracks([t]); }});
+    const favBtn = mh('button.muRowFav' + (fav ? '.on' : ''), {html: muIcon(fav || mu.settings.pixelUi ? 'heart' : 'heartO', 16), title: fav ? 'Retirer des favoris' : 'Ajouter aux favoris', onclick: e => { e.stopPropagation(); muFlash(e.currentTarget, T.HEART); muToggleFav(t); }});
+    const del = mh('button.muRowDel', {html: muIcon('close', 16), title: 'Supprimer', onclick: e => { e.stopPropagation(); muFlash(e.currentTarget, T.DANGER); muDeleteTracks([t]); }});
     const node = gal
       ? mh('div.muTile', {}, mh('i.muStrip'), muArt(t, 120), mh('b', {text: t.display_title || t.file}), mh('span', {text: sub}), mh('em', {text: muTime(muDur(t))}), mh('div.muTileAct', {}, favBtn, del))
       : mh('div.muRow' + (missing ? '.missing' : ''), {}, mh('i.muStrip'), muArt(t, 42), mh('div.muRowText', {}, mh('b', {text: t.display_title || t.file}),
-        mh('div', {}, mh('span', {text: sub}), mh('em', {text: muTime(muDur(t))}))), favBtn, del);
+        mh('div', {}, mh('span', {text: sub}))), mh('em.muRowDur', {text: muTime(muDur(t))}), favBtn, del);
     node._t = t; node._g = gal;
     node.onclick = e => muRowClick(i, e);
     node.ondblclick = () => muRequest(i);
@@ -699,7 +700,7 @@ export default async function (ctx) {
     const t = mp.view[i], sel = mp.sel.has(i), playing = mp.cur && muId(mp.cur) === muId(t);
     node.classList.toggle('sel', sel); node.classList.toggle('playing', !!playing);
     const fav = mp.favs.has(muId(t)), fb = node.querySelector('.muRowFav');
-    if (fb && fb.classList.contains('on') !== fav) { fb.classList.toggle('on', fav); fb.innerHTML = muIcon(fav ? 'heart' : 'heartO', 14); }
+    if (fb && fb.classList.contains('on') !== fav) { fb.classList.toggle('on', fav); fb.innerHTML = muIcon(fav || mu.settings.pixelUi ? 'heart' : 'heartO', 16); }
     node.classList.toggle('missing', !!(t.file && mp.exists[t.file] === false));
   }
   function muFlash(b, color) { const c = b.style.color; b.style.color = color; setTimeout(() => b.style.color = c, 130); }
@@ -959,7 +960,7 @@ export default async function (ctx) {
         const y0 = Math.round((rows - 4) / 2 * P);
         for (let i = 0; i < cols; i++) {
           const played = i < done, x = i * 2 * P;
-          for (let r = 0; r < 4; r++) { g.fillStyle = played ? (r === 0 ? muBlend(T.ACCENT, '#ffffff', .55) : r === 3 ? muShade(T.ACCENT, -.35) : T.ACCENT) : (r === 0 ? muBlend(T.CARD_ALT, T.ACCENT, .3) : r === 3 ? muShade(T.CARD_ALT, -.3) : T.CARD_ALT); g.fillRect(x, y0 + r * P, P * 1.5, P); }
+          for (let r = 0; r < 4; r++) { g.fillStyle = played ? (r === 0 ? muBlend(T.ACCENT, '#ffffff', .55) : r === 3 ? muShade(T.ACCENT, -.35) : T.ACCENT) : (r === 0 ? muBlend(T.CARD_ALT, T.ACCENT, .3) : r === 3 ? muShade(T.CARD_ALT, -.3) : T.CARD_ALT); g.fillRect(x, y0 + r * P, P * 2, P); }
         }
         if (dur) { g.fillStyle = '#ffffff'; g.fillRect(Math.min(cols - 1, done) * 2 * P - P / 2, y0 - P, 2 * P, 6 * P); }
         return;
