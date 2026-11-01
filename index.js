@@ -261,6 +261,14 @@ div.muCheck pre,.muLogs{margin:6px 0 0;white-space:pre-wrap;word-break:break-wor
 @media (max-width:900px){.muNowSide{display:none}.muSide{width:200px}}`;
 export default async function (ctx) {
   const view = ctx.view;
+  // le côté système de NeoMusic (yt-dlp, fichiers, raccourcis globaux) vit dans le main.js du plugin : « neo.musicXxx » y est redirigé
+  const MU_ID = 'neobase.music', MU_EV = { onMusicHotkey: 'music:hotkey', onMusicProgress: 'music:progress' };
+  const neo = new Proxy(ctx.neo, { get: (n, k) => {
+    if (typeof k !== 'string') return n[k];
+    if (MU_EV[k]) return cb => n.onPluginMain(e => { if (e.id === MU_ID && e.name === MU_EV[k]) cb(e.data); });
+    const m = /^music([A-Z]\w*)$/.exec(k);
+    return m ? (...a) => n.pluginMain(MU_ID, 'music:' + (m[1] === 'ImportMuPlayer' ? 'pickMuPlayer' : m[1][0].toLowerCase() + m[1].slice(1)), ...a) : n[k];
+  } });
   if (!ctx.host) { view.textContent = "Ce plugin doit être approuvé par NeoBase pour s'ouvrir."; return; }
   const { el, toast, sfx, ask, newTab, pixIcon, PIX, WX } = ctx.host;
   const host = ctx.host;
@@ -562,8 +570,8 @@ export default async function (ctx) {
   function muArt(t, size, cls = '') {  // ArtworkFrame: framed cover, or the "?" placeholder; a cover missing on this PC is fetched again
     const box = mh('div.muArt' + cls, {style: {width: size + 'px', height: size + 'px'}});
     if (t?.cover && !mu.settings.noImages) {
-      const img = mh('img', {src: 'neomusic://cover/' + encodeURIComponent(t.cover), loading: 'lazy', draggable: 'false', alt: ''});
-      img.onerror = () => { img.remove(); muFetchCover(t).then(ok => { if (ok) box.append(mh('img', {src: 'neomusic://cover/' + encodeURIComponent(t.cover) + '?r=' + Date.now(), alt: ''})); }); };
+      const img = mh('img', {src: 'neoplugin://neobase.music/cover/' + encodeURIComponent(t.cover), loading: 'lazy', draggable: 'false', alt: ''});
+      img.onerror = () => { img.remove(); muFetchCover(t).then(ok => { if (ok) box.append(mh('img', {src: 'neoplugin://neobase.music/cover/' + encodeURIComponent(t.cover) + '?r=' + Date.now(), alt: ''})); }); };
       box.append(img);
     }
     return box;
@@ -676,7 +684,7 @@ export default async function (ctx) {
   function muVolumeApply() { if (muNodes) muNodes.gain.gain.value = Math.max(0, mu.settings.volume * (mu.settings.replaygain ? mp.gain : 1)); }
   function muSetVolume(v) { mu.settings.volume = Math.max(0, Math.min(1, v)); if ($('muVol')) $('muVol').value = Math.round(mu.settings.volume * 100); muVolumeApply(); muSave(2000); }
   function muSetEq(name) { mu.settings.equalizer = name; $('muEq').value = name; muAudioSettings(); muSave(); }
-  const muSrc = t => t.file && mp.exists[t.file] !== false ? 'neomusic://file/' + encodeURIComponent(t.file) : t.url ? 'neomusic://stream/?u=' + encodeURIComponent(t.url) : '';
+  const muSrc = t => t.file && mp.exists[t.file] !== false ? 'neoplugin://neobase.music/file/' + encodeURIComponent(t.file) : t.url ? 'neoplugin://neobase.music/stream/?u=' + encodeURIComponent(t.url) : '';
 
   /* ---------- play, pause, next, previous (anti-bounce 120 ms + 0.5 s between manual changes, like MuPlayer) ---------- */
   function muRequest(i, opts = {}) {
@@ -795,8 +803,8 @@ export default async function (ctx) {
     if (!t?.cover || mu.settings.noImages) return;
     const img = new Image(); img.crossOrigin = 'anonymous';
     img.onload = () => { if (mp.cur === t) { mp.coverImg = img; mp.disc = null; mp.fadeAt = performance.now(); } };
-    img.onerror = () => muFetchCover(t).then(ok => { if (ok && mp.cur === t) img.src = 'neomusic://cover/' + encodeURIComponent(t.cover) + '?r=' + Date.now(); });
-    img.src = 'neomusic://cover/' + encodeURIComponent(t.cover);
+    img.onerror = () => muFetchCover(t).then(ok => { if (ok && mp.cur === t) img.src = 'neoplugin://neobase.music/cover/' + encodeURIComponent(t.cover) + '?r=' + Date.now(); });
+    img.src = 'neoplugin://neobase.music/cover/' + encodeURIComponent(t.cover);
   }
   function muDisc(img) {  // the record: dark body, grooves, the cover as the centre label, spindle hole (MuPlayer's build_now_cover_disc)
     const S = 248, c = document.createElement('canvas'); c.width = c.height = S;
@@ -1419,7 +1427,7 @@ export default async function (ctx) {
     const show = (title, url, cover) => {
       if (req !== mp.recoReq) return;
       mp.recoUrl = url || ''; $('muReco').textContent = title || 'Aucune recommandation disponible.';
-      $('muRecoCover').replaceChildren(...(cover && !mu.settings.noImages ? [mh('img', {src: 'neomusic://cover/' + encodeURIComponent(cover), alt: ''})] : []));
+      $('muRecoCover').replaceChildren(...(cover && !mu.settings.noImages ? [mh('img', {src: 'neoplugin://neobase.music/cover/' + encodeURIComponent(cover), alt: ''})] : []));
     };
     muCaps ||= await neo.musicCaps().catch(() => muDefaultCaps);
     const cur = mp.cur || muPl(mp.pl).tracks.at(-1);
