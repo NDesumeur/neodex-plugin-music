@@ -39,7 +39,7 @@ const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strip
 .muExtra>.muSideBtn:first-child{margin-top:0}
 .muSideIn>.muExtra:last-child{padding:0 0 0 14px}
 .muSideBtn{display:flex;align-items:center;gap:14px;width:100%;margin:2px 0;padding:9px 10px;color:var(--mtext);font-size:13px}
-.muSideBtn svg{color:var(--mtext);flex:none} .muSideBtn:hover{background:var(--mcard);color:var(--macc)} .muSideBtn:active{background:var(--mpress)}
+.muSideBtn svg{color:#fff;flex:none;image-rendering:pixelated} .muSideBtn:hover{background:var(--mcard);color:var(--macc)} .muSideBtn:active{background:var(--mpress)}
 /* main column: three cards */
 .muMain{flex:1;min-width:0;display:flex;flex-direction:column;gap:16px;padding:18px 18px 18px 0;margin-left:0}
 .mu .muMain{margin:0;height:auto;overflow:hidden;z-index:auto}  /* NeoBase styles every <main> */
@@ -84,9 +84,9 @@ const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strip
 body.vfs .muMini{display:none}
 .mu.novis .muSpectrum{display:none}
 .muControls{display:flex;align-items:center;justify-content:center;gap:24px}
-.muSkip{width:40px;height:40px} .muSkip svg{width:40px;height:40px;fill:var(--mtext);display:block}
+.muSkip{width:40px;height:40px} .muSkip{position:relative;color:#fff} .muSkip svg{width:40px;height:40px;fill:var(--mtext);display:block} .muSkip:hover{color:var(--macc)} .muSkip svg+svg{fill:none}
 .muSkip .halo{fill:transparent;transition:fill .12s} .muSkip:hover .halo{fill:var(--mcard2)} .muSkip:hover svg{fill:var(--macc)} .muSkip:active .halo{fill:var(--mpress)}
-.muPlay{width:64px;height:64px;border-radius:50%} .muPlay svg{width:64px;height:64px;display:block}
+.muPlay{width:64px;height:64px;border-radius:50%;position:relative} .muPlay svg{width:64px;height:64px;display:block}
 .muPlay .fill{fill:var(--macc);transition:fill .12s} .muPlay:hover .fill{fill:var(--macc2)} .muPlay:active svg{transform:scale(.95)}
 .muNowSide{flex:none;width:150px;align-self:flex-start;display:flex;flex-direction:column;align-items:center}
 .muNowSide .muBtn{margin-bottom:10px}
@@ -174,18 +174,13 @@ body.vfs .muMini{display:none}
 
 .muWThumb{width:72px;height:40px;object-fit:cover;flex:none;border:1px solid var(--mborder)}
 .muWin label.muCheck{display:flex;align-items:flex-start;gap:10px;margin:7px 0;cursor:var(--cp,pointer);font-size:12px;line-height:1.4}
-.muWin input[type=checkbox]{-webkit-appearance:none;appearance:none;margin:1px 0 0;width:16px;height:16px;flex:none;cursor:var(--cp,pointer);background:var(--mbg);border:2px solid var(--mborder);display:grid;place-items:center;transition:background .12s,border-color .12s,box-shadow .12s}
-.muWin input[type=checkbox]:hover{border-color:var(--macc)}
-.muWin input[type=checkbox]:checked{background:var(--macc);border-color:var(--macc);box-shadow:0 0 8px color-mix(in srgb,var(--macc) 60%,transparent)}
-.muWin input[type=checkbox]:checked::after{content:"";width:8px;height:4px;border-left:3px solid var(--mbg);border-bottom:3px solid var(--mbg);transform:translateY(-1px) rotate(-45deg)}
+.muWin label.muCheck input{accent-color:var(--macc);margin:1px 0 0;width:14px;height:14px;flex:none;cursor:inherit}
+.muArtRow input[type=checkbox]{-webkit-appearance:none;appearance:none;margin:1px 0 0;width:16px;height:16px;flex:none;cursor:var(--cp,pointer);background:var(--mbg);border:2px solid var(--mborder);display:grid;place-items:center;transition:background .12s,border-color .12s,box-shadow .12s}
+.muArtRow input[type=checkbox]:hover{border-color:var(--macc)}
+.muArtRow input[type=checkbox]:checked{background:var(--macc);border-color:var(--macc);box-shadow:0 0 8px color-mix(in srgb,var(--macc) 60%,transparent)}
+.muArtRow input[type=checkbox]:checked::after{content:"";width:8px;height:4px;border-left:3px solid var(--mbg);border-bottom:3px solid var(--mbg);transform:translateY(-1px) rotate(-45deg)}
 .muArtHead .ph{width:72px;height:72px;flex:none;border-radius:50%;object-fit:cover;border:3px solid var(--macc);box-shadow:0 0 0 3px var(--mcard),0 0 18px color-mix(in srgb,var(--macc) 45%,transparent)}
 .muArtHead .ic{width:72px;height:72px;font-size:30px}
-.mu{background:radial-gradient(ellipse 80% 55% at 70% -10%,color-mix(in srgb,var(--macc) 16%,transparent),transparent),radial-gradient(ellipse 60% 50% at 0% 100%,color-mix(in srgb,var(--macc2) 11%,transparent),transparent),var(--mbg)}
-.muCard{background:linear-gradient(160deg,color-mix(in srgb,var(--mcard) 88%,var(--macc)),var(--mcard));border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.28)}
-.muSide{background:linear-gradient(180deg,var(--mside),color-mix(in srgb,var(--mside) 88%,var(--macc)))}
-.muRow,.muTile{border-radius:4px} .muRow.playing{background:color-mix(in srgb,var(--macc) 14%,var(--mcard))}
-.muWin{border-radius:6px;overflow:hidden}
-.muPill,.muBtn,.muSideBtn,.muPlBtn{transition:background .12s,color .12s,transform .08s} .muBtn:active,.muPill:active{transform:translateY(1px)}
 .muRadios{display:flex;flex-wrap:wrap;gap:4px 18px;padding-left:24px}
 .muBands{display:flex;justify-content:space-between;gap:6px;padding:12px 10px;background:var(--mcard2);margin:8px 0}
 .muBand{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
@@ -205,7 +200,7 @@ body.vfs .muMini{display:none}
 .muArtList{display:flex;flex-direction:column;max-height:46vh;overflow-y:auto;border:1px solid var(--mborder)}
 .muArtRow{display:grid;grid-template-columns:30px 22px 1fr auto;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;border-bottom:1px solid color-mix(in srgb,var(--mborder) 40%,transparent)}
 .muArtRow:nth-child(even){background:color-mix(in srgb,var(--mcard2) 55%,transparent)} .muArtRow:hover{background:color-mix(in srgb,var(--macc) 14%,var(--mcard2))} .muArtRow.on{background:color-mix(in srgb,var(--macc) 22%,var(--mcard2))}
-.muArtRow .n{color:var(--msub);font-size:11px;text-align:right} .muArtRow input{accent-color:var(--macc);width:16px;height:16px} .muArtRow div{min-width:0} .muArtRow b{display:block;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .muArtRow small{color:var(--msub);font-size:11px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .muArtRow .d{color:var(--msub);font-size:12px;font-variant-numeric:tabular-nums}
+.muArtRow .n{color:var(--msub);font-size:11px;text-align:right}  .muArtRow div{min-width:0} .muArtRow b{display:block;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .muArtRow small{color:var(--msub);font-size:11px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .muArtRow .d{color:var(--msub);font-size:12px;font-variant-numeric:tabular-nums}
 .muSwatch{padding:8px 14px;border:2px solid transparent;font-weight:bold;font-size:12px}
 .muSwatch:hover{filter:brightness(1.2)} .muSwatch.locked{display:flex;align-items:center;gap:8px;background:var(--mcard2);color:var(--msub)}
 .muKeyRow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:3px 0;font-size:12px}
@@ -437,21 +432,28 @@ export default async function (ctx) {
   let muAudio = null, muCtx = null, muNodes = null, T = MU_THEMES.Nova;
 
   /* ---------- icons (vector, like MuPlayer's PIL-drawn ones) ---------- */
-  const MU_ICONS = {
-    search: '<circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10.4 10.4 14 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
-    note: '<path d="M6 12V3.5L12 2v8" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="4.6" cy="12.2" r="2" fill="currentColor"/><circle cx="10.6" cy="10.6" r="2" fill="currentColor"/>',
-    compass: '<circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10.6 5.4 9 9 5.4 10.6 7 7z" fill="currentColor"/>',
-    shuffle: '<path d="M2 4h3l6 8h3M2 12h3l6-8h3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12.5 2.2 14.8 4l-2.3 1.8zM12.5 10.2l2.3 1.8-2.3 1.8z" fill="currentColor"/>',
-    moon: '<path d="M10.5 2.2A6 6 0 1 0 13.8 11 5 5 0 0 1 10.5 2.2z" fill="currentColor"/>',
-    clock: '<circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 4.5V8l2.5 1.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
-    bars: '<rect x="2" y="9" width="3" height="5" rx="1" fill="currentColor"/><rect x="6.5" y="6" width="3" height="8" rx="1" fill="currentColor"/><rect x="11" y="3" width="3" height="11" rx="1" fill="currentColor"/>',
-    trophy: '<path d="M4.5 2h7v3.5a3.5 3.5 0 0 1-7 0z" fill="currentColor"/><path d="M4.5 3H2.2a2.3 2.3 0 0 0 2.6 3M11.5 3h2.3a2.3 2.3 0 0 1-2.6 3" fill="none" stroke="currentColor" stroke-width="1.3"/><rect x="7.2" y="8.5" width="1.6" height="3" fill="currentColor"/><rect x="4.5" y="11.5" width="7" height="2.2" rx=".8" fill="currentColor"/>',
-    trash: '<path d="M3 4.5h10M6.2 4.5V3h3.6v1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M4.2 5.5h7.6l-.7 8.2H4.9z" fill="currentColor"/>',
-    gear: '<path d="M8 1.6l1.1 1.6 1.9-.4.5 1.9 1.8.8-.5 1.9 1.3 1.5-1.3 1.4.5 1.9-1.8.8-.5 1.9-1.9-.4L8 14.4l-1.1-1.6-1.9.4-.5-1.9-1.8-.8.5-1.9L1.9 8l1.3-1.5-.5-1.9 1.8-.8.5-1.9 1.9.4z" fill="currentColor"/><circle cx="8" cy="8" r="2.3" fill="var(--mside)"/>',
-    globe: '<circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2 8h12M8 2c-2.2 2-2.2 10 0 12M8 2c2.2 2 2.2 10 0 12" fill="none" stroke="currentColor" stroke-width="1.2"/>',
-    heart: '<path d="M8 13.8 2.6 8.6A3.3 3.3 0 0 1 8 4.4a3.3 3.3 0 0 1 5.4 4.2z" fill="currentColor"/>',
-  };
-  const muIcon = (k, size = 16) => `<svg viewBox="0 0 16 16" width="${size}" height="${size}" aria-hidden="true">${MU_ICONS[k]}</svg>`;
+  const MU_PX = {search:['................','....######......','...##....##.....','..##......##....','..#........#....','..#........#....','..#........#....','..#........#....','..##......##....','...##....###....','....######.##...','............###.','.............###','..............##'],
+    note:['................','.....#########..','.....#########..','.....##.....##..','.....##.....##..','.....##.....##..','.....##.....##..','.....##.....##..','..#####..#####..','.######.######..','.######.######..','..####...####...'],
+    compass:['.....######.....','...###....###...','..##........##..','.##....##....##.','.#....#..#....#.','#....#....#....#','#...#..##..#...#','#..#..####..#..#','#...#..##..#...#','#....#....#....#','.#....#..#....#.','.##....##....##.','..##........##..','...###....###...','.....######.....'],
+    shuffle:['................','................','...........#....','...........##...','###......#####..','...#....#..##...','....#..#...#....','.....##.........','.....##.........','....#..#...#....','...#....#..##...','###......#####..','...........##...','...........#....'],
+    moon:['................','......####......','....######......','...#####........','..#####.........','..#####.........','.#####..........','.#####..........','.#####..........','..#####.....##..','..######..#####.','...###########..','....#########...','......#####.....'],
+    clock:['.....######.....','...###....###...','..##........##..','.##....##....##.','.#.....##.....#.','#......##......#','#......##......#','#......#####...#','#..............#','#..............#','.#............#.','.##..........##.','..##........##..','...###....###...','.....######.....'],
+    bars:['................','................','...........###..','...........###..','...........###..','...........###..','......###..###..','......###..###..','......###..###..','......###..###..','.###..###..###..','.###..###..###..','.###..###..###..','.###..###..###..','.###..###..###..'],
+    trophy:['................','..############..','###.########.###','#.#.########.#.#','#.#..######..#.#','.##...####...##.','......####......','.......##.......','.......##.......','.......##.......','....########....','....########....','...##########...'],
+    trash:['................','......####......','......#..#......','..############..','..############..','................','...###.##.###...','...###.##.###...','...###.##.###...','...###.##.###...','...###.##.###...','...###.##.###...','...###.##.###...','...##########...','....########....'],
+    gear:['................','......####......','..##..####..##..','.####.####.####.','..############..','..####....####..','######....######','######....######','..####....####..','..############..','.####.####.####.','..##..####..##..','......####......'],
+    globe:['.....######.....','...###.##.###...','..##..#..#..##..','.##...#..#...##.','.#....#..#....#.','#.....#..#.....#','#.....#..#.....#','################','#.....#..#.....#','#.....#..#.....#','.#....#..#....#.','.##...#..#...##.','..##..#..#..##..','...###.##.###...','.....######.....'],
+    heart:['................','................','..####....####..','.######..######.','################','################','################','################','.##############.','..############..','...##########...','....########....','.....######.....','......####......','.......##.......'],
+    heartO:['................','................','..####....####..','.#....#..#....#.','#......##......#','#..............#','#..............#','#..............#','.#............#.','..#..........#..','...#........#...','....#......#....','.....#....#.....','......#..#......','.......##.......'],
+    close:['................','................','................','..##........##..','...##......##...','....##....##....','.....##..##.....','......####......','......####......','.....##..##.....','....##....##....','...##......##...','..##........##..'],
+    play:['................','................','...##...........','...####.........','...######.......','...########.....','...##########...','...############.','...############.','...##########...','...########.....','...######.......','...####.........','...##...........'],
+    pause:['................','................','...####..####...','...####..####...','...####..####...','...####..####...','...####..####...','...####..####...','...####..####...','...####..####...','...####..####...','...####..####...','...####..####...','...####..####...'],
+    next:['................','................','..##.........##.','..####.......##.','..######.....##.','..########...##.','..##########.##.','..##########.##.','..########...##.','..######.....##.','..####.......##.','..##.........##.'],
+    prev:['................','................','.##.........##..','.##.......####..','.##.....######..','.##...########..','.##.##########..','.##.##########..','.##...########..','.##.....######..','.##.......####..','.##.........##..']};
+  // one pixel-art drawing = one path of unit squares (rows merged), white (currentColor), never smoothed
+  const muPx = (rows, size) => { let d = ''; rows.forEach((r, y) => { for (const m of r.matchAll(/#+/g)) d += 'M' + m.index + ' ' + y + 'h' + m[0].length + 'v1h-' + m[0].length + 'z'; });
+    return `<svg viewBox="0 0 16 ${rows.length}" width="${size}" height="${size * rows.length / 16}" shape-rendering="crispEdges" aria-hidden="true"><path d="${d}" fill="currentColor"/></svg>`; };
+  const muIcon = (k, size = 16) => muPx(MU_PX[k], size);
   const muLock = (size = 34, open = false) => `<svg viewBox="0 0 34 34" width="${size}" height="${size}" aria-hidden="true">${open
     ? '<path d="M15 16v-5a6 6 0 0 1 12 0" fill="none" stroke="currentColor" stroke-width="3.6"/>' : '<path d="M10.5 16v-4.5a6.5 6.5 0 0 1 13 0V16" fill="none" stroke="currentColor" stroke-width="3.6"/>'}<rect x="7" y="16" width="20" height="15" rx="4" fill="currentColor"/><circle cx="17" cy="22" r="2.2" fill="var(--mcard2)"/><path d="M16 23h2l.6 4.6h-3.2z" fill="var(--mcard2)"/></svg>`;
 
@@ -485,9 +487,9 @@ export default async function (ctx) {
               mh('span.muKick', {text: 'LECTURE EN COURS'}), mh('div.muTitle#muTitle', {text: 'Aucune musique sélectionnée'}), mh('span.muTime#muTime', {text: '00:00 / 00:00'}),
               mh('canvas.muProgress#muProgress', {height: 36}), mh('canvas.muSpectrum#muSpectrum', {height: 64}),
               mh('div.muControls', {},
-                mh('button.muSkip#muPrev', {title: 'Morceau précédent', html: '<svg viewBox="0 0 40 40"><circle class="halo" cx="20" cy="20" r="19.5"/><path d="M26.4 14.4v11.2L17.4 20z"/><rect x="12.7" y="14.4" width="3.6" height="11.2" rx="1.8"/></svg>', onclick: () => muPrev()}),
+                mh('button.muSkip#muPrev', {title: 'Morceau précédent', html: '<svg viewBox="0 0 40 40"><circle class="halo" cx="20" cy="20" r="19.5"/></svg>' + muPx(MU_PX.prev, 28).replace('<svg', '<svg style="position:absolute;inset:6px"'), onclick: () => muPrev()}),
                 mh('button.muPlay#muPlay', {title: 'Lecture / pause', onclick: () => muToggle()}),
-                mh('button.muSkip#muNext', {title: 'Morceau suivant', html: '<svg viewBox="0 0 40 40"><circle class="halo" cx="20" cy="20" r="19.5"/><path d="M13.6 14.4v11.2l9-5.6z"/><rect x="23.7" y="14.4" width="3.6" height="11.2" rx="1.8"/></svg>', onclick: () => muNext()}))),
+                mh('button.muSkip#muNext', {title: 'Morceau suivant', html: '<svg viewBox="0 0 40 40"><circle class="halo" cx="20" cy="20" r="19.5"/></svg>' + muPx(MU_PX.next, 28).replace('<svg', '<svg style="position:absolute;inset:6px"'), onclick: () => muNext()}))),
             mh('div.muNowSide.muExtra', {},
               mh('button.muBtn#muFav', {text: '♡ FAVORI', onclick: () => muToggleFav()}),
               mh('span.muSmall', {text: 'VOLUME'}), mh('input.muRange#muVol', {type: 'range', min: 0, max: 100, oninput: e => muSetVolume(e.target.value / 100)}),
@@ -543,7 +545,7 @@ export default async function (ctx) {
   /* ---------- playlists in the sidebar ---------- */
   function muSidebar() {
     $('muPlaylists').replaceChildren(...mu.playlists.map(p => {
-      const icon = p.name === 'Favoris' ? '♥' : p.mode === 'online' ? muIcon('globe', 13) : '♫';
+      const icon = muIcon(p.name === 'Favoris' ? 'heart' : p.mode === 'online' ? 'globe' : 'note', 13);
       const b = mh('button.muPlBtn' + (p.name === mp.pl ? '.on' : ''), {html: `<i></i><span class="ic">${icon}</span><span>${mhEsc(p.name)}</span>`, onclick: () => muLoadPlaylist(p.name)});
       b.oncontextmenu = e => { e.preventDefault(); muLoadPlaylist(p.name); };
       return b;
@@ -627,8 +629,8 @@ export default async function (ctx) {
     if (mu.settings.releaseDate && /^\d{8}$/.test(t.publish_date || '')) extra.push('Sorti le ' + t.publish_date.replace(/(\d{4})(\d\d)(\d\d)/, '$3/$2/$1'));
     if (extra.length) sub += '  ·  ' + extra.join('  ·  ');
     const missing = t.file && mp.exists[t.file] === false && !t.url;
-    const favBtn = mh('button.muRowFav' + (fav ? '.on' : ''), {text: fav ? '♥' : '♡', title: fav ? 'Retirer des favoris' : 'Ajouter aux favoris', onclick: e => { e.stopPropagation(); muFlash(e.target, T.HEART); muToggleFav(t); }});
-    const del = mh('button.muRowDel', {text: '✕', title: 'Supprimer', onclick: e => { e.stopPropagation(); muFlash(e.target, T.DANGER); muDeleteTracks([t]); }});
+    const favBtn = mh('button.muRowFav' + (fav ? '.on' : ''), {html: muIcon(fav ? 'heart' : 'heartO', 14), title: fav ? 'Retirer des favoris' : 'Ajouter aux favoris', onclick: e => { e.stopPropagation(); muFlash(e.currentTarget, T.HEART); muToggleFav(t); }});
+    const del = mh('button.muRowDel', {html: muIcon('close', 12), title: 'Supprimer', onclick: e => { e.stopPropagation(); muFlash(e.currentTarget, T.DANGER); muDeleteTracks([t]); }});
     const node = gal
       ? mh('div.muTile', {}, mh('i.muStrip'), muArt(t, 120), mh('b', {text: t.display_title || t.file}), mh('span', {text: sub}), mh('em', {text: muTime(muDur(t))}), mh('div.muTileAct', {}, favBtn, del))
       : mh('div.muRow' + (missing ? '.missing' : ''), {}, mh('i.muStrip'), muArt(t, 42), mh('div.muRowText', {}, mh('b', {text: t.display_title || t.file}),
@@ -643,7 +645,7 @@ export default async function (ctx) {
     const t = mp.view[i], sel = mp.sel.has(i), playing = mp.cur && muId(mp.cur) === muId(t);
     node.classList.toggle('sel', sel); node.classList.toggle('playing', !!playing);
     const fav = mp.favs.has(muId(t)), fb = node.querySelector('.muRowFav');
-    if (fb && fb.classList.contains('on') !== fav) { fb.classList.toggle('on', fav); fb.textContent = fav ? '♥' : '♡'; }
+    if (fb && fb.classList.contains('on') !== fav) { fb.classList.toggle('on', fav); fb.innerHTML = muIcon(fav ? 'heart' : 'heartO', 14); }
     node.classList.toggle('missing', !!(t.file && mp.exists[t.file] === false));
   }
   function muFlash(b, color) { const c = b.style.color; b.style.color = color; setTimeout(() => b.style.color = c, 130); }
@@ -795,8 +797,7 @@ export default async function (ctx) {
   function muPlayIcon() {
     const b = $('muPlay'); if (!b) return;
     const pause = muAudio && !muAudio.paused;
-    b.innerHTML = `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="31" fill="none" stroke="var(--mcard2)" stroke-width="2"/><circle class="fill" cx="32" cy="32" r="28"/>${pause
-      ? '<rect x="23.4" y="20.5" width="5.8" height="23" rx="2.9" fill="#06110C"/><rect x="34.8" y="20.5" width="5.8" height="23" rx="2.9" fill="#06110C"/>' : '<path d="M25.7 19.8v24.4L43.5 32z" fill="#06110C"/>'}</svg>`;
+    b.innerHTML = `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="31" fill="none" stroke="var(--mcard2)" stroke-width="2"/><circle class="fill" cx="32" cy="32" r="28"/></svg><span style="position:absolute;inset:16px;color:#06110C;display:block">${muPx(MU_PX[pause ? 'pause' : 'play'], 32)}</span>`;
   }
   function muFitTitle() {  // two lines at most, then an ellipsis (MuPlayer's set_song_title)
     const el = $('muTitle'), full = mp.cur?.display_title || el.textContent;
