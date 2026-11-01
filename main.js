@@ -176,7 +176,7 @@ async function artistTracks(name) {  // un artiste (le nom exact d'abord) et ses
     const k = normName(t.title_short || t.title); if (seen.has(k) || tracks.length >= 200) continue; seen.add(k);
     tracks.push({ title: t.title_short || t.title, album: t.albumTitle, duration: t.duration || 0 });
   }
-  return { artist: a.name, tracks };
+  return { artist: a.name, picture: a.picture_xl || a.picture_big || a.picture_medium || '', fans: a.nb_fan || 0, tracks };
 }
 async function weekly(queries, recentOnly) {  // "Radar des sorties": recent songs of the favourite artists
   const out = [], seen = new Set(), cutoff = Date.now() - 30 * 864e5;

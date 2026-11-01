@@ -174,7 +174,18 @@ body.vfs .muMini{display:none}
 
 .muWThumb{width:72px;height:40px;object-fit:cover;flex:none;border:1px solid var(--mborder)}
 .muWin label.muCheck{display:flex;align-items:flex-start;gap:10px;margin:7px 0;cursor:var(--cp,pointer);font-size:12px;line-height:1.4}
-.muWin label.muCheck input{accent-color:var(--macc);margin:1px 0 0;width:14px;height:14px;flex:none;cursor:inherit}
+.muWin input[type=checkbox]{-webkit-appearance:none;appearance:none;margin:1px 0 0;width:16px;height:16px;flex:none;cursor:var(--cp,pointer);background:var(--mbg);border:2px solid var(--mborder);display:grid;place-items:center;transition:background .12s,border-color .12s,box-shadow .12s}
+.muWin input[type=checkbox]:hover{border-color:var(--macc)}
+.muWin input[type=checkbox]:checked{background:var(--macc);border-color:var(--macc);box-shadow:0 0 8px color-mix(in srgb,var(--macc) 60%,transparent)}
+.muWin input[type=checkbox]:checked::after{content:"";width:8px;height:4px;border-left:3px solid var(--mbg);border-bottom:3px solid var(--mbg);transform:translateY(-1px) rotate(-45deg)}
+.muArtHead .ph{width:72px;height:72px;flex:none;border-radius:50%;object-fit:cover;border:3px solid var(--macc);box-shadow:0 0 0 3px var(--mcard),0 0 18px color-mix(in srgb,var(--macc) 45%,transparent)}
+.muArtHead .ic{width:72px;height:72px;font-size:30px}
+.mu{background:radial-gradient(ellipse 80% 55% at 70% -10%,color-mix(in srgb,var(--macc) 16%,transparent),transparent),radial-gradient(ellipse 60% 50% at 0% 100%,color-mix(in srgb,var(--macc2) 11%,transparent),transparent),var(--mbg)}
+.muCard{background:linear-gradient(160deg,color-mix(in srgb,var(--mcard) 88%,var(--macc)),var(--mcard));border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.28)}
+.muSide{background:linear-gradient(180deg,var(--mside),color-mix(in srgb,var(--mside) 88%,var(--macc)))}
+.muRow,.muTile{border-radius:4px} .muRow.playing{background:color-mix(in srgb,var(--macc) 14%,var(--mcard))}
+.muWin{border-radius:6px;overflow:hidden}
+.muPill,.muBtn,.muSideBtn,.muPlBtn{transition:background .12s,color .12s,transform .08s} .muBtn:active,.muPill:active{transform:translateY(1px)}
 .muRadios{display:flex;flex-wrap:wrap;gap:4px 18px;padding-left:24px}
 .muBands{display:flex;justify-content:space-between;gap:6px;padding:12px 10px;background:var(--mcard2);margin:8px 0}
 .muBand{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
@@ -1337,7 +1348,8 @@ export default async function (ctx) {
     try {
       const r = await neo.musicArtist(q);
       if (!r) { status.textContent = 'Aucun artiste trouvé.'; return; }
-      list = r.tracks; head.querySelector('b').textContent = r.artist; head.querySelector('.ic').textContent = r.artist.charAt(0).toUpperCase(); status.textContent = list.length + ' titres · coche ceux à ajouter dans « ' + mp.pl + ' »';
+      list = r.tracks; head.querySelector('b').textContent = r.artist; head.querySelector('.ic').textContent = r.artist.charAt(0).toUpperCase(); status.textContent = list.length + ' titres' + (r.fans ? ' · ' + r.fans.toLocaleString('fr-FR') + ' fans' : '') + ' · coche ceux à ajouter dans « ' + mp.pl + ' »';
+      if (/^https:\/\//.test(r.picture || '')) { const ph = mh('img.ph', {src: r.picture, alt: r.artist}); ph.onload = () => head.querySelector('.ic')?.replaceWith(ph); }
       const rowEls = [];
       rows.replaceChildren(...list.map((t, i) => { const b = mh('input', {type: 'checkbox'}); boxes.push(b); const row = mh('label.muArtRow', {}, mh('span.n', {text: String(i + 1)}), b, mh('div', {}, mh('b', {text: t.title}), mh('small', {text: t.album || ''})), mh('span.d', {text: t.duration ? muTime(t.duration) : ''})); b.onchange = () => { row.classList.toggle('on', b.checked); count(); }; rowEls.push(row); return row; }));
       filter.oninput = () => { const f = filter.value.toLowerCase(); rowEls.forEach((row, i) => { row.style.display = !f || (list[i].title + ' ' + (list[i].album || '')).toLowerCase().includes(f) ? '' : 'none'; }); };
