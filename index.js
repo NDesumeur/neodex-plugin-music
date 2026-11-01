@@ -166,11 +166,37 @@ body.vfs .muMini{display:none}
 .mu.px .muFilter,.mu.px .muArtFilter,.mu.px .muSelect{border:2px solid var(--mborder);box-shadow:inset 0 2px 0 rgba(0,0,0,.35)}
 .mu.px .muRange::-webkit-slider-runnable-track{height:8px;background:repeating-linear-gradient(90deg,var(--mcard2) 0 4px,var(--mborder) 4px 6px)}
 .mu.px .muRange::-webkit-slider-thumb{width:10px;height:18px;margin-top:-5px;border:2px solid var(--mtext);box-shadow:0 3px 0 rgba(0,0,0,.45)}
-.mu.px .muWinBar,.mu.px .muTop{background-image:repeating-linear-gradient(90deg,transparent 0 6px,rgba(255,255,255,.035) 6px 9px)}
+.mu.px .muWinBar{background-image:repeating-linear-gradient(90deg,transparent 0 6px,rgba(255,255,255,.035) 6px 9px)}
 .mu.px ::-webkit-scrollbar{width:10px;height:10px} .mu.px ::-webkit-scrollbar-track{background:var(--mcard2)} .mu.px ::-webkit-scrollbar-thumb{background:var(--mborder);box-shadow:inset -2px -2px 0 rgba(0,0,0,.4),inset 2px 2px 0 rgba(255,255,255,.15)}
 .mu.px .muCheck input[type=checkbox]{-webkit-appearance:none;appearance:none;margin:1px 0 0;width:16px;height:16px;flex:none;cursor:var(--cp,pointer);background:var(--mbg);border:2px solid var(--mborder);display:grid;place-items:center;box-shadow:inset 0 2px 0 rgba(0,0,0,.35)}
 .mu.px .muCheck input[type=checkbox]:hover{border-color:var(--macc)} .mu.px .muCheck input[type=checkbox]:checked{background:var(--macc);border-color:var(--macc)}
 .mu.px .muCheck input[type=checkbox]:checked::after{content:"";width:8px;height:4px;border-left:3px solid var(--mbg);border-bottom:3px solid var(--mbg);transform:translateY(-1px) rotate(-45deg)}
+.mu.px .muTop{height:48px;background:var(--mside);box-shadow:0 3px 0 var(--macc),0 6px 0 rgba(0,0,0,.4);position:relative;z-index:3}
+.mu.px .muTopStrip{display:none}
+.mu.px .muBrand{margin:0 14px 0 12px;padding:9px 16px;background:var(--macc);color:var(--mbg);font-weight:800;letter-spacing:2px;box-shadow:inset 0 2px 0 rgba(255,255,255,.3),inset 0 -3px 0 rgba(0,0,0,.25);clip-path:polygon(0 4px,4px 4px,4px 0,calc(100% - 4px) 0,calc(100% - 4px) 4px,100% 4px,100% calc(100% - 4px),calc(100% - 4px) calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,4px calc(100% - 4px),0 calc(100% - 4px))}
+.mu.px .muStatus{margin-left:0;padding:5px 12px;background:var(--mcard2);box-shadow:inset 0 2px 0 rgba(0,0,0,.4),0 2px 0 rgba(255,255,255,.05);letter-spacing:1px}
+.mu.px .muTopBtn{background:var(--mcard2);margin:8px 12px 8px auto;width:36px;align-self:auto;height:32px}
+.mu.px .muSide{background:var(--mside);box-shadow:4px 0 0 rgba(0,0,0,.35);position:relative;z-index:2;grid-template-rows:6px 1fr;background-image:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.025) 3px 4px)}
+.mu.px .muSideStrip{background:repeating-linear-gradient(90deg,var(--macc) 0 6px,var(--macc2) 6px 9px)}
+.mu.px .muHead{display:flex;align-items:center;gap:8px;padding:18px 12px 8px 14px;color:var(--macc);font-size:11px;letter-spacing:2px;text-transform:uppercase}
+.mu.px .muHead::before{content:"";width:8px;height:8px;flex:none;background:var(--macc);box-shadow:3px 3px 0 rgba(0,0,0,.45)}
+.mu.px .muHead::after{content:"";flex:1;height:2px;background:repeating-linear-gradient(90deg,var(--mborder) 0 4px,transparent 4px 7px)}
+.mu.px #muPlaylists{padding:0 12px 0 12px;display:flex;flex-direction:column;gap:7px}
+.mu.px .muPlBtn{margin:0;background:var(--mcard);border:2px solid var(--mborder);box-shadow:inset 0 2px 0 rgba(255,255,255,.06),0 3px 0 rgba(0,0,0,.45);position:relative}
+.mu.px .muPlBtn i{display:none}
+.mu.px .muPlBtn:hover:not(.on){border-color:var(--macc);color:var(--macc);background:var(--mcard)}
+.mu.px .muPlBtn.on{background:var(--macc);border-color:var(--macc);color:var(--mbg);font-weight:700}
+.mu.px .muPlBtn.on .ic{color:var(--mbg)}
+.mu.px .muPlBtn.on::after{content:"";position:absolute;right:-12px;top:50%;margin-top:-6px;border-left:8px solid var(--macc);border-top:6px solid transparent;border-bottom:6px solid transparent}
+.mu.px .muPlBtn:active{transform:translateY(3px);box-shadow:none}
+.mu.px .muPills{margin:12px 12px 8px}
+.mu.px .muSideIn>.muExtra:last-child{padding:0 12px}
+.mu.px .muSideBtn{margin:0 0 6px;padding:5px 8px;gap:12px;background:transparent;border:2px solid transparent;box-shadow:none}
+.mu.px .muSideBtn svg{padding:5px;box-sizing:content-box;background:var(--mcard2);border:2px solid var(--mborder);box-shadow:inset 0 2px 0 rgba(255,255,255,.08),0 3px 0 rgba(0,0,0,.45);margin:0 0 3px}
+.mu.px .muSideBtn:hover{background:var(--mcard);border-color:var(--mborder);color:var(--macc)} .mu.px .muSideBtn:hover svg{border-color:var(--macc);background:var(--mborder)}
+.mu.px .muSideBtn:active svg{transform:translateY(3px);box-shadow:none}
+.mu.px .muSide:not(.closed){width:276px} .mu.px .muSideBtn span{white-space:nowrap;font-size:12.5px} .mu.px .muSideBtn svg{padding:4px}
+.mu.px .muSideToggle{background:var(--mcard);box-shadow:inset 3px 0 0 var(--mborder)}
 /* secondary windows: borderless, title bar with accent strip, top-left like MuPlayer's, draggable */
 .muLayer{position:absolute;inset:0;pointer-events:none;z-index:20}
 .muWin{position:absolute;left:0;top:38px;max-width:100%;max-height:calc(100% - 38px);display:flex;flex-direction:column;background:var(--mcard);border:1px solid var(--mborder);box-shadow:6px 6px 0 rgba(0,0,0,.35);pointer-events:auto;animation:muReveal .18s ease-out}
