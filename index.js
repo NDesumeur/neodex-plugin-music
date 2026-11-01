@@ -161,8 +161,8 @@ body.vfs .muMini{display:none}
 .mu.px .muCard::before{content:"";display:block;height:3px;background:repeating-linear-gradient(90deg,var(--macc) 0 6px,var(--macc2) 6px 9px);opacity:.55}
 .mu.px .muBtn,.mu.px .muPill,.mu.px .muSelect,.mu.px .muTopBtn{box-shadow:inset 0 2px 0 rgba(255,255,255,.08),0 3px 0 rgba(0,0,0,.45)}
 .mu.px .muBtn:hover,.mu.px .muPill:hover{background:color-mix(in srgb,var(--macc) 24%,var(--mcard2));color:var(--mtext)} .mu.px .muBtn:active,.mu.px .muPill:active{transform:translateY(3px);box-shadow:none}
-.mu.px .muSideBtn,.mu.px .muPlBtn{box-shadow:0 2px 0 rgba(0,0,0,.25)} .mu.px .muSideBtn:active,.mu.px .muPlBtn:active{transform:translateY(2px)}
-.mu.px .muRow,.mu.px .muTile{box-shadow:0 2px 0 rgba(0,0,0,.4)} .mu.px .muRow.sel,.mu.px .muTile.sel{box-shadow:inset 0 0 0 2px var(--macc),0 2px 0 rgba(0,0,0,.4)}
+.mu.px .muSideBtn,.mu.px .muPlBtn{box-shadow:none} .mu.px .muSideBtn:active,.mu.px .muPlBtn:active{transform:translateY(2px)}
+.mu.px .muRow,.mu.px .muTile{box-shadow:none} .mu.px .muRow.sel,.mu.px .muTile.sel{box-shadow:inset 0 0 0 2px var(--macc)}
 .mu.px .muFilter,.mu.px .muArtFilter,.mu.px .muSelect{border:2px solid var(--mborder);box-shadow:inset 0 2px 0 rgba(0,0,0,.35)}
 .mu.px .muRange::-webkit-slider-runnable-track{height:8px;background:repeating-linear-gradient(90deg,var(--mcard2) 0 4px,var(--mborder) 4px 6px)}
 .mu.px .muRange::-webkit-slider-thumb{width:10px;height:18px;margin-top:-5px;border:2px solid var(--mtext);box-shadow:0 3px 0 rgba(0,0,0,.45)}
@@ -202,7 +202,7 @@ body.vfs .muMini{display:none}
 .mu.px .muWinBar::after{content:"";flex:1;order:1;height:2px;margin:0 8px;background:repeating-linear-gradient(90deg,var(--mborder) 0 4px,transparent 4px 7px)} .mu.px .muWinBar button{order:2}
 .mu.px .muWH{display:flex;align-items:center;gap:10px;letter-spacing:2px;text-transform:uppercase} .mu.px .muWH::after{content:"";flex:1;height:2px;background:repeating-linear-gradient(90deg,var(--macc) 0 4px,transparent 4px 7px);opacity:.6}
 .mu.px .muWSec{display:flex;align-items:center;gap:8px;letter-spacing:2px} .mu.px .muWSec::before{content:"";width:7px;height:7px;background:var(--macc2);box-shadow:2px 2px 0 rgba(0,0,0,.45)}
-.mu.px .muWRow,.mu.px .muArtRow,.mu.px .muTrashList button{box-shadow:0 2px 0 rgba(0,0,0,.35)} .mu.px .muArtList{border:2px solid var(--mborder)} .mu.px .muArtHead{border-left-width:6px}
+.mu.px .muWRow,.mu.px .muArtRow,.mu.px .muTrashList button{box-shadow:none} .mu.px .muArtList{border:2px solid var(--mborder)} .mu.px .muArtHead{border-left-width:6px}
 .mu.px .muMenu{padding:4px} .mu.px .muMenu button{padding:7px 12px;border-left:3px solid transparent} .mu.px .muMenu button:hover:not(:disabled){background:color-mix(in srgb,var(--macc) 24%,var(--mcard2));color:var(--mtext);border-left-color:var(--macc)}
 .mu.px .muMode{border:2px solid transparent;box-shadow:0 3px 0 rgba(0,0,0,.35)} .mu.px .muMode:hover{border-color:var(--macc)}
 /* secondary windows: borderless, title bar with accent strip, top-left like MuPlayer's, draggable */
@@ -323,7 +323,7 @@ div.muCheck pre,.muLogs{margin:6px 0 0;white-space:pre-wrap;word-break:break-wor
 .muPlay:hover svg{filter:drop-shadow(0 0 14px color-mix(in srgb,var(--macc2) 60%,transparent));transform:scale(1.05)} .muPlay:active svg{transform:scale(.95)}
 .muSkip svg{transition:transform .1s} .muSkip:active svg{transform:scale(.9)}
 .muRowDur{flex:none;align-self:center;min-width:44px;text-align:right;margin-left:8px;font-variant-numeric:tabular-nums} .muRowFav,.muRowDel{border-radius:50%;width:30px;height:30px;padding:0;display:grid;place-items:center}
-.mu.px .muRowFav,.mu.px .muRowDel{border-radius:0;width:32px;height:30px;background:var(--mcard2);box-shadow:inset 0 2px 0 rgba(255,255,255,.08),0 3px 0 rgba(0,0,0,.45);margin:0 4px 0 6px} .mu.px .muRowFav:hover,.mu.px .muRowDel:hover{background:color-mix(in srgb,var(--macc) 24%,var(--mcard2))} .mu.px .muRowFav:active,.mu.px .muRowDel:active{transform:translateY(3px);box-shadow:none} .mu.px .muRowFav{color:var(--mborder)} .mu.px .muRowFav.on{color:var(--mheart)} .mu.px .muRowDel:hover{color:var(--mdanger)} .muRowFav:hover,.muRowDel:hover{background:var(--mcard2)}
+.mu.px .muRowFav,.mu.px .muRowDel{border-radius:0;width:32px;height:30px;background:var(--mcard2);box-shadow:inset 0 2px 0 rgba(255,255,255,.08);margin:0 4px 0 6px} .mu.px .muRowFav:hover,.mu.px .muRowDel:hover{background:color-mix(in srgb,var(--macc) 24%,var(--mcard2))} .mu.px .muRowFav:active,.mu.px .muRowDel:active{transform:translateY(2px);box-shadow:none} .mu.px .muRowFav{color:var(--mborder)} .mu.px .muRowFav.on{color:var(--mheart)} .mu.px .muRowDel:hover{color:var(--mdanger)} .muRowFav:hover,.muRowDel:hover{background:var(--mcard2)}
 .muTopBtn{border-radius:6px;margin:5px 6px 5px auto;width:36px}
 .muSelect,.muFilter,.muKey,.muDlgIn{border-radius:6px;border:1px solid color-mix(in srgb,var(--mborder) 60%,transparent);transition:border-color .12s}
 .muSelect:hover,.muFilter:hover,.muKey:hover{border-color:var(--mborder)}
