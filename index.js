@@ -121,9 +121,9 @@ body.vfs .muMini{display:none}
 .muFilters{display:flex;flex-wrap:wrap;gap:6px;padding:0 20px 10px}
 .muFilter{width:190px;background:var(--mcard2);color:var(--mtext);border:0;padding:6px 8px;font-size:11px;outline:none;caret-color:var(--macc)}
 .muFilter::placeholder{color:var(--msub)} .muFilter:focus{outline:1px solid var(--macc)}
-.muList{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;margin:0 14px 14px;position:relative;outline:none}
+.muList{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;margin:0 14px 14px;position:relative;outline:none;background:var(--mcard);overscroll-behavior:contain}
 #muSpacer{position:relative;width:100%}
-.muRow{position:absolute;left:0;right:0;top:0;height:58px;display:flex;align-items:center;background:var(--mcard);cursor:var(--cp,pointer);will-change:transform}
+.muRow{position:absolute;left:0;right:0;top:0;height:58px;display:flex;align-items:center;background:var(--mcard);cursor:var(--cp,pointer);backface-visibility:hidden}
 .muRow:hover{background:color-mix(in srgb,var(--mcard) 70%,var(--mcard2))}
 .muRow .muStrip{width:4px;align-self:stretch;flex:none}
 .muRow .muArt{margin:0 12px 0 10px}
@@ -139,7 +139,7 @@ body.vfs .muMini{display:none}
 .muRow.playing .muRowText b,.muTile.playing b{color:var(--macc)}
 .muRow.playing .muRowText b::before,.muTile.playing b::before{content:"▶ ";font-size:10px}
 .muRow.missing,.muTile.missing{opacity:.5}
-.muTile{position:absolute;left:0;top:0;width:152px;height:196px;display:flex;flex-direction:column;align-items:center;background:var(--mcard);cursor:var(--cp,pointer);will-change:transform}
+.muTile{position:absolute;left:0;top:0;width:152px;height:196px;display:flex;flex-direction:column;align-items:center;background:var(--mcard);cursor:var(--cp,pointer);backface-visibility:hidden}
 .muTile:hover{background:color-mix(in srgb,var(--mcard) 70%,var(--mcard2))}
 .muTile .muStrip{height:3px;width:100%;flex:none}
 .muTile .muArt{margin:8px 0 4px}
@@ -1333,7 +1333,7 @@ export default async function (ctx) {
     if (name !== 'music' || !mu) return;
     neo.musicLoad().then(d => { const id = muId(mp.cur); mu = muRepair(d); if (mp.built) { muApplyTheme(); muApplySettingsUi(); muLoadPlaylist(muPl(mp.pl) ? mp.pl : 'Favoris'); } muHotkeys(); for (const p of mu.playlists) { const t = p.tracks.find(x => muId(x) === id); if (t) { mp.cur = t; break; } } muSyncFiles(); });
   });
-  addEventListener('beforeunload', () => { if (mp.cur && mu) { muSaveSession(false); neo.musicSave(mu); } });
+  addEventListener('beforeunload', () => { if (mu) { if (mp.cur) muSaveSession(false); clearTimeout(muSaveTimer); neo.musicSave(mu); } });
   async function muOpen() {
     await muLoad();
     muBuild();
