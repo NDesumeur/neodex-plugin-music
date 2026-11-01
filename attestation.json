@@ -1,0 +1,9 @@
+{
+  "pluginId": "neobase.music",
+  "repo": "NDesumeur/neobase-plugin-music",
+  "version": "1.6.2",
+  "sha256": "85bb51f3f164c7f8ff30b3732954ab671b7fb1addc7e476174725ced7d8d9f7d",
+  "approvedAt": "2026-11-01T13:30:30.024Z",
+  "neobase": ">=4.1.0",
+  "signature": "jyxhwvXOHf4U6k5C8O9aLYOpFDldh95glQKb1zP4OT+Qso4syz5cZtIwgCqzxc9ZT6BCiZjlTqVOdIJa0VsTAQ=="
+}
