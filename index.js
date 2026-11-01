@@ -174,7 +174,7 @@ body.vfs .muMini{display:none}
 .mu.px .muTop{height:48px;background:var(--mside);box-shadow:0 3px 0 var(--macc),0 6px 0 rgba(0,0,0,.4);position:relative;z-index:3}
 .mu.px .muTopStrip{display:none}
 .mu.px .muBrand{margin:0 14px 0 12px;padding:9px 16px;background:var(--macc);color:var(--mbg);font-weight:800;letter-spacing:2px;box-shadow:inset 0 2px 0 rgba(255,255,255,.3),inset 0 -3px 0 rgba(0,0,0,.25);clip-path:polygon(0 4px,4px 4px,4px 0,calc(100% - 4px) 0,calc(100% - 4px) 4px,100% 4px,100% calc(100% - 4px),calc(100% - 4px) calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,4px calc(100% - 4px),0 calc(100% - 4px))}
-.mu.px .muStatus{margin-left:0;padding:5px 12px;background:var(--mcard2);box-shadow:inset 0 2px 0 rgba(0,0,0,.4),0 2px 0 rgba(255,255,255,.05);letter-spacing:1px}
+.mu.px .muStatus{margin-left:0;padding:5px 4px;background:none;box-shadow:none;letter-spacing:1px}
 .mu.px .muTopBtn{background:var(--mcard2);margin:8px 12px 8px auto;width:36px;align-self:auto;height:32px}
 .mu.px .muSide{background:var(--mside);box-shadow:4px 0 0 rgba(0,0,0,.35);position:relative;z-index:2;grid-template-rows:6px 1fr;background-image:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.025) 3px 4px)}
 .mu.px .muSideStrip{background:repeating-linear-gradient(90deg,var(--macc) 0 6px,var(--macc2) 6px 9px)}
@@ -213,7 +213,7 @@ body.vfs .muMini{display:none}
 .muWinBar button,.muDlgBar button{width:42px;align-self:stretch;display:grid;place-items:center;color:var(--mdanger);font-weight:bold;font-size:12px}
 .muWinBar button:hover,.muDlgBar button:hover{background:var(--mdanger);color:var(--mtext)}
 .muWinBody{overflow-y:auto;padding:4px 30px 22px;user-select:text}
-.muWH{margin:20px 0 8px;color:var(--macc);font-weight:bold;font-size:17px}
+.muWHx{display:none} .muWH{margin:20px 0 8px;color:var(--macc);font-weight:bold;font-size:17px}
 .muWHead{display:flex;align-items:baseline;justify-content:space-between;gap:12px} .muWHead>span{color:var(--msub);font-size:12px}
 .muWSec{margin:22px 0 8px;color:var(--macc2);font-weight:bold;font-size:12px;letter-spacing:.3px}
 .muWNote{margin:4px 0;color:var(--msub);font-size:12px;line-height:1.45} .muWNote.ind{padding-left:24px}
@@ -443,7 +443,7 @@ export default async function (ctx) {
 
   /* ---------- the library (music.json) ---------- */
   const MU_DEFAULT_SETTINGS = {theme: 'Nova', volume: .5, equalizer: 'Normal', eqBands: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], limiter: false, balance: 0, visualizer: true, waveform: true, vinyl: true,
-    replaygain: true, coverFade: true, dateAdded: false, releaseDate: false, mini: false, gallery: false, noImages: false, weeklyWeek: '', recoSeen: [], pixelUi: true, shortcuts: {}};
+    replaygain: true, coverFade: true, dateAdded: false, releaseDate: false, mini: false, gallery: false, noImages: false, weeklyWeek: '', superVis: false, recoSeen: [], pixelUi: true, shortcuts: {}};
   function muBlank() {
     return {v: 1, settings: {...MU_DEFAULT_SETTINGS}, playlists: MU_SYSTEM.map(name => ({name, mode: 'offline', tracks: []})),
       stats: {plays: 0, seconds: 0, songs: {}, songs_time: {}, artists: {}, artists_time: {}, daily: {}, history: [], xp_level_seen: 1},
@@ -520,8 +520,7 @@ export default async function (ctx) {
     const sideBtn = (icon, text, fn) => mh('button.muSideBtn', {onclick: fn, html: muIcon(icon) + '<span>' + text + '</span>'});
     root.replaceChildren(mh('div.mu#mu', {},
       mh('div.muTop', {}, mh('i.muTopStrip'), mh('button.muTopBtn.muMenuBtn', {title: 'Masquer / afficher le menu', html: muIcon('menu', 16), onclick: () => $('muSide').classList.toggle('closed')}), mh('b.muBrand', {text: 'NEOMUSIC'}), mh('span.muStatus#muStatus', {text: '●  Prêt'}),
-        mh('div.muDl', {}, mh('i#muDl')), mh('span.muInd#muSleep'), mh('span.muInd#muWake'),
-        mh('button.muTopBtn', {title: 'Mode petit lecteur', html: muIcon('mini', 16), onclick: () => muMini()})),
+        mh('div.muDl', {}, mh('i#muDl')), mh('span.muInd#muSleep'), mh('span.muInd#muWake')),
       mh('div.muBody', {},
         mh('aside.muSide#muSide', {}, mh('i.muSideStrip'),
           mh('div.muSideIn', {},
@@ -987,6 +986,41 @@ export default async function (ctx) {
   // its top (dithered where they meet), a light left edge and a dark right edge for the relief, a bright cap, a peak marker that holds
   // then falls, a hard pixel drop shadow (1 then 2 pixels down-right, the second fainter), and a faint dotted grid behind.
   // Hue sweeps ACCENT -> DANGER -> ACCENT_2 like MuPlayer.
+  // SUPER VISUALISER (level 100): taller, hue that drifts along the bars, light-to-bright bars with a bright cap, glow, a mirrored fading reflection,
+  // a floor line that pulses with the bass and sparks that fly off the peaks
+  function muSuperSpectrum(cv, cssH, now) {
+    const avail = cv.parentElement?.clientWidth || 0; if (!avail) return;
+    const P = Math.max(2, Math.round(3 * devicePixelRatio)) / devicePixelRatio, cols = Math.floor(avail / P), rows = Math.floor(cssH / P);
+    if (cv.width !== cols || cv.height !== rows) { cv.width = cols; cv.height = rows; cv.style.width = cols * P + 'px'; cv.style.height = rows * P + 'px'; }
+    const g = cv.getContext('2d'), playing = muAudio && !muAudio.paused, t = now / 1000, L = muSpec.levels;
+    const N = Math.max(16, Math.min(64, Math.floor(cols / 5))), bw = Math.floor(cols / N), inner = Math.max(2, bw - 1), off = Math.floor((cols - N * bw) / 2) + Math.floor((bw - inner) / 2);
+    const Hb = Math.floor(rows * .66), base = 2 + Hb, refl = rows - base - 1;
+    const s = cv._sup ||= {}; if (s.n !== N) Object.assign(s, {n: N, display: Array(N).fill(0), peaks: Array(N).fill(0), sparks: [], pulse: 0});
+    const dt = Math.min(.1, (now - (s.at || now)) / 1000); s.at = now;
+    s.pulse = Math.max(playing && (L[0] + L[1] + L[2]) / 3 > .55 ? 1 : 0, s.pulse - dt * 4);
+    const down = 1 - .0005 ** dt, hue = f => { f = (f % 1 + 1) % 1; return f < 1 / 3 ? muBlend(T.ACCENT, T.DANGER, f * 3) : f < 2 / 3 ? muBlend(T.DANGER, T.ACCENT_2, f * 3 - 1) : muBlend(T.ACCENT_2, T.ACCENT, f * 3 - 2); };
+    g.clearRect(0, 0, cols, rows);
+    g.fillStyle = muBlend(T.CARD_ALT, T.ACCENT, .3 + .6 * s.pulse); g.fillRect(0, base, cols, 1);
+    for (let i = 0; i < N; i++) {
+      const pos = i / Math.max(1, N - 1) * (L.length - 1), lo = Math.floor(pos), hi = Math.min(L.length - 1, lo + 1);
+      const raw = playing ? Math.max(0, Math.min(1, L[lo] * (1 - (pos - lo)) + L[hi] * (pos - lo))) : 0, target = playing ? raw : .04 + .03 * Math.sin(t * 2 + i * .45);
+      s.display[i] = target > s.display[i] ? target : s.display[i] + (target - s.display[i]) * down; if (!(s.display[i] >= 0)) s.display[i] = 0;
+      s.peaks[i] = Math.max(raw, s.peaks[i] - dt * .8);
+      const x = off + i * bw, h = Math.max(1, Math.min(Hb, Math.round(s.display[i] * Hb))), col = hue(i / Math.max(1, N - 1) * .9 + t * .06);
+      if (raw > .45 && raw >= s.peaks[i] - 1e-4 && s.sparks.length < 140 && Math.random() < .3) s.sparks.push({x: x + inner / 2, y: base - h, vx: (Math.random() - .5) * 14, vy: -(8 + Math.random() * 18), life: 1, c: muBlend(col, '#ffffff', .6)});
+      g.globalAlpha = .13 + .1 * s.pulse; g.fillStyle = col; g.fillRect(x - 1, base - h - 1, inner + 2, h + 2); g.globalAlpha = 1;
+      for (let r = 0; r < h; r++) { g.fillStyle = muBlend(col, '#ffffff', r / Hb * .45); g.fillRect(x, base - 1 - r, inner, 1); }
+      if (inner > 2) { g.fillStyle = muBlend(col, '#ffffff', .5); g.fillRect(x, base - h, 1, h); g.fillStyle = muShade(col, -.35); g.fillRect(x + inner - 1, base - h, 1, h); }
+      g.fillStyle = muBlend(col, '#ffffff', .85); g.fillRect(x, base - h - 1, inner, 1);
+      const py = base - 2 - Math.round(s.peaks[i] * Hb); if (py < base - h - 3) { g.fillStyle = muBlend(col, '#ffffff', .6); g.fillRect(x, py, inner, 1); }
+      for (let r = 0; r < Math.min(h, refl); r++) { g.globalAlpha = .34 * (1 - r / Math.max(1, refl)) ** 1.6; g.fillStyle = muBlend(col, '#ffffff', r / Hb * .3); g.fillRect(x, base + 1 + r, inner, 1); }
+      g.globalAlpha = 1;
+    }
+    s.sparks = s.sparks.filter(p => (p.life -= dt * 1.5) > 0 && p.y < base + 1);
+    for (const p of s.sparks) { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 38 * dt; g.globalAlpha = Math.max(0, p.life); g.fillStyle = p.c; g.fillRect(Math.round(p.x), Math.round(p.y), 1, 1); }
+    g.globalAlpha = 1;
+  }
+  const muSuperOn = now => { if (now - (mp.supAt || -1e9) > 2000) { mp.supAt = now; mp.supOn = !!mu.settings.superVis && muLevel().level >= 100; } return mp.supOn; };
   function muPixSpectrum(cv, cssH, now) {
     const avail = cv.parentElement?.clientWidth || 0; if (!avail) return;
     const P = Math.max(2, Math.round(3 * devicePixelRatio)) / devicePixelRatio, cols = Math.floor(avail / P), rows = Math.floor(cssH / P);
@@ -1115,7 +1149,7 @@ export default async function (ctx) {
     else muSpec.ref = 1e-6;
     muSpin(now);
     if (main) {
-      muDrawCover(now); if (mu.settings.visualizer) muPixSpectrum($('muSpectrum'), 64, now);
+      muDrawCover(now); if (mu.settings.visualizer) muSuperOn(now) ? muSuperSpectrum($('muSpectrum'), 112, now) : muPixSpectrum($('muSpectrum'), 64, now);
       if (muAudio && !muAudio.paused && now - (mp.progAt || 0) > 120) { mp.progAt = now; muDrawProgress(); }
     } else muMiniFrame(now);
   }
@@ -1306,7 +1340,7 @@ export default async function (ctx) {
     win.onpointerdown = () => { if (+win.style.zIndex !== muWinZ) win.style.zIndex = ++muWinZ; };  // a click brings it to the front (moving the node instead would swallow the click)
     return {win, body, close};
   }
-  const muH = (text, cls = '') => mh('div.muWH' + cls, {text});
+  const muH = (text, cls = '') => text.includes('·') ? mh('div.muWH' + cls, {text}) : mh('span.muWHx');  // only the headings that say more than the window title
   const muSec = text => mh('div.muWSec', {text});
   const muNote = text => mh('p.muWNote', {text});
   const muButton = (text, fn, kind = '') => mh('button.muBtn' + (kind ? '.' + kind : ''), {text, onclick: fn});
@@ -1652,7 +1686,7 @@ export default async function (ctx) {
     const {level} = muLevel(); if (level <= (+mu.stats.xp_level_seen || 1)) return;
     mu.stats.xp_level_seen = level;
     const theme = Object.entries(MU_THEME_LEVEL).find(([, l]) => l === level)?.[0];
-    muStatus(theme ? `Niveau ${level} atteint — thème « ${theme} » débloqué !` : `Niveau ${level} atteint !`, T.ACCENT);
+    muStatus(theme ? `Niveau ${level} atteint — thème « ${theme} » débloqué !` : level === 100 ? 'Niveau 100 atteint — super visualiseur débloqué (Options) !' : `Niveau ${level} atteint !`, T.ACCENT);
     muSave();
   }
   function muUnlock(id) {
@@ -1802,7 +1836,7 @@ export default async function (ctx) {
     const st = mu.settings, w = muWindow('Options', 620), b = w.body, lv = muLevel();
     const check = (label, key) => { const c = mh('input', {type: 'checkbox', checked: !!st[key]}); c.dataset.k = key; return mh('label.muCheck', {}, c, mh('span', {text: label})); };
     b.append(muH('OPTIONS'));
-    b.append(muSec('AFFICHAGE'), check('Afficher le visualiseur audio', 'visualizer'), check('Pochette « lecture en cours » en cercle façon vinyle', 'vinyl'),
+    b.append(muSec('AFFICHAGE'), check('Afficher le visualiseur audio', 'visualizer'), lv.level >= 100 ? check('Super visualiseur : reflet, étincelles, lueur et pulsation des basses (niveau 100)', 'superVis') : mh('p.muWNote.ind', {text: 'Super visualiseur : se débloque au niveau 100 (tu es niveau ' + lv.level + ').'}), check('Pochette « lecture en cours » en cercle façon vinyle', 'vinyl'),
       check('Forme d\'onde dans la barre de progression (au lieu d\'une simple ligne)', 'waveform'), check('Afficher la date d\'ajout des musiques dans la liste', 'dateAdded'),
       check('Afficher la date de sortie des musiques dans la liste', 'releaseDate'), check('Appli pixel : cadres, boutons et police façon petit lecteur', 'pixelUi'), check('Mode petit lecteur (playlists et musiques uniquement)', 'mini'),
       check('Vue « mur de pochettes » (grille de pochettes) au lieu de la liste', 'gallery'), check('Mode sans images (masque les pochettes partout) — réduit les lags', 'noImages'));
