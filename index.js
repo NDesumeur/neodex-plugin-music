@@ -953,6 +953,28 @@ export default async function (ctx) {
     g.clearRect(0, 0, w, h);
     $('muTime').textContent = muClock(pos) + ' / ' + muClock(dur);
     const levels = mu.settings.waveform && mp.cur ? muCache[muId(mp.cur)]?.w : null;
+    if (mu.settings.pixelUi) {  // pixel mode: blocks snapped to a 3-px grid, stepped heights, light cap on the played part, a blinking playhead block
+      const P = 3 * k, rows = Math.floor(h / P), cols = Math.floor(w / (2 * P)), mid = rows / 2, done = Math.floor(cols * ratio);
+      if (!levels) {  // no waveform: a chunky bar of 4-row blocks with a lit top row, a dark foot row and a white playhead block
+        const y0 = Math.round((rows - 4) / 2 * P);
+        for (let i = 0; i < cols; i++) {
+          const played = i < done, x = i * 2 * P;
+          for (let r = 0; r < 4; r++) { g.fillStyle = played ? (r === 0 ? muBlend(T.ACCENT, '#ffffff', .55) : r === 3 ? muShade(T.ACCENT, -.35) : T.ACCENT) : (r === 0 ? muBlend(T.CARD_ALT, T.ACCENT, .3) : r === 3 ? muShade(T.CARD_ALT, -.3) : T.CARD_ALT); g.fillRect(x, y0 + r * P, P * 1.5, P); }
+        }
+        if (dur) { g.fillStyle = '#ffffff'; g.fillRect(Math.min(cols - 1, done) * 2 * P - P / 2, y0 - P, 2 * P, 6 * P); }
+        return;
+      }
+      for (let i = 0; i < cols; i++) {
+        const lv = levels ? levels[Math.min(levels.length - 1, Math.floor(i * levels.length / cols))] : .12, half = Math.max(1, Math.round(lv * mid)), x = i * 2 * P, played = i < done;
+        for (let r = 0; r < half * 2; r++) {
+          const edge = r === 0 || r === half * 2 - 1;
+          g.fillStyle = played ? (edge ? muBlend(T.ACCENT, '#ffffff', .55) : r < half ? T.ACCENT : muShade(T.ACCENT, -.25)) : (edge ? muBlend(T.CARD_ALT, T.ACCENT, .35) : T.CARD_ALT);
+          g.fillRect(x, Math.round((mid - half + r) * P), P, P);
+        }
+      }
+      if (dur && (Math.floor(Date.now() / 450) & 1 || !muAudio || muAudio.paused)) { g.fillStyle = '#ffffff'; g.fillRect(Math.min(cols - 1, done) * 2 * P - P / 2, 0, P, rows * P); }
+      return;
+    }
     if (!levels) {  // a plain bar, like MuPlayer without a waveform
       g.fillStyle = T.CARD_ALT; g.fillRect(0, h / 2 - 3 * k, w, 6 * k); g.fillStyle = T.ACCENT; g.fillRect(0, h / 2 - 3 * k, w * ratio, 6 * k); return;
     }
