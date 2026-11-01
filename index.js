@@ -294,6 +294,16 @@ export default async function (ctx) {
     'Ambre': {BG: '#191310', SIDEBAR: '#211A15', CARD: '#2B221B', CARD_ALT: '#3A2F25', BORDER: '#6B5640', TEXT: '#F5ECE0', SUBTEXT: '#C2AB8F', ACCENT: '#E0A65C', ACCENT_2: '#4FBFAE', DANGER: '#E8756B', WARN: '#E0BE7F', HEART: '#FF9E7A'},
     'Abyme': {BG: '#030A12', SIDEBAR: '#061019', CARD: '#0B1A29', CARD_ALT: '#12283D', BORDER: '#1F5C7A', TEXT: '#E7FBFF', SUBTEXT: '#7FC4D9', ACCENT: '#29DDBF', ACCENT_2: '#FF8F6B', DANGER: '#FF5D7A', WARN: '#FFD166', HEART: '#FFA487'},
     'Sakura': {BG: '#1A0E1E', SIDEBAR: '#22132A', CARD: '#2E1A38', CARD_ALT: '#3F2249', BORDER: '#7A3E86', TEXT: '#FFF0F8', SUBTEXT: '#DCA9D0', ACCENT: '#FF6FC4', ACCENT_2: '#7FE0B0', DANGER: '#FF5477', WARN: '#FFD166', HEART: '#FFA0D6'},
+    'Crépuscule': {BG: '#160B22', SIDEBAR: '#1F1030', CARD: '#2A1640', CARD_ALT: '#3A2058', BORDER: '#8A4A9A', TEXT: '#FFF1E6', SUBTEXT: '#D2A9C2', ACCENT: '#FF7A59', ACCENT_2: '#FFC857', DANGER: '#FF4D6D', WARN: '#FFC857', HEART: '#FF9EC0'},
+    'Menthe': {BG: '#07161A', SIDEBAR: '#0C2126', CARD: '#122E34', CARD_ALT: '#1B4048', BORDER: '#2F7F80', TEXT: '#EAFFF8', SUBTEXT: '#8FD1C2', ACCENT: '#3DF2B5', ACCENT_2: '#7AD7FF', DANGER: '#FF6B7A', WARN: '#FFE07A', HEART: '#7DF0D0'},
+    'Rubis': {BG: '#16060C', SIDEBAR: '#200A12', CARD: '#2E1019', CARD_ALT: '#421826', BORDER: '#96304A', TEXT: '#FFEFF2', SUBTEXT: '#D79AA8', ACCENT: '#FF3D63', ACCENT_2: '#FFB84D', DANGER: '#FF3D63', WARN: '#FFC857', HEART: '#FF7C98'},
+    'Glacier': {BG: '#0A1420', SIDEBAR: '#101D2E', CARD: '#172A40', CARD_ALT: '#223C58', BORDER: '#5F8FB8', TEXT: '#F2FAFF', SUBTEXT: '#9DBBD6', ACCENT: '#7CD4FF', ACCENT_2: '#C8F1FF', DANGER: '#FF7B8A', WARN: '#FFE08A', HEART: '#A8E4FF'},
+    'Cuivre': {BG: '#170D08', SIDEBAR: '#20130C', CARD: '#2D1B11', CARD_ALT: '#40271A', BORDER: '#9A5A34', TEXT: '#FFF0E4', SUBTEXT: '#CFA68A', ACCENT: '#E8793A', ACCENT_2: '#5FD3B8', DANGER: '#E5585A', WARN: '#F2C14E', HEART: '#FF9A6A'},
+    'Lavande': {BG: '#13102A', SIDEBAR: '#1B1738', CARD: '#251F4A', CARD_ALT: '#352C66', BORDER: '#7E6FC8', TEXT: '#F5F1FF', SUBTEXT: '#B9B0E6', ACCENT: '#B79CFF', ACCENT_2: '#FFB3E6', DANGER: '#FF6F91', WARN: '#FFD98A', HEART: '#FFA8E0'},
+    'Forêt': {BG: '#08140C', SIDEBAR: '#0E1E13', CARD: '#15291B', CARD_ALT: '#1F3B28', BORDER: '#3F8A55', TEXT: '#EEFBEF', SUBTEXT: '#98C9A2', ACCENT: '#6BE585', ACCENT_2: '#E6D36A', DANGER: '#F0645A', WARN: '#E6D36A', HEART: '#B5F08F'},
+    'Océan': {BG: '#04101F', SIDEBAR: '#071A30', CARD: '#0B2642', CARD_ALT: '#123A5E', BORDER: '#2A78B5', TEXT: '#EAF6FF', SUBTEXT: '#8DB9DE', ACCENT: '#2BA8FF', ACCENT_2: '#2EE6C9', DANGER: '#FF6B81', WARN: '#FFD36B', HEART: '#6FD8FF'},
+    'Soleil': {BG: '#1C1405', SIDEBAR: '#271C07', CARD: '#352709', CARD_ALT: '#4A360E', BORDER: '#B8861C', TEXT: '#FFF8E0', SUBTEXT: '#DCC27A', ACCENT: '#FFC93C', ACCENT_2: '#FF7A3C', DANGER: '#F25C54', WARN: '#FFD65A', HEART: '#FFB05A'},
+    'Cyber': {BG: '#0C0C0F', SIDEBAR: '#131318', CARD: '#1C1C24', CARD_ALT: '#2A2A36', BORDER: '#FFE600', TEXT: '#F8F8F2', SUBTEXT: '#A6A6B8', ACCENT: '#FFE600', ACCENT_2: '#00F0FF', DANGER: '#FF2E63', WARN: '#FFE600', HEART: '#FF2E93'},
     'Néon': {BG: '#05010D', SIDEBAR: '#0B0316', CARD: '#140626', CARD_ALT: '#1E0A38', BORDER: '#4B3480', TEXT: '#F3ECFF', SUBTEXT: '#B39DDB', ACCENT: '#9C82F2', ACCENT_2: '#B8DE6E', DANGER: '#FF3B5C', WARN: '#FFD166', HEART: '#FF6FB8'},
   };
   const MU_THEME_LEVEL = {Onyx: 3, Grenat: 6, Aube: 10, Ambre: 16, Abyme: 24, Sakura: 35, 'Néon': 50};
@@ -437,7 +447,7 @@ export default async function (ctx) {
             mh('div.muPills.muExtra', {}, mh('button.muPill', {text: '＋ Nouvelle', onclick: () => muNewPlaylist()}), mh('button.muPill.danger', {text: '－ Supprimer', onclick: () => muDeletePlaylist()})),
             mh('div.muHead.muExtra', {text: 'BIBLIOTHÈQUE'}),
             mh('div.muExtra', {},
-              sideBtn('search', 'Rechercher / importer', () => muSearchDialog()), sideBtn('note', 'Importer une playlist', () => $('muFile').click()),
+              sideBtn('search', 'Rechercher / importer', () => muSearchDialog()), sideBtn('compass', 'Chercher un artiste', () => muArtistDialog()), sideBtn('note', 'Importer une playlist', () => $('muFile').click()),
               sideBtn('shuffle', 'Lecture aléatoire', () => muShuffle()),
               sideBtn('moon', 'Mode sommeil', () => muSleepDialog()), sideBtn('clock', 'Réveil musical', () => muWakeDialog()),
               sideBtn('bars', 'Statistiques', () => muStats()), sideBtn('trophy', 'Succès', () => muAchievements()),
@@ -1299,6 +1309,31 @@ export default async function (ctx) {
       } catch (e) { muStatus('Import échoué', T.DANGER); return muNotify('error', 'Piste Deezer', 'Piste introuvable :\n\n' + e.message); }
     }
     muSearchResults(q);
+  }
+  /* ---------- Chercher un artiste : ses titres les plus écoutés (Deezer), on coche ceux à ajouter à la playlist ouverte ---------- */
+  async function muArtistDialog() {
+    if (mp.pl === 'Favoris') return muNotify('warning', 'NeoMusic', 'Sélectionne une vraie playlist pour ajouter des musiques.');
+    if (!await muNeedYtdlp()) return;
+    const q = await muPrompt('Chercher un artiste', "Nom de l'artiste :"); if (!q) return;
+    const w = muWindow('Artiste', 680), status = mh('p.muWNote', {text: 'Recherche de ' + q + '…'}), rows = mh('div.muRows'), go = muButton('AJOUTER', () => {}, 'accent'), all = muButton('TOUT COCHER', () => {}, '');
+    w.body.append(muH('ARTISTE · ' + q), status, rows, mh('div.muWEnd', {}, all, go, muButton('FERMER', w.close, '')));
+    let list = [], boxes = [];
+    const count = () => { const n = boxes.filter(b => b.checked).length; go.textContent = n ? 'AJOUTER (' + n + ')' : 'AJOUTER'; go.disabled = !n; };
+    try {
+      const r = await neo.musicArtist(q);
+      if (!r) { status.textContent = 'Aucun artiste trouvé.'; return; }
+      list = r.tracks; status.textContent = r.artist + ' · ' + list.length + ' titres · coche ceux que tu veux dans « ' + mp.pl + ' »';
+      rows.replaceChildren(...list.map(t => { const b = mh('input', {type: 'checkbox'}); boxes.push(b); b.onchange = count;
+        return mh('label.muWRow', {style: {cursor: 'pointer'}}, b, mh('div', {}, mh('b', {text: t.title}), mh('span', {text: (t.album || '') + (t.duration ? ' · ' + muTime(t.duration) : '')}))); }));
+      all.onclick = () => { const on = boxes.some(b => !b.checked); boxes.forEach(b => b.checked = on); all.textContent = on ? 'TOUT DÉCOCHER' : 'TOUT COCHER'; count(); };
+      go.onclick = async () => {
+        const pick = list.filter((_, i) => boxes[i].checked), name = mp.pl; w.close();
+        muStatus('Ajout de ' + pick.length + ' titre(s) de ' + r.artist + '…', T.ACCENT_2);
+        for (const t of pick) { try { const y = await neo.musicResolve(r.artist, t.title); if (y) await muAddUrl(y.url, name, y); } catch (e) { muWarn('artiste', e); } }
+        muStatus('Titres de ' + r.artist + ' ajoutés', T.ACCENT_2);
+      };
+      count();
+    } catch (e) { status.textContent = 'Recherche impossible : ' + e.message; }
   }
   async function muSearchResults(q) {  // five results to choose from (MuPlayer took the first one directly)
     const w = muWindow('Recherche', 620);

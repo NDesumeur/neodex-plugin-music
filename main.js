@@ -160,6 +160,24 @@ async function radar(artists) {  // les sorties des 4 derniers mois des artistes
   });
   return out.sort((x, y) => y.released.localeCompare(x.released));
 }
+async function artistTracks(name) {  // un artiste (le nom exact d'abord) et ses titres les plus écoutés, sans doublon
+  let a = await dzArtist(name);
+  if (!a) a = ((await deezer('/search/artist?limit=1&q=' + encodeURIComponent(name))).data || [])[0];
+  if (!a) return null;
+  const seen = new Set(), tracks = [];
+  for (const t of (await deezer('/artist/' + a.id + '/top?limit=100')).data || []) {
+    const k = normName(t.title_short || t.title); if (seen.has(k)) continue; seen.add(k);
+    tracks.push({ title: t.title_short || t.title, album: t.album?.title || '', duration: t.duration || 0 });
+  }
+  // puis le reste de ses albums et singles, du plus récent au plus ancien (le « top » de Deezer ne donne souvent qu'une poignée de titres)
+  const albums = ((await deezer('/artist/' + a.id + '/albums?limit=100')).data || []).sort((x, y) => (y.release_date || '').localeCompare(x.release_date || '')).slice(0, 30), per = [];
+  await inBatches(albums, 6, async al => { try { per[albums.indexOf(al)] = ((await deezer('/album/' + al.id + '/tracks?limit=60')).data || []).map(t => ({ ...t, albumTitle: al.title })); } catch {} });
+  for (const t of per.flat().filter(Boolean)) {
+    const k = normName(t.title_short || t.title); if (seen.has(k) || tracks.length >= 200) continue; seen.add(k);
+    tracks.push({ title: t.title_short || t.title, album: t.albumTitle, duration: t.duration || 0 });
+  }
+  return { artist: a.name, tracks };
+}
 async function weekly(queries, recentOnly) {  // "Radar des sorties": recent songs of the favourite artists
   const out = [], seen = new Set(), cutoff = Date.now() - 30 * 864e5;
   await Promise.all(queries.map(async q => {
@@ -326,6 +344,8 @@ function register({ ipcMain, getWin, emit, serveFile, protocol, onShortcutReset,
   });
   ipcMain.handle('music:cover', (_, thumb) => saveCover(thumb));
   ipcMain.handle('music:mix', (_, seeds, exclude) => mix(seeds, exclude));
+  ipcMain.handle('music:artist', (_, name) => artistTracks(String(name || '').slice(0, 100)));
+  ipcMain.handle('music:resolve', (_, artist, title) => realSong(String(artist), String(title)));
   ipcMain.handle('music:radar', (_, artists) => radar(artists));
   ipcMain.handle('music:weekly', (_, queries, recent) => weekly(queries, recent));
   ipcMain.handle('music:entries', (_, url, kind) => playlistEntries(url, kind));
@@ -390,3 +410,4 @@ module.exports = api => {
   return () => { for (const combo of Object.values(hotkeys)) if (combo && /(Ctrl|Alt|Shift)\+/.test(combo)) try { globalShortcut.unregister(accel(combo)); } catch {} };
 };
 module.exports.radar = radar;  // pour les tests
+module.exports.artistTracks = artistTracks;
