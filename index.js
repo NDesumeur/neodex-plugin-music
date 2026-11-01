@@ -180,7 +180,21 @@ body.vfs .muMini{display:none}
 .muBand{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
 .muBand span{color:var(--macc);font-size:10px;font-weight:bold} .muBand b{color:var(--msub);font-size:10px}
 .muBand input{writing-mode:vertical-lr;direction:rtl;width:18px;height:120px;accent-color:var(--macc);cursor:var(--cp,pointer)}
-.muThemes{display:flex;flex-wrap:wrap;gap:8px}
+.muThemes{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px}
+.muTh{display:flex;flex-direction:column;gap:0;padding:0;border:2px solid transparent;background:none;cursor:pointer;font:inherit;text-align:left;overflow:hidden;transition:transform .12s,border-color .12s}
+.muTh:hover{transform:translateY(-2px)} .muTh.on{transform:translateY(-1px)}
+.muTh .pv{display:grid;grid-template-columns:22% 1fr;height:58px} .muTh .pv i{display:block} .muTh .pv .sd{display:flex;flex-direction:column;gap:5px;padding:7px 5px} .muTh .pv .sd u{display:block;height:4px;border-radius:2px;opacity:.7}
+.muTh .pv .mn{display:flex;flex-direction:column;gap:5px;padding:7px} .muTh .pv .mn u{display:block;height:9px} .muTh .pv .mn s{display:block;height:4px;width:60%} .muTh .pv .mn em{display:block;height:5px;width:35%;margin-top:auto}
+.muTh .nm{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;font-size:11px;font-weight:600} .muTh .nm span{display:flex;gap:3px} .muTh .nm span u{display:block;width:8px;height:8px;border-radius:50%}
+.muTh.locked{opacity:.45;cursor:default}
+.muArtHead{display:flex;align-items:center;gap:14px;padding:14px 16px;margin-bottom:10px;background:linear-gradient(135deg,var(--mcard2),var(--mcard));border-left:4px solid var(--macc)}
+.muArtHead .ic{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--macc);color:var(--mbg);font-size:22px;font-weight:800;flex:none}
+.muArtHead b{display:block;font-size:19px} .muArtHead span{color:var(--msub);font-size:12px}
+.muArtTools{display:flex;gap:8px;margin-bottom:8px} .muArtFilter{flex:1;padding:9px 12px;background:var(--mcard2);border:1px solid var(--mborder);color:var(--mtext);font:inherit;outline:none} .muArtFilter:focus{border-color:var(--macc)}
+.muArtList{display:flex;flex-direction:column;max-height:46vh;overflow-y:auto;border:1px solid var(--mborder)}
+.muArtRow{display:grid;grid-template-columns:30px 22px 1fr auto;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;border-bottom:1px solid color-mix(in srgb,var(--mborder) 40%,transparent)}
+.muArtRow:nth-child(even){background:color-mix(in srgb,var(--mcard2) 55%,transparent)} .muArtRow:hover{background:color-mix(in srgb,var(--macc) 14%,var(--mcard2))} .muArtRow.on{background:color-mix(in srgb,var(--macc) 22%,var(--mcard2))}
+.muArtRow .n{color:var(--msub);font-size:11px;text-align:right} .muArtRow input{accent-color:var(--macc);width:16px;height:16px} .muArtRow div{min-width:0} .muArtRow b{display:block;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .muArtRow small{color:var(--msub);font-size:11px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .muArtRow .d{color:var(--msub);font-size:12px;font-variant-numeric:tabular-nums}
 .muSwatch{padding:8px 14px;border:2px solid transparent;font-weight:bold;font-size:12px}
 .muSwatch:hover{filter:brightness(1.2)} .muSwatch.locked{display:flex;align-items:center;gap:8px;background:var(--mcard2);color:var(--msub)}
 .muKeyRow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:3px 0;font-size:12px}
@@ -1315,17 +1329,19 @@ export default async function (ctx) {
     if (mp.pl === 'Favoris') return muNotify('warning', 'NeoMusic', 'Sélectionne une vraie playlist pour ajouter des musiques.');
     if (!await muNeedYtdlp()) return;
     const q = await muPrompt('Chercher un artiste', "Nom de l'artiste :"); if (!q) return;
-    const w = muWindow('Artiste', 680), status = mh('p.muWNote', {text: 'Recherche de ' + q + '…'}), rows = mh('div.muRows'), go = muButton('AJOUTER', () => {}, 'accent'), all = muButton('TOUT COCHER', () => {}, '');
-    w.body.append(muH('ARTISTE · ' + q), status, rows, mh('div.muWEnd', {}, all, go, muButton('FERMER', w.close, '')));
+    const w = muWindow('Artiste', 720), status = mh('p.muWNote', {text: 'Recherche de ' + q + '…'}), rows = mh('div.muRows'), go = muButton('AJOUTER', () => {}, 'accent'), all = muButton('TOUT COCHER', () => {}, '');
+    const head = mh('div.muArtHead', {}, mh('div.ic', {text: q.trim().charAt(0).toUpperCase() || '♪'}), mh('div', {}, mh('b', {text: q}), status)), filter = mh('input.muArtFilter', {placeholder: 'Filtrer les titres…', spellcheck: false}), tools = mh('div.muArtTools', {}, filter, all);
+    rows.className = 'muArtList'; w.body.append(head, tools, rows, mh('div.muWEnd', {}, go, muButton('FERMER', w.close, '')));
     let list = [], boxes = [];
     const count = () => { const n = boxes.filter(b => b.checked).length; go.textContent = n ? 'AJOUTER (' + n + ')' : 'AJOUTER'; go.disabled = !n; };
     try {
       const r = await neo.musicArtist(q);
       if (!r) { status.textContent = 'Aucun artiste trouvé.'; return; }
-      list = r.tracks; status.textContent = r.artist + ' · ' + list.length + ' titres · coche ceux que tu veux dans « ' + mp.pl + ' »';
-      rows.replaceChildren(...list.map(t => { const b = mh('input', {type: 'checkbox'}); boxes.push(b); b.onchange = count;
-        return mh('label.muWRow', {style: {cursor: 'pointer'}}, b, mh('div', {}, mh('b', {text: t.title}), mh('span', {text: (t.album || '') + (t.duration ? ' · ' + muTime(t.duration) : '')}))); }));
-      all.onclick = () => { const on = boxes.some(b => !b.checked); boxes.forEach(b => b.checked = on); all.textContent = on ? 'TOUT DÉCOCHER' : 'TOUT COCHER'; count(); };
+      list = r.tracks; head.querySelector('b').textContent = r.artist; head.querySelector('.ic').textContent = r.artist.charAt(0).toUpperCase(); status.textContent = list.length + ' titres · coche ceux à ajouter dans « ' + mp.pl + ' »';
+      const rowEls = [];
+      rows.replaceChildren(...list.map((t, i) => { const b = mh('input', {type: 'checkbox'}); boxes.push(b); const row = mh('label.muArtRow', {}, mh('span.n', {text: String(i + 1)}), b, mh('div', {}, mh('b', {text: t.title}), mh('small', {text: t.album || ''})), mh('span.d', {text: t.duration ? muTime(t.duration) : ''})); b.onchange = () => { row.classList.toggle('on', b.checked); count(); }; rowEls.push(row); return row; }));
+      filter.oninput = () => { const f = filter.value.toLowerCase(); rowEls.forEach((row, i) => { row.style.display = !f || (list[i].title + ' ' + (list[i].album || '')).toLowerCase().includes(f) ? '' : 'none'; }); };
+      all.onclick = () => { const on = boxes.some((b, i) => !b.checked && rowEls[i].style.display !== 'none'); boxes.forEach((b, i) => { if (rowEls[i].style.display !== 'none') { b.checked = on; rowEls[i].classList.toggle('on', on); } }); all.textContent = on ? 'TOUT DÉCOCHER' : 'TOUT COCHER'; count(); };
       go.onclick = async () => {
         const pick = list.filter((_, i) => boxes[i].checked), name = mp.pl; w.close();
         muStatus('Ajout de ' + pick.length + ' titre(s) de ' + r.artist + '…', T.ACCENT_2);
@@ -1737,8 +1753,9 @@ export default async function (ctx) {
     b.append(muSec('NIVEAU'), muNote(`Niveau ${lv.level} — ${Math.floor(lv.total)} min d'écoute cumulées` + (nextTheme ? ` (prochain thème au niveau ${nextTheme})` : ' (tous les thèmes sont débloqués)')), mh('div.muLevel', {}, mh('i', {style: {width: Math.max(1, lv.progress * 100) + '%'}})));
     b.append(muSec('THÈME'), mh('div.muThemes', {}, ...Object.entries(MU_THEMES).map(([name, c]) => {
       const need = MU_THEME_LEVEL[name], locked = need && lv.level < need;
-      if (locked) return mh('button.muSwatch.locked', {html: muLock(16) + `<span>${name} — Niv. ${need}</span>`, onclick: () => muStatus(`Thème « ${name} » débloqué au niveau ${need}.`, T.WARN)});
-      return mh('button.muSwatch' + (name === st.theme ? '.on' : ''), {text: (name === st.theme ? '✓ ' : '') + name, style: {background: c.CARD, color: c.ACCENT, borderColor: name === st.theme ? c.ACCENT : c.CARD_ALT},
+      if (locked) return mh('button.muTh.locked', {style: {background: c.CARD, color: c.SUBTEXT, borderColor: c.BORDER}, html: `<div class="pv" style="background:${c.BG};place-items:center;display:grid">${muLock(20)}</div><div class="nm" style="background:${c.CARD}"><b>${name}</b><span style="font-weight:400">Niv. ${need}</span></div>`, onclick: () => muStatus(`Thème « ${name} » débloqué au niveau ${need}.`, T.WARN)});
+      const bar = (col, w) => mh('u', {style: {background: col, width: w || ''}});
+      return mh('button.muTh' + (name === st.theme ? '.on' : ''), {style: {background: c.CARD, color: c.TEXT, borderColor: name === st.theme ? c.ACCENT : c.BORDER, boxShadow: name === st.theme ? '0 0 0 2px ' + c.ACCENT : ''}, title: name}, mh('div.pv', {style: {background: c.BG}}, mh('i.sd', {style: {background: c.SIDEBAR}}, bar(c.ACCENT), bar(c.SUBTEXT), bar(c.SUBTEXT)), mh('i.mn', {}, mh('u', {style: {background: c.CARD_ALT}}), mh('s', {style: {background: c.TEXT, opacity: .8}}), mh('s', {style: {background: c.SUBTEXT, opacity: .6}}), mh('em', {style: {background: c.ACCENT}}))), mh('div.nm', {style: {background: c.CARD}}, mh('b', {text: (name === st.theme ? '✓ ' : '') + name}), mh('span', {}, bar(c.ACCENT), bar(c.ACCENT_2), bar(c.HEART))),
         onclick: () => { if (name === st.theme) return; st.theme = name; muApplyTheme(); muSave(); muUnlock('customizer'); w.close(); muOptions(); muDrawProgress(true); }});
     })));
     // shortcuts: click a field then press the combination (Échap cancels, Retour arrière / Suppr clears)
