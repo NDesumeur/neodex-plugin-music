@@ -2,7 +2,7 @@
 // the global shortcuts, capsules and the import of an existing MuPlayer folder. The page keeps the library itself
 // (music.json, synced between PCs): files and covers are only caches here, fetched again from their URL on a PC that does not have them.
 const { app, net, nativeImage, globalShortcut, shell, dialog } = require('electron');
-const { spawn, execFileSync } = require('child_process');
+const { spawn, execFile, execFileSync } = require('child_process');
 const fs = require('fs'), path = require('path'), os = require('os'), crypto = require('crypto');
 
 const ROOT = () => path.join(app.getPath('userData'), 'neomusic');
@@ -11,13 +11,40 @@ const md5 = s => crypto.createHash('md5').update(String(s)).digest('hex');
 const inside = (dir, name) => { const p = path.join(dir, path.basename(String(name || ''))); return p.startsWith(dir) ? p : null; };  // only plain file names, never a path elsewhere
 let ffmpeg = null;
 try { ffmpeg = execFileSync('where', ['ffmpeg'], { encoding: 'utf8', windowsHide: true }).split(/\r?\n/)[0].trim() || null; } catch {}
+const BIN = () => path.join(ROOT(), 'bin'), YT = () => path.join(BIN(), 'yt-dlp.exe'), FF = () => path.join(BIN(), 'ffmpeg.exe');
+if (!ffmpeg && fs.existsSync(FF())) ffmpeg = FF();
 
-/* ---------- yt-dlp (the Python module, like MuPlayer) ---------- */
-function ytdlp(args, { onLine, timeout = 180000 } = {}) {
+/* ---------- yt-dlp et ffmpeg : installés tout seuls dans le dossier de NeoMusic (ni Python ni installation à la main), yt-dlp remis à jour ---------- */
+async function grab(url, dest) {
+  const r = await fetch(url, { headers: { 'User-Agent': 'NeoBase' }, signal: AbortSignal.timeout(600000) });
+  if (!r.ok) throw new Error('téléchargement impossible (' + r.status + ') : ' + url.split('/').pop());
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+  fs.writeFileSync(dest + '.tmp', Buffer.from(await r.arrayBuffer())); fs.renameSync(dest + '.tmp', dest);
+}
+let tools = null;
+function ensureTools(force) {  // une seule installation à la fois ; force = yt-dlp retéléchargé (YouTube change souvent et refuse alors les vieilles versions : erreur 403)
+  if (force) tools = null;
+  return tools ??= (async () => {
+    const yt = YT();
+    if (force || !fs.existsSync(yt) || Date.now() - fs.statSync(yt).mtimeMs > 3 * 864e5) {
+      try { await grab('https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe', yt); }
+      catch (e) { if (!fs.existsSync(yt)) throw new Error("yt-dlp n'a pas pu être installé : " + e.message); }  // une ancienne copie vaut mieux que rien
+    }
+    if (!ffmpeg) {
+      const zip = path.join(BIN(), 'ffmpeg.zip');
+      await grab('https://github.com/yt-dlp/FFmpeg-Builds/releases/latest/download/ffmpeg-master-latest-win64-gpl.zip', zip);
+      await new Promise((ok, ko) => execFile('tar', ['-xf', zip, '-C', BIN(), '--strip-components=2', '*/bin/ffmpeg.exe'], { windowsHide: true, timeout: 120000 }, e => e ? ko(new Error('ffmpeg illisible')) : ok()));
+      fs.rmSync(zip, { force: true });
+      if (fs.existsSync(FF())) ffmpeg = FF();
+    }
+  })().catch(e => { tools = null; throw e; });
+}
+function ytRun(args, { onLine, timeout = 180000 } = {}) {
   return new Promise((ok, ko) => {
-    // -P: the script's folder is not searched for modules (a planted yt_dlp.py there would run); the user site-packages, where yt-dlp often lives, stays
-    const p = spawn('python', ['-P', '-m', 'yt_dlp', '--no-warnings', '--ignore-config', ...(ffmpeg ? ['--ffmpeg-location', ffmpeg] : []), ...args],
-      { windowsHide: true, cwd: os.tmpdir(), env: { ...process.env, PYTHONIOENCODING: 'utf-8', PYTHONUTF8: '1' } });
+    const opt = { windowsHide: true, cwd: os.tmpdir(), env: { ...process.env, PYTHONIOENCODING: 'utf-8', PYTHONUTF8: '1' } };
+    const common = ['--no-warnings', '--ignore-config', ...(ffmpeg ? ['--ffmpeg-location', ffmpeg] : []), ...args];
+    // yt-dlp.exe installé par NeoMusic ; à défaut le module Python (-P : le dossier du script n'est pas cherché, un yt_dlp.py planté ne tournerait pas)
+    const p = fs.existsSync(YT()) ? spawn(YT(), common, opt) : spawn('python', ['-P', '-m', 'yt_dlp', ...common], opt);
     const out = [], err = [];
     let buf = '';
     const t = setTimeout(() => { p.kill(); ko(new Error('yt-dlp ne répond pas')); }, timeout);
@@ -28,7 +55,7 @@ function ytdlp(args, { onLine, timeout = 180000 } = {}) {
       for (let i; (i = buf.search(/[\r\n]/)) >= 0; buf = buf.slice(i + 1)) if (buf.slice(0, i).trim()) onLine(buf.slice(0, i));
     });
     p.stderr.on('data', d => err.push(d));
-    p.on('error', e => { clearTimeout(t); ko(new Error('Python est introuvable (' + e.message + ')')); });
+    p.on('error', e => { clearTimeout(t); ko(new Error('yt-dlp est introuvable (' + e.message + ')')); });
     p.on('close', code => {
       clearTimeout(t);
       if (code === 0) return ok(Buffer.concat(out).toString('utf8'));
@@ -36,6 +63,15 @@ function ytdlp(args, { onLine, timeout = 180000 } = {}) {
       ko(new Error((lines.filter(l => /ERROR/.test(l)).pop() || lines.pop() || 'yt-dlp a échoué').replace(/^ERROR:\s*(\[[^\]]+\]\s*)?/, '').slice(0, 300)));
     });
   });
+}
+async function ytdlp(args, opts) {
+  try { await ensureTools(); } catch (e) { if (!fs.existsSync(YT())) { try { return await ytRun(args, opts); } catch { throw e; } } }  // installation impossible (hors ligne) : Python s'il est là
+  try { return await ytRun(args, opts); }
+  catch (e) {
+    if (!/403|forbidden|unable to download|sign in|unable to extract|HTTP Error/i.test(e.message)) throw e;
+    await ensureTools(true);  // YouTube refuse la version installée : mise à jour de yt-dlp puis une seconde tentative
+    return ytRun(args, opts);
+  }
 }
 const ytJson = async (args, opts) => JSON.parse(await ytdlp([...args, '-J'], opts));
 const ytId = url => /(?:v=|youtu\.be\/|shorts\/)([\w-]{11})/.exec(url || '')?.[1] || null;
