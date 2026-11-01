@@ -30,8 +30,8 @@ const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strip
 #muPlaylists{padding:0 0 0 14px}
 .muPlBtn{display:flex;align-items:center;width:100%;margin:1px 0;color:var(--mtext);font-size:13px}
 .muPlBtn i{width:3px;align-self:stretch;flex:none}
-.muPlBtn .ic{width:16px;margin-left:10px;flex:none;display:grid;place-items:center;font-size:12px}
-.muPlBtn span:last-child{padding:8px 10px 8px 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.muPlBtn .ic{width:16px;margin:0 8px 0 12px;flex:none;display:grid;place-items:center;font-size:12px;color:#fff} .muPlBtn .ic svg{display:block}
+.muPlBtn span:last-child{padding:8px 10px 8px 2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .muPlBtn:hover,.muPlBtn.on{background:var(--mcard);color:var(--macc)} .muPlBtn.on i{background:var(--macc)} .muPlBtn:active{background:var(--mpress)}
 .muPills{display:flex;gap:8px;margin:6px 0 18px 14px}
 .muPill{flex:1;text-align:center;padding:7px 4px;background:var(--mcard2);color:var(--macc2);font-weight:bold;font-size:11px}
@@ -39,7 +39,8 @@ const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strip
 .muExtra>.muSideBtn:first-child{margin-top:0}
 .muSideIn>.muExtra:last-child{padding:0 0 0 14px}
 .muSideBtn{display:flex;align-items:center;gap:14px;width:100%;margin:2px 0;padding:9px 10px;color:var(--mtext);font-size:13px}
-.muSideBtn svg{color:#fff;flex:none;image-rendering:pixelated} .muSideBtn:hover{background:var(--mcard);color:var(--macc)} .muSideBtn:active{background:var(--mpress)}
+.muSideBtn svg{color:#fff;flex:none;image-rendering:pixelated;margin-right:2px} .muSideBtn:hover{background:var(--mcard);color:var(--macc)} .muSideBtn:active{background:var(--mpress)}
+:where(.mu button,.mu .muInfo,.mu .muRowText,.mu .muWinBar b,.mu .muHead){text-align:left}
 /* main column: three cards */
 .muMain{flex:1;min-width:0;display:flex;flex-direction:column;gap:16px;padding:18px 18px 18px 0;margin-left:0}
 .mu .muMain{margin:0;height:auto;overflow:hidden;z-index:auto}  /* NeoBase styles every <main> */
@@ -84,10 +85,10 @@ const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strip
 body.vfs .muMini{display:none}
 .mu.novis .muSpectrum{display:none}
 .muControls{display:flex;align-items:center;justify-content:center;gap:24px}
-.muSkip{width:40px;height:40px} .muSkip{position:relative;color:#fff} .muSkip svg{width:40px;height:40px;fill:var(--mtext);display:block} .muSkip:hover{color:var(--macc)} .muSkip svg+svg{fill:none}
-.muSkip .halo{fill:transparent;transition:fill .12s} .muSkip:hover .halo{fill:var(--mcard2)} .muSkip:hover svg{fill:var(--macc)} .muSkip:active .halo{fill:var(--mpress)}
-.muPlay{width:64px;height:64px;border-radius:50%;position:relative} .muPlay svg{width:64px;height:64px;display:block}
-.muPlay .fill{fill:var(--macc);transition:fill .12s} .muPlay:hover .fill{fill:var(--macc2)} .muPlay:active svg{transform:scale(.95)}
+.muSkip{width:40px;height:40px} .muSkip{position:relative;color:#fff;display:grid;place-items:center} .muSkip>svg+svg{width:24px!important;height:auto!important;position:absolute!important;inset:auto!important} .muSkip>svg:first-child{width:40px;height:40px;fill:var(--mtext);display:block} .muSkip:hover{color:var(--macc)} .muSkip>svg+svg{fill:none}
+.muSkip .halo{fill:transparent;transition:fill .12s} .muSkip:hover .halo{fill:var(--mcard2)} .muSkip:hover>svg:first-child{fill:var(--macc)} .muSkip:active .halo{fill:var(--mpress)}
+.muPlay{width:64px;height:64px;border-radius:50%;position:relative} .muPlay>svg{width:64px;height:64px;display:block} .muPlay>span{position:absolute;inset:0!important;display:grid!important;place-items:center;pointer-events:none} .muPlay>span svg{width:28px;height:auto;display:block}
+.muPlay .fill{fill:var(--macc);transition:fill .12s} .muPlay:hover .fill{fill:var(--macc2)} .muPlay:active>svg{transform:scale(.95)}
 .muNowSide{flex:none;width:150px;align-self:flex-start;display:flex;flex-direction:column;align-items:center}
 .muNowSide .muBtn{margin-bottom:10px}
 .muSmall{color:var(--msub);font-weight:bold;font-size:11px;margin-top:4px} .muNowSide .muSmall+.muSelect{margin-top:3px} .muNowSide .muRange+.muSmall{margin-top:12px}
@@ -152,6 +153,24 @@ body.vfs .muMini{display:none}
 .muMenu{position:fixed;z-index:60;min-width:210px;padding:3px;background:var(--mcard2);border:1px solid var(--mborder);box-shadow:4px 4px 0 #090B12;display:flex;flex-direction:column;font-size:12px}
 .muMenu button{padding:6px 12px;white-space:nowrap;color:var(--mtext)} .muMenu button:hover:not(:disabled){background:var(--macc);color:#17111F}
 .muMenu hr{border:0;border-top:1px solid var(--mborder);margin:3px 2px}
+/* Appli pixel (settings.pixelUi): the look of the portable player everywhere */
+.mu.px{font-family:Consolas,'Cascadia Mono',monospace;letter-spacing:.2px}
+.mu.px *{border-radius:0!important;transition-timing-function:steps(3)!important}
+.mu.px .muCard,.mu.px .muWin,.mu.px .muMenu{border:0;box-shadow:0 -3px 0 0 var(--macc),0 3px 0 0 var(--mborder),-3px 0 0 0 var(--mborder),3px 0 0 0 var(--mborder),0 -6px 0 -3px var(--macc),9px 9px 0 0 rgba(0,0,0,.45)}
+.mu.px .muMain{gap:22px;padding:24px 22px 20px 6px} .mu.px .muWin{margin:8px}
+.mu.px .muCard::before{content:"";display:block;height:3px;background:repeating-linear-gradient(90deg,var(--macc) 0 6px,var(--macc2) 6px 9px);opacity:.55}
+.mu.px .muBtn,.mu.px .muPill,.mu.px .muSelect,.mu.px .muTopBtn{box-shadow:inset 0 2px 0 rgba(255,255,255,.08),0 3px 0 rgba(0,0,0,.45)}
+.mu.px .muBtn:hover,.mu.px .muPill:hover{background:var(--mborder);color:var(--macc)} .mu.px .muBtn:active,.mu.px .muPill:active{transform:translateY(3px);box-shadow:none}
+.mu.px .muSideBtn,.mu.px .muPlBtn{box-shadow:0 2px 0 rgba(0,0,0,.25)} .mu.px .muSideBtn:active,.mu.px .muPlBtn:active{transform:translateY(2px)}
+.mu.px .muRow,.mu.px .muTile{box-shadow:0 2px 0 rgba(0,0,0,.4)} .mu.px .muRow.sel,.mu.px .muTile.sel{box-shadow:inset 0 0 0 2px var(--macc),0 2px 0 rgba(0,0,0,.4)}
+.mu.px .muFilter,.mu.px .muArtFilter,.mu.px .muSelect{border:2px solid var(--mborder);box-shadow:inset 0 2px 0 rgba(0,0,0,.35)}
+.mu.px .muRange::-webkit-slider-runnable-track{height:8px;background:repeating-linear-gradient(90deg,var(--mcard2) 0 4px,var(--mborder) 4px 6px)}
+.mu.px .muRange::-webkit-slider-thumb{width:10px;height:18px;margin-top:-5px;border:2px solid var(--mtext);box-shadow:0 3px 0 rgba(0,0,0,.45)}
+.mu.px .muWinBar,.mu.px .muTop{background-image:repeating-linear-gradient(90deg,transparent 0 6px,rgba(255,255,255,.035) 6px 9px)}
+.mu.px ::-webkit-scrollbar{width:10px;height:10px} .mu.px ::-webkit-scrollbar-track{background:var(--mcard2)} .mu.px ::-webkit-scrollbar-thumb{background:var(--mborder);box-shadow:inset -2px -2px 0 rgba(0,0,0,.4),inset 2px 2px 0 rgba(255,255,255,.15)}
+.mu.px .muCheck input[type=checkbox]{-webkit-appearance:none;appearance:none;margin:1px 0 0;width:16px;height:16px;flex:none;cursor:var(--cp,pointer);background:var(--mbg);border:2px solid var(--mborder);display:grid;place-items:center;box-shadow:inset 0 2px 0 rgba(0,0,0,.35)}
+.mu.px .muCheck input[type=checkbox]:hover{border-color:var(--macc)} .mu.px .muCheck input[type=checkbox]:checked{background:var(--macc);border-color:var(--macc)}
+.mu.px .muCheck input[type=checkbox]:checked::after{content:"";width:8px;height:4px;border-left:3px solid var(--mbg);border-bottom:3px solid var(--mbg);transform:translateY(-1px) rotate(-45deg)}
 /* secondary windows: borderless, title bar with accent strip, top-left like MuPlayer's, draggable */
 .muLayer{position:absolute;inset:0;pointer-events:none;z-index:20}
 .muWin{position:absolute;left:0;top:38px;max-width:100%;max-height:calc(100% - 38px);display:flex;flex-direction:column;background:var(--mcard);border:1px solid var(--mborder);box-shadow:6px 6px 0 rgba(0,0,0,.35);pointer-events:auto;animation:muReveal .18s ease-out}
@@ -390,7 +409,7 @@ export default async function (ctx) {
 
   /* ---------- the library (music.json) ---------- */
   const MU_DEFAULT_SETTINGS = {theme: 'Nova', volume: .5, equalizer: 'Normal', eqBands: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], limiter: false, balance: 0, visualizer: true, waveform: true, vinyl: true,
-    replaygain: true, coverFade: true, dateAdded: false, releaseDate: false, mini: false, gallery: false, noImages: false, weeklyWeek: '', shortcuts: {}};
+    replaygain: true, coverFade: true, dateAdded: false, releaseDate: false, mini: false, gallery: false, noImages: false, weeklyWeek: '', pixelUi: false, shortcuts: {}};
   function muBlank() {
     return {v: 1, settings: {...MU_DEFAULT_SETTINGS}, playlists: MU_SYSTEM.map(name => ({name, mode: 'offline', tracks: []})),
       stats: {plays: 0, seconds: 0, songs: {}, songs_time: {}, artists: {}, artists_time: {}, daily: {}, history: [], xp_level_seen: 1},
@@ -535,7 +554,7 @@ export default async function (ctx) {
     const st = mu.settings;
     $('muVol').value = Math.round(st.volume * 100);
     $('muEq').value = st.equalizer in MU_PRESETS ? st.equalizer : 'Normal';
-    $('mu').classList.toggle('mini', !!st.mini);
+    $('mu').classList.toggle('mini', !!st.mini); $('mu').classList.toggle('px', !!st.pixelUi);
     $('mu').classList.toggle('novis', !st.visualizer);
     $('mu').classList.toggle('gallery', !!st.gallery);
     $('muCoverWrap').classList.toggle('rect', !st.vinyl);
@@ -797,7 +816,7 @@ export default async function (ctx) {
   function muPlayIcon() {
     const b = $('muPlay'); if (!b) return;
     const pause = muAudio && !muAudio.paused;
-    b.innerHTML = `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="31" fill="none" stroke="var(--mcard2)" stroke-width="2"/><circle class="fill" cx="32" cy="32" r="28"/></svg><span style="position:absolute;inset:16px;color:#06110C;display:block">${muPx(MU_PX[pause ? 'pause' : 'play'], 32)}</span>`;
+    b.innerHTML = `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="31" fill="none" stroke="var(--mcard2)" stroke-width="2"/><circle class="fill" cx="32" cy="32" r="28"/></svg><span style="color:#06110C">${muPx(MU_PX[pause ? 'pause' : 'play'], 28)}</span>`;
   }
   function muFitTitle() {  // two lines at most, then an ellipsis (MuPlayer's set_song_title)
     const el = $('muTitle'), full = mp.cur?.display_title || el.textContent;
@@ -949,7 +968,7 @@ export default async function (ctx) {
       });
     }
     const dt = Math.min(.25, (now - (s.at || now)) / 1000); s.at = now;
-    const per = r => 1 - (1 - r) ** (dt / .25), up = per(.6), down = per(.25), fall = .55 ** (dt / .25), t = now / 1000, L = muSpec.levels;
+    const per = r => 1 - (1 - r) ** (dt / .25), up = per(.92), down = per(.25), fall = .55 ** (dt / .25), t = now / 1000, L = muSpec.levels;
     g.clearRect(0, 0, cols, rows);
     g.fillStyle = T.CARD_ALT;
     for (const q of [.25, .5, .75]) { const y = base - 1 - Math.round(q * (Hb - 1)); for (let x = (y & 1) * 2; x < cols; x += 4) g.fillRect(x, y, 1, 1); }  // dotted grid
@@ -1748,7 +1767,7 @@ export default async function (ctx) {
     b.append(muH('OPTIONS'));
     b.append(muSec('AFFICHAGE'), check('Afficher le visualiseur audio', 'visualizer'), check('Pochette « lecture en cours » en cercle façon vinyle', 'vinyl'),
       check('Forme d\'onde dans la barre de progression (au lieu d\'une simple ligne)', 'waveform'), check('Afficher la date d\'ajout des musiques dans la liste', 'dateAdded'),
-      check('Afficher la date de sortie des musiques dans la liste', 'releaseDate'), check('Mode petit lecteur (playlists et musiques uniquement)', 'mini'),
+      check('Afficher la date de sortie des musiques dans la liste', 'releaseDate'), check('Appli pixel : cadres, boutons et police façon petit lecteur', 'pixelUi'), check('Mode petit lecteur (playlists et musiques uniquement)', 'mini'),
       check('Vue « mur de pochettes » (grille de pochettes) au lieu de la liste', 'gallery'), check('Mode sans images (masque les pochettes partout) — réduit les lags', 'noImages'));
     b.append(muSec('LECTURE'), check('Normaliser le volume entre les morceaux (ReplayGain)', 'replaygain'), check('Fondu de la pochette au changement de morceau', 'coverFade'));
 
