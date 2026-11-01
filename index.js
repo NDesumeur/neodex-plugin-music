@@ -263,8 +263,10 @@ export default async function (ctx) {
   const view = ctx.view;
   // le côté système de NeoMusic (yt-dlp, fichiers, raccourcis globaux) vit dans le main.js du plugin : « neo.musicXxx » y est redirigé
   const MU_ID = 'neobase.music', MU_EV = { onMusicHotkey: 'music:hotkey', onMusicProgress: 'music:progress' };
-  const neo = new Proxy(ctx.neo, { get: (n, k) => {
+  const MU_DOC = cb => ctx.neo.onPluginDataChanged(e => { if (e.id === MU_ID && e.name === 'library') cb('music'); });  // un autre PC a changé la bibliothèque
+  const neo = new Proxy({}, { get: (_, k) => { const n = ctx.neo;  // cible vide : contextBridge fige les propriétés de neo
     if (typeof k !== 'string') return n[k];
+    if (k === 'onDataChanged') return cb => { n.onDataChanged?.(cb); MU_DOC(cb); };
     if (MU_EV[k]) return cb => n.onPluginMain(e => { if (e.id === MU_ID && e.name === MU_EV[k]) cb(e.data); });
     const m = /^music([A-Z]\w*)$/.exec(k);
     return m ? (...a) => n.pluginMain(MU_ID, 'music:' + (m[1] === 'ImportMuPlayer' ? 'pickMuPlayer' : m[1][0].toLowerCase() + m[1].slice(1)), ...a) : n[k];
@@ -1414,6 +1416,7 @@ export default async function (ctx) {
     const w = new Map(), add = (a, n) => { a = (a || '').trim(); if (a) w.set(a, (w.get(a) || 0) + n); };
     for (const [a, n] of Object.entries(mu.stats.artists || {})) add(a, Math.min(n, 40));
     for (const t of muPl('Favoris').tracks) add(t.author, 3);
+    for (const p of mu.playlists) if (!MU_SYSTEM.includes(p.name)) for (const t of p.tracks) add(t.author, .5);  // toute ta bibliothèque compte un peu, pas seulement les favoris
     if (cur) add(cur.author, 12);
     return [...w].map(([artist, x]) => ({artist, w: x})).sort((p, q) => q.w - p.w);
   };
@@ -1451,17 +1454,17 @@ export default async function (ctx) {
   }
   async function muWeekly() {  // "Radar des sorties" and "Découvertes de la semaine", refilled once a week
     const wk = muWeek();
-    if (mu.settings.weeklyWeek === wk && mu.settings.weeklyAlgo === 2) return;  // weeklyAlgo : refait une fois les listes avec les nouveaux calculs
+    if (mu.settings.weeklyWeek === wk && mu.settings.weeklyAlgo === 3) return;  // weeklyAlgo : refait une fois les listes avec les nouveaux calculs
     muCaps ||= await neo.musicCaps().catch(() => muDefaultCaps);
     if (!muCaps.ytdlp) return;
     const taste = muTaste(), artists = taste.map(x => x.artist);
     if (!artists.length) return muStatus('Radar : ajoute des favoris ou écoute quelques musiques');
-    mu.settings.weeklyWeek = wk; mu.settings.weeklyAlgo = 2; muSave();
+    mu.settings.weeklyWeek = wk; mu.settings.weeklyAlgo = 3; muSave();
     muQueue(async () => {
       try {
-        let news = await neo.musicRadar(artists.slice(0, 10)).catch(() => []);
+        let news = await neo.musicRadar(artists.slice(0, 30)).catch(() => []);
         if (news.length < 3) news = [...news, ...await neo.musicWeekly(artists.slice(0, 6).map(a => a + ' new release'), true)];  // sans Deezer : la recherche YouTube d'avant
-        await muFillWeekly('Radar des sorties', news.slice(0, 12));
+        await muFillWeekly('Radar des sorties', news.slice(0, 24));
         await muFillWeekly('Découvertes de la semaine', (await neo.musicMix(taste.slice(0, 8), muLibraryArtists())).slice(0, 12));
         muStatus('Playlists hebdomadaires mises à jour');
       } catch (e) { muStatus('Mise à jour hebdomadaire indisponible', T.DANGER); muWarn('hebdo', e); }

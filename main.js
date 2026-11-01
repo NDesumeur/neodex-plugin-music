@@ -138,20 +138,24 @@ async function mix(seeds, exclude = []) {  // seeds : des noms, ou { artist, w }
   let out = []; try { out = await similar(ws, exclude); } catch {}
   return out.length ? out : mixYt(ws.map(s => s.artist), exclude);  // sans Deezer : l'ancien mix YouTube
 }
-async function radar(artists) {  // les sorties des 60 derniers jours des artistes écoutés (albums et singles de Deezer), chaque titre retrouvé sur YouTube
-  const cutoff = new Date(Date.now() - 60 * 864e5).toISOString().slice(0, 10), albums = [];
-  await inBatches(artists.slice(0, 10), 5, async name => {
-    try {
-      const a = await dzArtist(name); if (!a) return;
-      for (const al of ((await deezer('/artist/' + a.id + '/albums?limit=100')).data || []).filter(x => x.release_date >= cutoff).slice(0, 2)) albums.push({ ...al, artist: a.name });
-    } catch {}
+async function radar(artists) {  // les sorties des 4 derniers mois des artistes écoutés ET d'artistes proches (albums et singles de Deezer), des titres de chaque sortie retrouvés sur YouTube
+  const cutoff = new Date(Date.now() - 120 * 864e5).toISOString().slice(0, 10), albums = [], seen = new Set(), names = artists.slice(0, 30);
+  const known = new Set(names.map(normName)), close = [];
+  await inBatches(names.slice(0, 5), 5, async name => {  // les artistes proches des plus écoutés : on n'écoute pas que ses favoris
+    try { const a = await dzArtist(name); if (a) for (const x of ((await deezer('/artist/' + a.id + '/related?limit=6')).data || []).slice(0, 4)) if (!known.has(normName(x.name))) { known.add(normName(x.name)); close.push(x); } } catch {}
   });
+  const take = async (a, n) => {
+    for (const al of ((await deezer('/artist/' + a.id + '/albums?limit=100')).data || []).filter(x => x.release_date >= cutoff).slice(0, n)) if (!seen.has(al.id)) { seen.add(al.id); albums.push({ ...al, artist: a.name }); }
+  };
+  await inBatches(names, 6, async name => { try { const a = await dzArtist(name); if (a) await take(a, 3); } catch {} });
+  await inBatches(close, 6, async x => { try { await take(x, 1); } catch {} });
   albums.sort((x, y) => y.release_date.localeCompare(x.release_date));
   const out = [];
-  await inBatches(albums.slice(0, 12), 4, async al => {
+  await inBatches(albums.slice(0, 30), 5, async al => {
     try {
-      const t = ((await deezer('/album/' + al.id + '/tracks?limit=3')).data || [])[0]; if (!t) return;
-      const y = await realSong(al.artist, t.title); if (y) out.push({ ...y, artist: al.artist, released: al.release_date });
+      for (const t of ((await deezer('/album/' + al.id + '/tracks?limit=3')).data || []).slice(0, 2)) {
+        const y = await realSong(al.artist, t.title); if (y && !out.some(o => o.url === y.url)) out.push({ ...y, artist: al.artist, released: al.release_date });
+      }
     } catch {}
   });
   return out.sort((x, y) => y.released.localeCompare(x.released));
@@ -291,7 +295,7 @@ function importMuPlayer(dir) {
 const dirSize = d => { let n = 0, c = 0; try { for (const f of fs.readdirSync(d)) { const s = fs.statSync(path.join(d, f)); if (s.isFile()) { n += s.size; c++; } } } catch {} return { bytes: n, count: c }; };
 const tar = (args, cwd) => new Promise((ok, ko) => { const p = spawn('tar', args, { cwd, windowsHide: true }); let e = ''; p.stderr.on('data', d => e += d); p.on('error', ko); p.on('close', c => c ? ko(new Error(e.trim() || 'tar a échoué')) : ok()); });
 
-function register({ ipcMain, getWin, emit, serveFile, protocol, onShortcutReset }) {
+function register({ ipcMain, getWin, emit, serveFile, protocol, onShortcutReset, readDoc, writeDoc }) {
   sendHotkey = action => emit('music:hotkey', action);
   onShortcutReset(registerHotkeys);  // le cœur défait tous les raccourcis globaux quand il refait le sien
   protocol(async req => {  // neoplugin://neobase.music/file/<nom> | cover/<nom> | stream/?u=<adresse>
@@ -301,9 +305,14 @@ function register({ ipcMain, getWin, emit, serveFile, protocol, onShortcutReset 
     if (kind === 'stream') return await serveStream(u.searchParams.get('u'), req);
     return new Response('', { status: 404 });
   });
-  const LIB = () => path.join(app.getPath('userData'), 'music.json');  // next to links.json etc.: in the sync and the backups
-  ipcMain.handle('music:load', () => readJ(LIB()));
-  ipcMain.handle('music:save', (_, d) => { fs.writeFileSync(LIB() + '.tmp', JSON.stringify(d)); fs.renameSync(LIB() + '.tmp', LIB()); return true; });
+  // la bibliothèque est le document « library » du dossier du plugin : la synchro et les sauvegardes le prennent comme tout document de plugin (règles de fusion : « sync » du manifeste)
+  const LEGACY = path.join(app.getPath('userData'), 'music.json');  // l'ancien emplacement, dans le cœur : repris une fois
+  ipcMain.handle('music:load', () => {
+    let d = readDoc('library');
+    if (d == null && (d = readJ(LEGACY))) { writeDoc('library', d); fs.renameSync(LEGACY, LEGACY + '.migre'); }
+    return d;
+  });
+  ipcMain.handle('music:save', (_, d) => { writeDoc('library', d); return true; });
   ipcMain.handle('music:caps', async () => {
     let version = ''; try { version = (await ytdlp(['--version'], { timeout: 30000 })).trim(); } catch {}
     return { ytdlp: version, ffmpeg: !!ffmpeg, muplayer: [path.join(app.getPath('downloads'), 'MuPlayerV1.0'), path.join(app.getPath('downloads'), 'muplayer_repo', 'muplayer_repo')].find(d => fs.existsSync(path.join(d, 'jsons', 'playlists.json'))) || '' };
@@ -380,3 +389,4 @@ module.exports = api => {
   register(api);
   return () => { for (const combo of Object.values(hotkeys)) if (combo && /(Ctrl|Alt|Shift)\+/.test(combo)) try { globalShortcut.unregister(accel(combo)); } catch {} };
 };
+module.exports.radar = radar;  // pour les tests
