@@ -69,7 +69,7 @@ const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strip
 .mmKick{color:var(--macc);font-weight:bold;font-size:10px;letter-spacing:2px} #mmState{flex:1;font-size:10px;font-weight:bold;letter-spacing:1px}
 #mmTitle{font-size:13px;line-height:1.3;min-height:1.3em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #mmArtist{color:var(--msub);font-size:11px;line-height:1.3;min-height:1.3em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mmSpecBox{height:21px;margin-top:2px} #mmSpec{display:block;image-rendering:pixelated}
+.mmSpecBox{height:21px;margin-top:2px} .mmSpecBox.sup{height:39px} #mmSpec{display:block;image-rendering:pixelated}
 .mmBar{display:flex;align-items:center;gap:8px}
 #mmSeek{flex:1;height:6px;background:var(--mcard2);cursor:var(--cp,pointer);box-shadow:0 2px 0 rgba(0,0,0,.35)} #mmSeek:hover{height:8px}
 #mmSeek i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,var(--macc) 0 4px,color-mix(in srgb,var(--macc) 75%,#fff) 4px 6px)}
@@ -1136,7 +1136,8 @@ export default async function (ctx) {
       g.strokeStyle = T.ACCENT; g.lineWidth = 6; g.beginPath(); g.arc(W / 2, W / 2, W / 2 - 4, 0, 7); g.stroke();
     } else if (mp.coverImg) { const im = mp.coverImg, s = Math.min(im.width, im.height); g.drawImage(im, (im.width - s) / 2, (im.height - s) / 2, s, s, 0, 0, W, W); }
     else { g.fillStyle = T.CARD_ALT; g.fillRect(0, 0, W, W); g.fillStyle = T.ACCENT; g.font = 'bold 80px Consolas'; g.textAlign = 'center'; g.fillText('?', W / 2, W / 2 + 28); }
-    muPixSpectrum($('mmSpec'), 21, now);
+    const sup = muSuperOn(now); $('mmSpec').parentElement.classList.toggle('sup', sup);  // the super visualiser follows into the portable player
+    if (sup) muSuperSpectrum($('mmSpec'), 39, now); else muPixSpectrum($('mmSpec'), 21, now);
     const dur = muAudio?.duration || mp.length || 0, pos = muAudio?.currentTime || mp.resume || 0;
     $('mmSeek').firstChild.style.width = (dur ? Math.min(100, pos / dur * 100) : 0) + '%';
     $('mmTime').textContent = muClock(pos) + ' / ' + muClock(dur);
@@ -1675,7 +1676,7 @@ export default async function (ctx) {
   }
 
   /* ---------- levels (from the listening time) and achievements ---------- */
-  const muMinutesFor = l => l <= 1 ? 0 : 12 * (l - 1) ** 1.55;
+  const muMinutesFor = l => l <= 1 ? 0 : 5.57 * (l - 1) ** 1.55;  // niveau 100 = ~115 h d écoute
   function muLevel() {
     const total = (+mu.stats.seconds || 0) / 60; let level = 1;
     while (muMinutesFor(level + 1) <= total) level++;
