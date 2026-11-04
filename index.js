@@ -444,7 +444,7 @@ export default async function (ctx) {
 
   /* ---------- the library (music.json) ---------- */
   const MU_DEFAULT_SETTINGS = {theme: 'Nova', volume: .5, equalizer: 'Normal', eqBands: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], limiter: false, balance: 0, visualizer: true, waveform: true, vinyl: true,
-    replaygain: true, coverFade: true, dateAdded: false, releaseDate: false, mini: false, gallery: false, noImages: false, weeklyWeek: '', superVis: false, recoSeen: [], pixelUi: true, shortcuts: {}};
+    replaygain: true, coverFade: true, dateAdded: false, releaseDate: false, mini: false, gallery: false, noImages: false, weeklyWeek: '', superVis: false, pixelDisc: true, recoSeen: [], pixelUi: true, shortcuts: {}};
   function muBlank() {
     return {v: 1, settings: {...MU_DEFAULT_SETTINGS}, playlists: MU_SYSTEM.map(name => ({name, mode: 'offline', tracks: []})),
       stats: {plays: 0, seconds: 0, songs: {}, songs_time: {}, artists: {}, artists_time: {}, daily: {}, history: [], xp_level_seen: 1},
@@ -915,6 +915,43 @@ export default async function (ctx) {
     g.fillStyle = T.CARD; g.beginPath(); g.arc(mid, mid, hole, 0, 7); g.fill(); g.strokeStyle = vinyl; g.lineWidth = 2; g.stroke();
     return c;
   }
+  /* ---------- niveau 150 : le disque pixel. Dessiné en 48 x 48 vrais pixels puis agrandi sans lissage. Les sillons, la tranche et le reflet
+     sont ronds : ils restent fixes, comme sur un vrai disque. Seule l'étiquette (la pochette) tourne, en basse résolution, au plus proche
+     voisin et par crans de 15°, comme une animation de sprite. ---------- */
+  const MU_PD = 48;
+  const muPixDiscOn = now => { if (now - (mp.pdAt || -1e9) > 2000) { mp.pdAt = now; mp.pdOn = !!mu.settings.vinyl && !!mu.settings.pixelDisc && muLevel().level >= 150; } return mp.pdOn; };
+  const muPdEach = f => { const C = MU_PD / 2; for (let y = 0; y < MU_PD; y++) for (let x = 0; x < MU_PD; x++) f(x, y, Math.hypot(x + .5 - C, y + .5 - C), Math.atan2(y + .5 - C, x + .5 - C) * 180 / Math.PI); };
+  const muPdCanvas = () => Object.assign(document.createElement('canvas'), { width: MU_PD, height: MU_PD });
+  function muPixDiscBase() {  // le corps du disque (selon le thème) : tranche, sillons, pause entre deux pistes, reflet fixe
+    const c = muPdCanvas(), g = c.getContext('2d'), C = MU_PD / 2, vinyl = muShade(T.CARD, -.85), groove = muShade(vinyl, .16), gap = muShade(vinyl, -.5), edge = muShade(T.ACCENT, -.35), shine = muShade(vinyl, .45);
+    muPdEach((x, y, d, a) => {
+      const col = d > C ? '' : d > C - 1.2 ? edge : d > C - 2.2 ? vinyl : d > 9.6 ? (Math.abs(d - 16) < .6 ? gap : Math.floor(d) % 3 === 0 ? (a > -150 && a < -112 || a > 30 && a < 52 ? shine : groove) : vinyl) : d > 8.7 ? gap : '';
+      if (col) { g.fillStyle = col; g.fillRect(x, y, 1, 1); }
+    });
+    return c;
+  }
+  function muPixDiscLabel(img) {  // l'étiquette : la pochette réduite à 19 x 19 pixels, coupée en rond, et une marque pour voir le disque tourner
+    const c = muPdCanvas(), g = c.getContext('2d'), C = MU_PD / 2;
+    if (img) {
+      const l = document.createElement('canvas'); l.width = l.height = 19; const lg = l.getContext('2d'), sq = Math.min(img.width, img.height);
+      lg.drawImage(img, (img.width - sq) / 2, (img.height - sq) / 2, sq, sq, 0, 0, 19, 19);
+      g.imageSmoothingEnabled = false; g.drawImage(l, C - 9.5, C - 9.5);
+    }
+    muPdEach((x, y, d) => { if (d > 8.7) g.clearRect(x, y, 1, 1); else if (!img) { g.fillStyle = (x + y) % 4 < 2 ? T.CARD : T.CARD_ALT; g.fillRect(x, y, 1, 1); } });
+    g.fillStyle = T.ACCENT; g.fillRect(C + 5, C - 1, 2, 2); g.fillStyle = muShade(T.ACCENT, .5); g.fillRect(C + 5, C - 1, 1, 1);
+    return c;
+  }
+  function muPixDiscPaint(g, img, x0, size, alpha = 1) {
+    const C = MU_PD / 2;
+    if (mp.pdTheme !== T) { mp.pdTheme = T; mp.pdBase = muPixDiscBase(); mp.pdLabels = new WeakMap(); }
+    const key = img || muPixDiscPaint; let label = mp.pdLabels.get(key); if (!label) mp.pdLabels.set(key, label = muPixDiscLabel(img));
+    const b = mp.pdBuf ??= muPdCanvas(), bg = b.getContext('2d');
+    bg.setTransform(1, 0, 0, 1, 0, 0); bg.clearRect(0, 0, MU_PD, MU_PD); bg.imageSmoothingEnabled = false;
+    bg.drawImage(mp.pdBase, 0, 0);
+    bg.translate(C, C); bg.rotate(Math.round((mp.angle || 0) / 15) * 15 * Math.PI / 180); bg.drawImage(label, -C, -C); bg.setTransform(1, 0, 0, 1, 0, 0);
+    bg.fillStyle = T.CARD; bg.fillRect(C - 1, C - 1, 2, 2);  // le trou
+    g.save(); g.globalAlpha = alpha; g.imageSmoothingEnabled = false; g.drawImage(b, x0, x0, size, size); g.restore();
+  }
   function muSpin(now) {  // the record speeds up fast and slows down like a real turntable (shared by the big cover and the portable player)
     const playing = muAudio && !muAudio.paused;
     mp.spin = playing ? Math.min(1.4, (mp.spin || 0) + .35) : (mp.spin || 0) * .9 < .01 ? 0 : (mp.spin || 0) * .9;
@@ -924,7 +961,9 @@ export default async function (ctx) {
     const cv = $('muCover'), g = cv.getContext('2d'), W = cv.width, vinyl = mu.settings.vinyl;
     g.clearRect(0, 0, W, W);
     const fade = mp.coverOld ? Math.min(1, (now - mp.fadeAt) / 180) : 1;
+    const pix = muPixDiscOn(now);
     const paint = (img, disc, alpha) => {
+      if (pix) return muPixDiscPaint(g, img, 2, W - 4, alpha);
       g.globalAlpha = alpha;
       if (vinyl) {
         g.save(); g.translate(W / 2, W / 2); g.rotate(mp.angle * Math.PI / 180); g.drawImage(disc, -124, -124, 248, 248); g.restore();
@@ -932,11 +971,11 @@ export default async function (ctx) {
       else { g.fillStyle = T.CARD_ALT; g.fillRect(6, 6, W - 12, W - 12); g.fillStyle = T.ACCENT; g.font = 'bold 64px Consolas'; g.textAlign = 'center'; g.fillText('?', W / 2, W / 2 + 22); }
       g.globalAlpha = 1;
     };
-    if (vinyl) { if (!mp.disc) mp.disc = muDisc(mp.coverImg); }
-    if (fade < 1 && mp.coverOld) paint(mp.coverOld.img, mp.coverOld.disc || muDisc(mp.coverOld.img), 1 - fade);
+    if (vinyl && !pix) { if (!mp.disc) mp.disc = muDisc(mp.coverImg); }
+    if (fade < 1 && mp.coverOld) paint(mp.coverOld.img, pix ? null : mp.coverOld.disc || muDisc(mp.coverOld.img), 1 - fade);
     else mp.coverOld = null;
     paint(mp.coverImg, mp.disc, fade);
-    if (vinyl) { g.strokeStyle = T.ACCENT; g.lineWidth = 4; g.beginPath(); g.arc(W / 2, W / 2, W / 2 - 4, 0, 7); g.stroke(); }
+    if (vinyl && !pix) { g.strokeStyle = T.ACCENT; g.lineWidth = 4; g.beginPath(); g.arc(W / 2, W / 2, W / 2 - 4, 0, 7); g.stroke(); }
   }
   function muProgressEvents() {
     const cv = $('muProgress'), at = e => { const r = cv.getBoundingClientRect(); return Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * (muAudio?.duration || mp.length); };
@@ -1153,7 +1192,8 @@ export default async function (ctx) {
   function muMiniFrame(now) {
     const cv = $('mmDisc'), g = cv.getContext('2d'), W = cv.width;
     g.clearRect(0, 0, W, W);
-    if (mu.settings.vinyl) {
+    if (muPixDiscOn(now)) muPixDiscPaint(g, mp.coverImg, 2, W - 4);
+    else if (mu.settings.vinyl) {
       if (!mp.disc) mp.disc = muDisc(mp.coverImg);
       g.save(); g.translate(W / 2, W / 2); g.rotate(mp.angle * Math.PI / 180); g.drawImage(mp.disc, -W / 2 + 6, -W / 2 + 6, W - 12, W - 12); g.restore();
       g.strokeStyle = T.ACCENT; g.lineWidth = 6; g.beginPath(); g.arc(W / 2, W / 2, W / 2 - 4, 0, 7); g.stroke();
@@ -1710,7 +1750,7 @@ export default async function (ctx) {
     const {level} = muLevel(); if (level <= (+mu.stats.xp_level_seen || 1)) return;
     mu.stats.xp_level_seen = level;
     const theme = Object.entries(MU_THEME_LEVEL).find(([, l]) => l === level)?.[0];
-    muStatus(theme ? `Niveau ${level} atteint — thème « ${theme} » débloqué !` : level === 100 ? 'Niveau 100 atteint — super visualiseur débloqué (Options) !' : `Niveau ${level} atteint !`, T.ACCENT);
+    muStatus(theme ? `Niveau ${level} atteint — thème « ${theme} » débloqué !` : level === 100 ? 'Niveau 100 atteint — super visualiseur débloqué (Options) !' : level === 150 ? 'Niveau 150 atteint — disque pixel débloqué !' : `Niveau ${level} atteint !`, T.ACCENT);
     muSave();
   }
   function muUnlock(id) {
@@ -1860,7 +1900,7 @@ export default async function (ctx) {
     const st = mu.settings, w = muWindow('Options', 620), b = w.body, lv = muLevel();
     const check = (label, key) => { const c = mh('input', {type: 'checkbox', checked: !!st[key]}); c.dataset.k = key; return mh('label.muCheck', {}, c, mh('span', {text: label})); };
     b.append(muH('OPTIONS'));
-    b.append(muSec('AFFICHAGE'), check('Afficher le visualiseur audio', 'visualizer'), lv.level >= 100 ? check('Super visualiseur : reflet, étincelles, lueur et pulsation des basses (niveau 100)', 'superVis') : mh('p.muWNote.ind', {text: 'Super visualiseur : se débloque au niveau 100 (tu es niveau ' + lv.level + ').'}), check('Pochette « lecture en cours » en cercle façon vinyle', 'vinyl'),
+    b.append(muSec('AFFICHAGE'), check('Afficher le visualiseur audio', 'visualizer'), lv.level >= 100 ? check('Super visualiseur : reflet, étincelles, lueur et pulsation des basses (niveau 100)', 'superVis') : mh('p.muWNote.ind', {text: 'Super visualiseur : se débloque au niveau 100 (tu es niveau ' + lv.level + ').'}), check('Pochette « lecture en cours » en cercle façon vinyle', 'vinyl'), lv.level >= 150 ? check('Disque pixel : le vinyle dessiné et animé en vrai pixel art (niveau 150)', 'pixelDisc') : mh('p.muWNote.ind', {text: 'Disque pixel : se débloque au niveau 150 (tu es niveau ' + lv.level + ').'}),
       check('Forme d\'onde dans la barre de progression (au lieu d\'une simple ligne)', 'waveform'), check('Afficher la date d\'ajout des musiques dans la liste', 'dateAdded'),
       check('Afficher la date de sortie des musiques dans la liste', 'releaseDate'), check('Appli pixel : cadres, boutons et police façon petit lecteur', 'pixelUi'), check('Mode petit lecteur (playlists et musiques uniquement)', 'mini'),
       check('Vue « mur de pochettes » (grille de pochettes) au lieu de la liste', 'gallery'), check('Mode sans images (masque les pochettes partout) — réduit les lags', 'noImages'));

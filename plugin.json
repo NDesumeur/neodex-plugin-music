@@ -1,7 +1,7 @@
 {
   "id": "neobase.music",
   "name": "NeoMusic",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "author": "NDesumeur",
   "description": "Ton lecteur de musique : playlists en ligne et hors ligne, thèmes, spectre, égaliseur, statistiques, succès et raccourcis globaux.",
   "icon": "icon.png",
