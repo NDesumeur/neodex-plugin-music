@@ -85,6 +85,7 @@ const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strip
 .mmTop .mmBtn{width:22px;height:18px;background:transparent;box-shadow:none;color:var(--msub)} .mmTop .mmBtn:hover{background:var(--mcard2);color:var(--mtext)} #mmClose:hover{background:var(--mdanger);color:#fff}
 #mmVol{margin-left:auto;color:var(--msub);font-size:10px;letter-spacing:1px}
 body.vfs .muMini{display:none}
+body.mmFloat>*:not(.muMini){display:none!important} body.mmFloat{overflow:hidden;background:transparent!important} body.mmFloat .muMini{left:0!important;top:0!important}
 .mu.novis .muSpectrum{display:none}
 .muControls{display:flex;align-items:center;justify-content:center;gap:24px}
 .muSkip{width:40px;height:40px} .muSkip{position:relative;color:#fff;display:grid;place-items:center} .muSkip>svg+svg{width:24px!important;height:auto!important;position:absolute!important;inset:auto!important} .muSkip>svg:first-child{width:40px;height:40px;fill:var(--mtext);display:block} .muSkip:hover{color:var(--macc)} .muSkip>svg+svg{fill:none}
@@ -901,127 +902,92 @@ export default async function (ctx) {
     img.onerror = () => muFetchCover(t).then(ok => { if (ok && mp.cur === t) img.src = 'neoplugin://neodex.music/cover/' + encodeURIComponent(t.cover) + '?r=' + Date.now(); });
     img.src = 'neoplugin://neodex.music/cover/' + encodeURIComponent(t.cover);
   }
-  /* ---------- la platine : le vinyle tourne à 33 tours ⅓ sur son plateau, la pochette en étiquette (lisse, pas en pixels),
-     le bras se pose quand la musique joue, avance vers le centre avec le morceau et se relève à la pause.
-     Tout est dessiné à la résolution de l'écran ; les parties fixes (corps du disque, étiquette) sont mises en cache. ---------- */
-  const MU_RPM = 200;  // 33 ⅓ tours par minute = 200° par seconde
+  /* ---------- la platine en pixel art : tout est posé pixel par pixel dans une petite image, agrandie ensuite sans lissage.
+     Le disque tourne pour de vrai : chaque pixel va chercher sa couleur dans la pochette (réduite en gros pixels) à l'angle du moment.
+     Le bras se pose quand la musique joue, avance vers le centre avec le morceau et se relève à la pause. ---------- */
+  const MU_RPM = 200;  // 33 tours ⅓ par minute = 200° par seconde
   const muLuxe = () => !!mu.settings.deckLuxe && muLevel().level >= 150;  // niveau 150 : socle en bois, bras doré
-  function muRecordBody(R) {  // le corps du disque : noir teinté du thème, sillons fins, plages entre les pistes, bord biseauté
-    const key = Math.round(R) + '|' + T.CARD; if (mp.recKey === key) return mp.recBody;
-    const S = Math.ceil(R * 2), c = document.createElement('canvas'); c.width = c.height = S;
-    const g = c.getContext('2d'), m = S / 2, base = muBlend('#0b0a0e', T.CARD, .1), lab = R * .36;
-    const rg = g.createRadialGradient(m, m, R * .3, m, m, R); rg.addColorStop(0, muShade(base, .05)); rg.addColorStop(1, base);
-    g.fillStyle = rg; g.beginPath(); g.arc(m, m, R, 0, 7); g.fill();
-    let seed = 11; const rnd = () => (seed = seed * 16807 % 2147483647) / 2147483647;
-    g.lineWidth = Math.max(.5, R / 420);
-    for (let r = lab + R * .07; r < R * .965; r += Math.max(.8, R / 240)) { g.strokeStyle = `rgba(255,255,255,${(.02 + rnd() * .04).toFixed(3)})`; g.beginPath(); g.arc(m, m, r, 0, 7); g.stroke(); }
-    for (const f of [.3, .52, .7, .86]) { g.strokeStyle = 'rgba(0,0,0,.6)'; g.lineWidth = Math.max(1.4, R * .011); g.beginPath(); g.arc(m, m, lab + R * .07 + (R * .9 - lab) * f, 0, 7); g.stroke(); }
-    g.fillStyle = muShade(base, -.25); g.beginPath(); g.arc(m, m, lab + R * .06, 0, 7); g.fill();  // la plage lisse autour de l'étiquette
-    g.lineWidth = Math.max(1, R * .014); g.strokeStyle = 'rgba(255,255,255,.16)'; g.beginPath(); g.arc(m, m, R - g.lineWidth / 2, 0, 7); g.stroke();
-    mp.recKey = key; mp.recBody = c; return c;
+  const muCol = c => { const [r, g, b] = muHex(c.length === 4 ? '#' + [...c.slice(1)].map(x => x + x).join('') : c); return (0xff000000 | b << 16 | g << 8 | r) >>> 0; };  // une couleur → un pixel d'ImageData
+  function muPixLabel(img, d) {  // l'étiquette : la pochette réduite à d×d pixels, en peu de couleurs (ou une étiquette aux couleurs du thème)
+    const cache = mp.pxLabels ??= new WeakMap(), k = img || muPixLabel, hit = cache.get(k);
+    if (hit && hit.d === d && hit.t === T) return hit.p;
+    const c = document.createElement('canvas'); c.width = c.height = d;
+    const g = c.getContext('2d', {willReadFrequently: true});
+    g.fillStyle = T.ACCENT; g.fillRect(0, 0, d, d); g.fillStyle = muShade(T.ACCENT_2 || T.ACCENT, -.35); g.fillRect(0, d >> 1, d, d - (d >> 1));
+    if (img) { const s = Math.min(img.width, img.height); g.imageSmoothingQuality = 'high'; g.drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, d, d); }
+    let p; try { p = new Uint32Array(g.getImageData(0, 0, d, d).data.buffer); } catch { p = new Uint32Array(d * d).fill(muCol(T.ACCENT)); }
+    for (let i = 0; i < p.length; i++) p[i] = (p[i] & 0xffe0e0e0 | 0xff101010) >>> 0;  // 8 niveaux par couleur : l'aspect pixel art
+    cache.set(k, {d, t: T, p}); return p;
   }
-  function muRecordLabel(img, r) {  // l'étiquette : la pochette coupée en rond (ou une étiquette NeoMusic), avec un léger relief
-    const cache = mp.labels ??= new WeakMap(), k = img || muRecordLabel, hit = cache.get(k);
-    if (hit && hit.r === Math.round(r) && hit.t === T) return hit.c;
-    const S = Math.ceil(r * 2), c = document.createElement('canvas'); c.width = c.height = S;
-    const g = c.getContext('2d'), m = S / 2;
-    g.save(); g.beginPath(); g.arc(m, m, m, 0, 7); g.clip();
-    if (img) { const s = Math.min(img.width, img.height); g.imageSmoothingQuality = 'high'; g.drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, S, S); }
-    else {
-      const lg = g.createLinearGradient(0, 0, S, S); lg.addColorStop(0, T.ACCENT); lg.addColorStop(1, muShade(T.ACCENT_2 || T.ACCENT, -.35));
-      g.fillStyle = lg; g.fillRect(0, 0, S, S);
-      g.fillStyle = 'rgba(255,255,255,.92)'; g.textAlign = 'center'; g.font = `bold ${Math.round(S * .15)}px Consolas, monospace`; g.fillText('NeoMusic', m, m - S * .12);
-      g.font = `${Math.round(S * .1)}px Consolas, monospace`; g.fillStyle = 'rgba(255,255,255,.7)'; g.fillText('33 tours', m, m + S * .26);
+  function muPixBuf(key, W, H) {  // une petite image réutilisée d'une image à l'autre
+    let b = mp[key]; if (!b || b.W !== W || b.H !== H) { const c = document.createElement('canvas'); c.width = W; c.height = H; const id = c.getContext('2d').createImageData(W, H); b = mp[key] = {W, H, c, id, P: new Uint32Array(id.data.buffer)}; }
+    b.P.fill(0); return b;
+  }
+  function muPixKit(b) {
+    const {W, H, P} = b, put = (x, y, c) => { x = Math.round(x); y = Math.round(y); if (x >= 0 && y >= 0 && x < W && y < H) P[y * W + x] = c; };
+    const rect = (x, y, w, h, c) => { for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) put(x + i, y + j, c); };
+    const disc = (cx, cy, r, c) => { for (let y = -r; y <= r; y++) for (let x = -r; x <= r; x++) if (x * x + y * y <= r * r + r * .8) put(cx + x, cy + y, c); };
+    const line = (x0, y0, x1, y1, c, t = 1) => { const n = Math.max(1, Math.round(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)))); for (let i = 0; i <= n; i++) rect(Math.round(x0 + (x1 - x0) * i / n) - (t >> 1), Math.round(y0 + (y1 - y0) * i / n) - (t >> 1), t, t, c); };
+    return {put, rect, disc, line};
+  }
+  function muPixRecord(b, cx, cy, R, angle, img) {  // le disque : étiquette = pochette qui tourne, sillons en deux tons, reflet fixe tramé
+    const {put} = muPixKit(b), a = angle * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a), lr = Math.max(3, Math.round(R * .42)), d = lr * 2, L = muPixLabel(img, d);
+    const base = muBlend('#100e16', T.CARD, .12), c0 = muCol(base), c1 = muCol(muShade(base, .08)), cGap = muCol(muShade(base, -.4)), cHi = muCol(muShade(base, .3)), cRim = muCol(muShade(base, .22)), cLip = muCol(muShade(base, -.3));
+    for (let y = -R; y <= R; y++) for (let x = -R; x <= R; x++) {
+      const d2 = x * x + y * y; if (d2 > R * R + R * .8) continue;
+      const r = Math.sqrt(d2); let c;
+      if (r <= lr - .5) { const u = Math.max(0, Math.min(d - 1, Math.round(x * ca + y * sa + lr - .5))), v = Math.max(0, Math.min(d - 1, Math.round(-x * sa + y * ca + lr - .5))); c = L[v * d + u]; }
+      else if (r < lr + 1) c = cLip;
+      else if (r > R - 1) c = cRim;
+      else {
+        const k = Math.round(r); c = k % 2 ? c0 : c1;
+        if (k === Math.round(lr + (R - lr) * .45) || k === Math.round(lr + (R - lr) * .75)) c = cGap;  // les silences entre les plages
+        const th = Math.atan2(y, x), sec = Math.min(Math.abs(th + 2.3), Math.abs(th - .84));  // la lumière ne tourne pas avec le disque
+        if (sec < .12 || (sec < .24 && (x + y & 1))) c = cHi;
+      }
+      put(cx + x, cy + y, c);
     }
-    const sh = g.createRadialGradient(m, m, m * .55, m, m, m); sh.addColorStop(0, 'rgba(0,0,0,0)'); sh.addColorStop(1, 'rgba(0,0,0,.28)');
-    g.fillStyle = sh; g.fillRect(0, 0, S, S); g.restore();
-    g.lineWidth = Math.max(1, S * .018); g.strokeStyle = 'rgba(0,0,0,.45)'; g.beginPath(); g.arc(m, m, m - g.lineWidth / 2, 0, 7); g.stroke();
-    cache.set(k, { r: Math.round(r), t: T, c }); return c;
+    put(cx, cy, muCol('#e8eaf0'));  // l'axe
   }
-  function muRecord(g, cx, cy, R, angle, img, alpha = 1) {  // le disque qui tourne, son reflet fixe (la lumière ne tourne pas), l'axe
-    g.save(); g.globalAlpha = alpha; g.translate(cx, cy);
-    g.rotate(angle * Math.PI / 180);
-    g.drawImage(muRecordBody(R), -R, -R, R * 2, R * 2);
-    const lr = R * .36; g.drawImage(muRecordLabel(img, lr), -lr, -lr, lr * 2, lr * 2);
-    g.rotate(-angle * Math.PI / 180);
-    const cg = g.createConicGradient(-Math.PI * .8, 0, 0);
-    for (const [at, a] of [[0, 0], [.05, .13], [.1, 0], [.5, 0], [.55, .08], [.6, 0], [1, 0]]) cg.addColorStop(at, `rgba(255,255,255,${a})`);
-    g.fillStyle = cg; g.beginPath(); g.arc(0, 0, R * .985, 0, 7); g.arc(0, 0, R * .43, 0, 7, true); g.fill();
-    const sp = R * .035, sg = g.createRadialGradient(-sp * .3, -sp * .3, 0, 0, 0, sp); sg.addColorStop(0, '#ffffff'); sg.addColorStop(.5, '#b9bcc6'); sg.addColorStop(1, '#55586a');
-    g.fillStyle = sg; g.beginPath(); g.arc(0, 0, sp, 0, 7); g.fill();
-    g.restore();
+  function muPixShow(g, b, w, h, s) {  // la petite image, agrandie d'un facteur entier, au centre
+    b.c.getContext('2d').putImageData(b.id, 0, 0);
+    g.imageSmoothingEnabled = false; g.drawImage(b.c, Math.floor((w - b.W * s) / 2), Math.floor((h - b.H * s) / 2), b.W * s, b.H * s);
   }
-  const muRound = (g, x, y, w, h, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
-  function muMetal(g, x0, y0, x1, y1, gold) {
-    const lg = g.createLinearGradient(x0, y0, x1, y1);
-    (gold ? ['#fff1c4', '#d9a945', '#8a5a14', '#e8c06a'] : ['#f4f5f8', '#a9acb8', '#5f6272', '#c9ccd6']).forEach((c, i, a) => lg.addColorStop(i / (a.length - 1), c));
-    return lg;
-  }
-  function muDeck(g, W, H, now, playing) {
-    const luxe = muLuxe(), pad = H * .07, Rp = H / 2 - pad, cx = pad + Rp + H * .02, cy = H / 2, R = Rp * .93;
-    // le socle
-    g.save(); g.shadowColor = 'rgba(0,0,0,.45)'; g.shadowBlur = H * .05; g.shadowOffsetY = H * .015;
-    muRound(g, H * .015, H * .015, W - H * .03, H - H * .045, H * .06);
-    const pg = g.createLinearGradient(0, 0, 0, H);
-    if (luxe) { pg.addColorStop(0, '#7a4f2c'); pg.addColorStop(1, '#3d2513'); } else { pg.addColorStop(0, muShade(T.CARD, -.38)); pg.addColorStop(1, muShade(T.CARD, -.68)); }
-    g.fillStyle = pg; g.fill(); g.restore();
-    g.save(); muRound(g, H * .015, H * .015, W - H * .03, H - H * .045, H * .06); g.clip();
-    if (luxe) { let s = 3; const rnd = () => (s = s * 16807 % 2147483647) / 2147483647; g.lineWidth = 1; for (let i = 0; i < 46; i++) { const y = rnd() * H; g.strokeStyle = `rgba(30,14,4,${(.08 + rnd() * .14).toFixed(2)})`; g.beginPath(); g.moveTo(0, y); g.bezierCurveTo(W * .3, y + (rnd() - .5) * H * .08, W * .7, y + (rnd() - .5) * H * .08, W, y + (rnd() - .5) * H * .05); g.stroke(); } }
-    g.fillStyle = 'rgba(255,255,255,.07)'; g.fillRect(0, H * .015, W, Math.max(1, H * .008));
-    g.fillStyle = T.ACCENT; g.globalAlpha = .55; g.fillRect(0, H - H * .045, W, Math.max(1, H * .01)); g.globalAlpha = 1;
-    g.restore();
-    // le plateau : ombre, tranche métallique, points stroboscopiques qui tournent
-    g.save(); g.shadowColor = 'rgba(0,0,0,.6)'; g.shadowBlur = H * .04; g.shadowOffsetY = H * .012;
-    g.fillStyle = '#16161b'; g.beginPath(); g.arc(cx, cy, Rp, 0, 7); g.fill(); g.restore();
-    const rim = g.createConicGradient(0, cx, cy); ['#9a9dab', '#e9ebf1', '#7d808e', '#d4d7e0', '#8d909d', '#eef0f5', '#9a9dab'].forEach((c, i, a) => rim.addColorStop(i / (a.length - 1), c));
-    g.fillStyle = rim; g.beginPath(); g.arc(cx, cy, Rp, 0, 7); g.arc(cx, cy, Rp * .955, 0, 7, true); g.fill();
-    g.save(); g.translate(cx, cy); g.rotate(mp.deckAng * Math.PI / 180); g.fillStyle = 'rgba(20,20,26,.55)';
-    for (let i = 0; i < 90; i++) { g.rotate(Math.PI * 2 / 90); g.fillRect(Rp * .962, -Rp * .008, Rp * .03, Rp * .016); }
-    g.restore();
-    // le disque (fondu entre deux pochettes)
-    const fade = mp.coverOld ? Math.min(1, (now - mp.fadeAt) / 260) : 1;
-    if (fade < 1 && mp.coverOld) muRecord(g, cx, cy, R, mp.deckAng, mp.coverOld.img, 1); else mp.coverOld = null;
-    muRecord(g, cx, cy, R, mp.deckAng, mp.coverImg, fade);
+  function muDeck(g, w, h, now, playing) {
+    const s = Math.max(2, Math.round(h / 80)), W = Math.floor(w / s), H = Math.floor(h / s), b = muPixBuf('pxDeck', W, H), {put, rect, disc, line} = muPixKit(b), luxe = muLuxe();
+    mp.coverOld = null;
+    // le socle : bloc plat, liseré clair en haut, bande de couleur du thème en bas, coins coupés
+    const base = luxe ? '#6b4426' : muShade(T.CARD, -.45), cB = muCol(base), cBd = muCol(luxe ? '#3a2312' : muShade(T.CARD, -.72));
+    rect(1, 1, W - 2, H - 2, cB); rect(2, 1, W - 4, 1, muCol(muShade(base, .22))); rect(1, H - 4, W - 2, 1, muCol(T.ACCENT)); rect(1, H - 3, W - 2, 2, cBd);
+    for (const [x, y] of [[1, 1], [W - 2, 1], [1, H - 2], [W - 2, H - 2]]) put(x, y, 0);
+    if (luxe) { let q = 3; const rnd = () => (q = q * 16807 % 2147483647) / 2147483647; for (let i = 0; i < 14; i++) { const y = 3 + Math.floor(rnd() * (H - 9)), x = Math.floor(rnd() * W * .8); rect(x, y, 4 + Math.floor(rnd() * W * .3), 1, muCol('#5a371d')); } }
+    // le plateau : ombre, bord métallique, points stroboscopiques qui tournent
+    const pad = Math.round(H * .08), Rp = Math.floor(H / 2 - pad), cx = pad + Rp + 2, cy = Math.floor((H - 3) / 2), R = Rp - 2;
+    disc(cx + 1, cy + 2, Rp, cBd); disc(cx, cy, Rp, muCol('#8d909d')); disc(cx, cy, Rp - 1, muCol('#1a1a20'));
+    for (let i = 0; i < 24; i++) { const t = (mp.deckAng + i * 15) * Math.PI / 180; put(cx + Math.cos(t) * Rp, cy + Math.sin(t) * Rp, muCol(i % 2 ? '#c9ccd6' : '#55586a')); }
+    muPixRecord(b, cx, cy, R, mp.deckAng, mp.coverImg);
     // le bras : pivot à droite, il se pose sur le bord et avance vers l'étiquette avec le morceau
-    const px = Math.min(W - pad * 1.9, cx + Rp + (W - cx - Rp) * .55), py = pad + H * .12, dx = cx - px, dy = cy - py, D = Math.hypot(dx, dy), L = D * .93;
-    const at = rho => { const c = Math.max(-1, Math.min(1, (D * D + L * L - rho * rho) / (2 * D * L))); return Math.atan2(dy, dx) - Math.acos(c); };
+    const pvx = Math.round(Math.min(W - pad - 5, cx + Rp + (W - cx - Rp) * .55)), pvy = Math.round(pad + H * .14), dx = cx - pvx, dy = cy - pvy, D = Math.hypot(dx, dy), Lr = D * .93;
+    const at = rho => { const c = Math.max(-1, Math.min(1, (D * D + Lr * Lr - rho * rho) / (2 * D * Lr))); return Math.atan2(dy, dx) - Math.acos(c); };
     const dur = muAudio?.duration || mp.length || 0, pos = muAudio?.currentTime || mp.resume || 0, prog = dur ? Math.max(0, Math.min(1, pos / dur)) : 0;
-    const target = mp.cur ? at(R * .94 - (R * .94 - R * .45) * prog) : at(R * 1.22);
+    const target = mp.cur ? at(R * .94 - (R * .94 - R * .45) * prog) : at(R * 1.25);
     const dt = Math.min(64, now - (mp.armAt || now)); mp.armAt = now;
-    mp.arm = mp.arm == null ? at(R * 1.22) : mp.arm + (target - mp.arm) * Math.min(1, dt * .006);
+    mp.arm = mp.arm == null ? at(R * 1.25) : mp.arm + (target - mp.arm) * Math.min(1, dt * .006);
     mp.lift = (mp.lift ?? 1) + ((playing ? 0 : 1) - (mp.lift ?? 1)) * Math.min(1, dt * .008);
-    const arm = (shadow) => {
-      const o = shadow ? H * (.012 + mp.lift * .03) : 0, a = mp.arm, sx = px + Math.cos(a) * L + o, sy = py + Math.sin(a) * L + o * 1.3, bx = px + o, by = py + o;
-      g.save(); if (shadow) { g.globalAlpha = .32; g.filter = `blur(${Math.max(1, H * .012)}px)`; }
-      const tone = shadow ? '#000' : null, tw = H * .024;
-      // contrepoids
-      const cwx = bx - Math.cos(a) * L * .2, cwy = by - Math.sin(a) * L * .2;
-      g.lineCap = 'round'; g.lineWidth = tw * 2.4; g.strokeStyle = tone || muMetal(g, cwx - tw, cwy - tw, cwx + tw, cwy + tw, false);
-      g.beginPath(); g.moveTo(bx - Math.cos(a) * L * .1, by - Math.sin(a) * L * .1); g.lineTo(cwx, cwy); g.stroke();
-      // le tube
-      const ex = sx - Math.cos(a) * H * .07, ey = sy - Math.sin(a) * H * .07;
-      g.lineWidth = tw; g.strokeStyle = tone || muMetal(g, bx, by - tw, bx + tw, by + tw, luxe);
-      g.beginPath(); g.moveTo(bx, by); g.lineTo(ex, ey); g.stroke();
-      // la tête de lecture et sa cellule
-      g.translate(sx, sy); g.rotate(a + .45);
-      g.fillStyle = tone || '#1d1d24'; muRound(g, -H * .085, -H * .028, H * .11, H * .056, H * .012); g.fill();
-      if (!shadow) { g.fillStyle = T.ACCENT; g.fillRect(-H * .02, -H * .022, H * .035, H * .044); g.fillStyle = 'rgba(255,255,255,.25)'; g.fillRect(-H * .085, -H * .028, H * .11, H * .008); }
-      g.restore();
-      // le pivot
-      g.save(); if (shadow) { g.globalAlpha = .32; g.filter = `blur(${Math.max(1, H * .012)}px)`; }
-      const pr = H * .065, pv = g.createRadialGradient(bx - pr * .35, by - pr * .35, 0, bx, by, pr);
-      if (shadow) pv.addColorStop(0, '#000'), pv.addColorStop(1, '#000'); else (luxe ? ['#fff3cf', '#c99a3e', '#6e4a12'] : ['#ffffff', '#a4a7b4', '#4a4d5c']).forEach((c, i) => pv.addColorStop(i / 2, c));
-      g.fillStyle = pv; g.beginPath(); g.arc(bx, by, pr, 0, 7); g.fill();
-      if (!shadow) { g.fillStyle = '#23232b'; g.beginPath(); g.arc(bx, by, pr * .38, 0, 7); g.fill(); }
-      g.restore();
+    const metal = luxe ? ['#ffe9a8', '#c99a3e', '#6e4a12'] : ['#f2f3f7', '#a4a7b4', '#4a4d5c'];
+    const arm = sh => {
+      const o = sh ? 1 + Math.round(mp.lift * 2) : 0, A = mp.arm, ax = pvx + o, ay = pvy + o, sx = pvx + Math.cos(A) * Lr + o, sy = pvy + Math.sin(A) * Lr + o;
+      const hx = sx - Math.cos(A) * 4, hy = sy - Math.sin(A) * 4;
+      line(ax - Math.cos(A) * 2, ay - Math.sin(A) * 2, ax - Math.cos(A) * 5, ay - Math.sin(A) * 5, muCol(sh ? '#000' : metal[2]), 4);  // contrepoids
+      line(ax, ay, hx, hy, muCol(sh ? '#000' : metal[1]), 2); if (!sh) line(ax, ay - 1, hx, hy - 1, muCol(metal[0]), 1);  // le tube, éclairé dessus
+      line(hx, hy, sx, sy, muCol(sh ? '#000' : '#1d1d24'), 3); if (!sh) put(hx + (sx - hx) * .5, hy + (sy - hy) * .5, muCol(T.ACCENT));  // la tête de lecture
     };
-    arm(true); arm(false);
-    // le voyant et le sélecteur de vitesse
-    const lx = W - pad * 1.6, ly = H - pad * 1.7;
-    g.save(); g.fillStyle = playing ? (T.ACCENT_2 || T.ACCENT) : '#3a3a44'; if (playing) { g.shadowColor = T.ACCENT_2 || T.ACCENT; g.shadowBlur = H * .05; }
-    g.beginPath(); g.arc(lx, ly, H * .022, 0, 7); g.fill(); g.restore();
-    g.save(); g.fillStyle = 'rgba(255,255,255,.55)'; g.font = `bold ${Math.round(H * .055)}px Consolas, monospace`; g.textAlign = 'right';
-    g.fillText('33', lx - H * .05, ly + H * .02); g.fillStyle = 'rgba(255,255,255,.22)'; g.fillText('45', lx - H * .14, ly + H * .02); g.restore();
+    if (mp.lift > .05) arm(true); arm(false);
+    disc(pvx + 1, pvy + 1, 3, cBd); disc(pvx, pvy, 3, muCol(metal[1])); put(pvx - 1, pvy - 1, muCol(metal[0])); put(pvx - 2, pvy, muCol(metal[0])); rect(pvx, pvy, 1, 1, muCol('#23232b'));  // le pivot
+    // le voyant et la vitesse en points
+    const lx = W - pad - 3, ly = H - pad - 4; rect(lx, ly, 2, 2, muCol(playing ? T.ACCENT_2 || T.ACCENT : '#3a3a44'));
+    for (let i = 0; i < 3; i++) put(lx - 4 - i * 2, ly + 1, muCol(i ? '#4a4d5c' : '#c9ccd6'));
+    muPixShow(g, b, w, h, s);
   }
   function muSpin(now) {  // the record speeds up fast and slows down like a real turntable (shared by the big cover and the portable player)
     const playing = muAudio && !muAudio.paused;
@@ -1218,9 +1184,9 @@ export default async function (ctx) {
     box.ondblclick = e => { if (!e.target.closest('button, #mmSeek')) muShowTab(); };
     box.onpointerdown = e => {  // drag to move (remembered), a plain click = pause / play, like the video mini player
       if (e.button || e.target.closest('button, #mmSeek')) return;
-      const sx = e.clientX, sy = e.clientY, o = {...mp.miniPos}; let moved = false;
+      const sx = e.screenX, sy = e.screenY, o = {...mp.miniPos}; let moved = false;
       box.setPointerCapture(e.pointerId);
-      box.onpointermove = m => { if (!moved && Math.hypot(m.clientX - sx, m.clientY - sy) < 4) return; moved = true; box.classList.add('drag'); mp.miniPos = {x: o.x + m.clientX - sx, y: o.y + m.clientY - sy}; muMiniPlace(); };
+      box.onpointermove = m => { if (!moved && Math.hypot(m.screenX - sx, m.screenY - sy) < 4) return; moved = true; box.classList.add('drag'); mp.miniPos = {x: o.x + m.screenX - sx, y: o.y + m.screenY - sy}; muMiniPlace(); };
       box.onpointerup = () => { box.onpointermove = box.onpointerup = null; box.classList.remove('drag'); if (moved) { try { localStorage.neoMusicMini = JSON.stringify(mp.miniPos); } catch {} } else { muToggle(); setTimeout(muMiniPaint, 80); } };
     };
     try { mp.miniPos = JSON.parse(localStorage.neoMusicMini || 'null'); } catch {}
@@ -1230,6 +1196,9 @@ export default async function (ctx) {
   function muShowTab() { newTab('plugin:neodex.music'); }
   function muMiniPlace() {
     const box = $('muMini'), w = box.offsetWidth || 430, h = box.offsetHeight || 118;
+    if (host.float) {  // dans le bac à sable de NeoDex : c'est la frame entière qui flotte dans un coin de NeoDex, NeoDex la garde dans la fenêtre
+      const at = mp.miniPos; host.float({w, h, x: at?.x, y: at?.y}).then(p => { if (p && mp.miniOn) mp.miniPos = p; }).catch(() => {}); return;
+    }
     if (!mp.miniPos) {  // first time: bottom right, above the video mini player if one is shown
       const vid = document.body.classList.contains('hasMini') ? parseFloat(getComputedStyle(document.body).getPropertyValue('--my')) : NaN;
       mp.miniPos = {x: innerWidth - w - 24, y: (isFinite(vid) ? vid - 18 : document.body.clientHeight - 24) - h};
@@ -1245,6 +1214,7 @@ export default async function (ctx) {
     const show = away && !!mp.cur && !mp.miniOff && host.pref('pip') !== false && (playing || mp.miniOn);
     const appear = show && !mp.miniOn;
     box.classList.toggle('on', show);
+    if (host.float && show !== mp.miniOn) { document.body.classList.toggle('mmFloat', show); if (!show) host.float(null).catch(() => {}); }
     mp.miniOn = show;
     if (appear) { muMiniPaint(); muMiniPlace(); }  // filled first: its height is only known with its text
     if (show) muMiniPaint();
@@ -1262,8 +1232,8 @@ export default async function (ctx) {
     const cv = $('mmDisc'), g = cv.getContext('2d'), W = cv.width;
     g.clearRect(0, 0, W, W);
     if (mu.settings.vinyl) {
-      muRecord(g, W / 2, W / 2, W / 2 - 7, mp.deckAng || 0, mp.coverImg);
-      g.strokeStyle = T.ACCENT; g.lineWidth = 5; g.beginPath(); g.arc(W / 2, W / 2, W / 2 - 3, 0, 7); g.stroke();
+      const b = muPixBuf('pxMini', 46, 46), {disc} = muPixKit(b);  // le même disque en pixels, cerclé de la couleur du thème
+      disc(23, 23, 22, muCol(T.ACCENT)); muPixRecord(b, 23, 23, 20, mp.deckAng || 0, mp.coverImg); muPixShow(g, b, W, W, 4);
     } else if (mp.coverImg) { const im = mp.coverImg, s = Math.min(im.width, im.height); g.drawImage(im, (im.width - s) / 2, (im.height - s) / 2, s, s, 0, 0, W, W); }
     else { g.fillStyle = T.CARD_ALT; g.fillRect(0, 0, W, W); g.fillStyle = T.ACCENT; g.font = 'bold 80px Consolas'; g.textAlign = 'center'; g.fillText('?', W / 2, W / 2 + 28); }
     const sup = muSuperOn(now); $('mmSpec').parentElement.classList.toggle('sup', sup);  // the super visualiser follows into the portable player
