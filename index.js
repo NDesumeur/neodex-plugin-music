@@ -931,8 +931,8 @@ export default async function (ctx) {
     return {put, rect, disc, line};
   }
   function muPixRecord(b, cx, cy, R, angle, img) {  // le disque : étiquette = pochette qui tourne, sillons en deux tons, reflet fixe tramé
-    const {put} = muPixKit(b), a = angle * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a), lr = Math.max(3, Math.round(R * .42)), d = lr * 2, L = muPixLabel(img, d);
-    const base = muBlend('#100e16', T.CARD, .12), c0 = muCol(base), c1 = muCol(muShade(base, .08)), cGap = muCol(muShade(base, -.4)), cHi = muCol(muShade(base, .3)), cRim = muCol(muShade(base, .22)), cLip = muCol(muShade(base, -.3));
+    const {put} = muPixKit(b), a = angle * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a), lr = muLabelR(R), d = lr * 2, L = muPixLabel(img, d);
+    const base = muBlend('#0e0b14', muBlend(T.CARD, T.ACCENT, .3), .22), c0 = muCol(base), c1 = muCol(muShade(base, .08)), cGap = muCol(muShade(base, -.4)), cHi = muCol(muShade(base, .3)), cRim = muCol(muShade(base, .22)), cLip = muCol(muShade(base, -.3));
     for (let y = -R; y <= R; y++) for (let x = -R; x <= R; x++) {
       const d2 = x * x + y * y; if (d2 > R * R + R * .8) continue;
       const r = Math.sqrt(d2); let c;
@@ -951,20 +951,31 @@ export default async function (ctx) {
   }
   function muPixShow(g, b, w, h, s) {  // la petite image, agrandie d'un facteur entier, au centre
     b.c.getContext('2d').putImageData(b.id, 0, 0);
-    g.imageSmoothingEnabled = false; g.drawImage(b.c, Math.floor((w - b.W * s) / 2), Math.floor((h - b.H * s) / 2), b.W * s, b.H * s);
+    const ox = Math.floor((w - b.W * s) / 2), oy = Math.floor((h - b.H * s) / 2);
+    g.imageSmoothingEnabled = false; g.drawImage(b.c, ox, oy, b.W * s, b.H * s);
+    return [ox, oy];
   }
+  function muSharpLabel(g, x, y, r, angle, img, s) {  // la pochette au centre du disque : nette (pas en pixels), elle tourne avec lui
+    if (!img) return;
+    const k = Math.min(img.width, img.height);
+    g.save(); g.translate(x, y); g.rotate(angle * Math.PI / 180); g.beginPath(); g.arc(0, 0, r, 0, 7); g.clip();
+    g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; g.drawImage(img, (img.width - k) / 2, (img.height - k) / 2, k, k, -r, -r, r * 2, r * 2);
+    g.restore();
+    g.fillStyle = '#0b0a10'; g.fillRect(Math.round(x - s * 1.5), Math.round(y - s * 1.5), s * 3, s * 3); g.fillStyle = '#e8eaf0'; g.fillRect(Math.round(x - s / 2), Math.round(y - s / 2), s, s);  // l'axe
+  }
+  const muLabelR = R => Math.max(3, Math.round(R * .42));
   function muDeck(g, w, h, now, playing) {
     const s = Math.max(2, Math.round(h / 80)), W = Math.floor(w / s), H = Math.floor(h / s), b = muPixBuf('pxDeck', W, H), {put, rect, disc, line} = muPixKit(b), luxe = muLuxe();
     mp.coverOld = null;
     // le socle : bloc plat, liseré clair en haut, bande de couleur du thème en bas, coins coupés
-    const base = luxe ? '#6b4426' : muShade(T.CARD, -.45), cB = muCol(base), cBd = muCol(luxe ? '#3a2312' : muShade(T.CARD, -.72));
-    rect(1, 1, W - 2, H - 2, cB); rect(2, 1, W - 4, 1, muCol(muShade(base, .22))); rect(1, H - 4, W - 2, 1, muCol(T.ACCENT)); rect(1, H - 3, W - 2, 2, cBd);
-    for (const [x, y] of [[1, 1], [W - 2, 1], [1, H - 2], [W - 2, H - 2]]) put(x, y, 0);
-    if (luxe) { let q = 3; const rnd = () => (q = q * 16807 % 2147483647) / 2147483647; for (let i = 0; i < 14; i++) { const y = 3 + Math.floor(rnd() * (H - 9)), x = Math.floor(rnd() * W * .8); rect(x, y, 4 + Math.floor(rnd() * W * .3), 1, muCol('#5a371d')); } }
+    const base = muShade(muBlend(T.CARD, T.ACCENT, .2), -.3), cB = muCol(base), cBd = muCol(muShade(base, -.5)), OL = muCol(muShade(T.CARD, -.88));  // aux couleurs du thème
+    rect(1, 0, W - 2, H, OL); rect(0, 1, W, H - 2, OL);  // le contour
+    rect(1, 1, W - 2, H - 2, cB); rect(2, 1, W - 4, 1, muCol(muShade(base, .3))); rect(1, H - 4, W - 2, 1, muCol(T.ACCENT)); rect(1, H - 3, W - 2, 2, cBd);
     // le plateau : ombre, bord métallique, points stroboscopiques qui tournent
     const pad = Math.round(H * .08), Rp = Math.floor(H / 2 - pad), cx = pad + Rp + 2, cy = Math.floor((H - 3) / 2), R = Rp - 2;
-    disc(cx + 1, cy + 2, Rp, cBd); disc(cx, cy, Rp, muCol('#8d909d')); disc(cx, cy, Rp - 1, muCol('#1a1a20'));
-    for (let i = 0; i < 24; i++) { const t = (mp.deckAng + i * 15) * Math.PI / 180; put(cx + Math.cos(t) * Rp, cy + Math.sin(t) * Rp, muCol(i % 2 ? '#c9ccd6' : '#55586a')); }
+    const rim = luxe ? ['#ffe9a8', '#c99a3e'] : [muBlend('#d4d7e0', T.ACCENT, .25), muBlend('#7d808e', T.ACCENT, .25)];
+    disc(cx + 1, cy + 2, Rp + 1, cBd); disc(cx, cy, Rp + 1, OL); disc(cx, cy, Rp, muCol(rim[1])); disc(cx, cy, Rp - 1, muCol(muShade(T.CARD, -.78)));
+    for (let i = 0; i < 24; i++) { const t = (mp.deckAng + i * 15) * Math.PI / 180; put(cx + Math.cos(t) * Rp, cy + Math.sin(t) * Rp, muCol(i % 2 ? rim[0] : muShade(rim[1], -.4))); }
     muPixRecord(b, cx, cy, R, mp.deckAng, mp.coverImg);
     // le bras : pivot à droite, il se pose sur le bord et avance vers l'étiquette avec le morceau
     const pvx = Math.round(Math.min(W - pad - 5, cx + Rp + (W - cx - Rp) * .55)), pvy = Math.round(pad + H * .14), dx = cx - pvx, dy = cy - pvy, D = Math.hypot(dx, dy), Lr = D * .93;
@@ -982,12 +993,17 @@ export default async function (ctx) {
       line(ax, ay, hx, hy, muCol(sh ? '#000' : metal[1]), 2); if (!sh) line(ax, ay - 1, hx, hy - 1, muCol(metal[0]), 1);  // le tube, éclairé dessus
       line(hx, hy, sx, sy, muCol(sh ? '#000' : '#1d1d24'), 3); if (!sh) put(hx + (sx - hx) * .5, hy + (sy - hy) * .5, muCol(T.ACCENT));  // la tête de lecture
     };
-    if (mp.lift > .05) arm(true); arm(false);
-    disc(pvx + 1, pvy + 1, 3, cBd); disc(pvx, pvy, 3, muCol(metal[1])); put(pvx - 1, pvy - 1, muCol(metal[0])); put(pvx - 2, pvy, muCol(metal[0])); rect(pvx, pvy, 1, 1, muCol('#23232b'));  // le pivot
+    { const A = mp.arm, sx = pvx + Math.cos(A) * Lr, sy = pvy + Math.sin(A) * Lr, hx = sx - Math.cos(A) * 4, hy = sy - Math.sin(A) * 4;  // le contour du bras
+      if (mp.lift > .05) arm(true);
+      line(pvx - Math.cos(A) * 2, pvy - Math.sin(A) * 2, pvx - Math.cos(A) * 5, pvy - Math.sin(A) * 5, OL, 6); line(pvx, pvy, hx, hy, OL, 4); line(hx, hy, sx, sy, OL, 5); }
+    arm(false);
+    disc(pvx + 1, pvy + 1, 4, cBd); disc(pvx, pvy, 4, OL); disc(pvx, pvy, 3, muCol(metal[1])); put(pvx - 1, pvy - 1, muCol(metal[0])); put(pvx - 2, pvy, muCol(metal[0])); rect(pvx, pvy, 1, 1, muCol('#23232b'));  // le pivot
     // le voyant et la vitesse en points
-    const lx = W - pad - 3, ly = H - pad - 4; rect(lx, ly, 2, 2, muCol(playing ? T.ACCENT_2 || T.ACCENT : '#3a3a44'));
+    const lx = W - pad - 3, ly = H - pad - 4;
+    rect(lx - 1, ly - 1, 4, 4, OL); rect(lx, ly, 2, 2, muCol(playing ? T.ACCENT_2 || T.ACCENT : '#3a3a44'));
     for (let i = 0; i < 3; i++) put(lx - 4 - i * 2, ly + 1, muCol(i ? '#4a4d5c' : '#c9ccd6'));
-    muPixShow(g, b, w, h, s);
+    const [ox, oy] = muPixShow(g, b, w, h, s), lr = muLabelR(R);
+    muSharpLabel(g, ox + (cx + .5) * s, oy + (cy + .5) * s, (lr - .5) * s, mp.deckAng, mp.coverImg, s);
   }
   function muSpin(now) {  // the record speeds up fast and slows down like a real turntable (shared by the big cover and the portable player)
     const playing = muAudio && !muAudio.paused;
@@ -1233,7 +1249,7 @@ export default async function (ctx) {
     g.clearRect(0, 0, W, W);
     if (mu.settings.vinyl) {
       const b = muPixBuf('pxMini', 46, 46), {disc} = muPixKit(b);  // le même disque en pixels, cerclé de la couleur du thème
-      disc(23, 23, 22, muCol(T.ACCENT)); muPixRecord(b, 23, 23, 20, mp.deckAng || 0, mp.coverImg); muPixShow(g, b, W, W, 4);
+      disc(23, 23, 22, muCol(T.ACCENT)); muPixRecord(b, 23, 23, 20, mp.deckAng || 0, mp.coverImg); const [ox, oy] = muPixShow(g, b, W, W, 4); muSharpLabel(g, ox + 23.5 * 4, oy + 23.5 * 4, (muLabelR(20) - .5) * 4, mp.deckAng || 0, mp.coverImg, 4);
     } else if (mp.coverImg) { const im = mp.coverImg, s = Math.min(im.width, im.height); g.drawImage(im, (im.width - s) / 2, (im.height - s) / 2, s, s, 0, 0, W, W); }
     else { g.fillStyle = T.CARD_ALT; g.fillRect(0, 0, W, W); g.fillStyle = T.ACCENT; g.font = 'bold 80px Consolas'; g.textAlign = 'center'; g.fillText('?', W / 2, W / 2 + 28); }
     const sup = muSuperOn(now); $('mmSpec').parentElement.classList.toggle('sup', sup);  // the super visualiser follows into the portable player
