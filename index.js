@@ -3,7 +3,7 @@
 // Elle tourne dans le bac à sable de NeoDex, avec ses outils d'interface (ctx.host) et seulement les autorisations de son plugin.json.
 const HTML = "";
 const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strips); colours are the theme's, set on #mu by muApplyTheme */
-#plug_neobase_music{overflow:hidden;background:#101425}
+#plug_neodex_music{overflow:hidden;background:#101425}
 .mu{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--mbg);color:var(--mtext);font:13px Consolas,'Cascadia Mono',monospace;user-select:none;overflow:hidden}
 :where(.mu) button{all:unset;box-sizing:border-box;cursor:var(--cp,pointer)}
 :where(.mu) :is(input,select){font:inherit;color:inherit}
