@@ -1,9 +1,9 @@
 {
   "pluginId": "neodex.music",
   "repo": "NDesumeur/neodex-plugin-music",
-  "version": "1.7.0",
-  "sha256": "4290e290e41a6e42c9c6b59641eb29016f94f95b2940e61ec257f75921c61074",
-  "approvedAt": "2026-11-04T10:05:10.912Z",
+  "version": "1.7.1",
+  "sha256": "6db624a8bcbfb94372e31ba0f6ddc83362b8b0972f792088409a25119b0d755d",
+  "approvedAt": "2026-11-04T15:58:36.038Z",
   "neobase": ">=4.1.0",
-  "signature": "Fj5EvYTA/RhYEcBetaC1g4PAoYr6Hh2s0b4uGU6hwQnpAbGSkiHtzPfOyr3I0ElC+s0GVksD2qm+GBtvcGDQAQ=="
+  "signature": "nVengF8h+QRNRNwXqJ4u5DBn967+k4nRq1yWJz4JELjaRn5nkDE5sS3a2/fNSbQK0EHB86wMwLfWloD+rFUiBg=="
 }
