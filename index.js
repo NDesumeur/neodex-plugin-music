@@ -1,6 +1,6 @@
 // NeoMusic : ton appli d'origine (HTML et code inchangés), livrée en plugin.
-// Ses données sont dans le dossier du plugin, que NeoBase sauvegarde (synchro cloud et sauvegardes) ; à la première ouverture elle reprend ce que tu avais dans NeoBase.
-// Elle tourne dans le bac à sable de NeoBase, avec ses outils d'interface (ctx.host) et seulement les autorisations de son plugin.json.
+// Ses données sont dans le dossier du plugin, que NeoDex sauvegarde (synchro cloud et sauvegardes) ; à la première ouverture elle reprend ce que tu avais dans NeoDex.
+// Elle tourne dans le bac à sable de NeoDex, avec ses outils d'interface (ctx.host) et seulement les autorisations de son plugin.json.
 const HTML = "";
 const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strips); colours are the theme's, set on #mu by muApplyTheme */
 #plug_neobase_music{overflow:hidden;background:#101425}
@@ -43,7 +43,7 @@ const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strip
 :where(.mu,.mu *,.muLayer,.muLayer *,.muWin,.muWin *,.muMenu,.muMenu *,.muMini,.muMini *){text-align:left}
 /* main column: three cards */
 .muMain{flex:1;min-width:0;display:flex;flex-direction:column;gap:16px;padding:18px 18px 18px 0;margin-left:0}
-.mu .muMain{margin:0;height:auto;overflow:hidden;z-index:auto}  /* NeoBase styles every <main> */
+.mu .muMain{margin:0;height:auto;overflow:hidden;z-index:auto}  /* NeoDex styles every <main> */
 .muCard{background:var(--mcard);border:1px solid var(--mborder);flex:none;animation:muReveal .25s ease-out}
 @keyframes muReveal{from{transform:translateY(6px)}}  /* no fade: a hidden window would leave it half-faded */
 .muNow{display:flex;align-items:center;gap:18px;padding:18px 20px}
@@ -336,7 +336,7 @@ div.muCheck pre,.muLogs{margin:6px 0 0;white-space:pre-wrap;word-break:break-wor
 export default async function (ctx) {
   const view = ctx.view;
   // le côté système de NeoMusic (yt-dlp, fichiers, raccourcis globaux) vit dans le main.js du plugin : « neo.musicXxx » y est redirigé
-  const MU_ID = 'neobase.music', MU_EV = { onMusicHotkey: 'music:hotkey', onMusicProgress: 'music:progress' };
+  const MU_ID = 'neodex.music', MU_EV = { onMusicHotkey: 'music:hotkey', onMusicProgress: 'music:progress' };
   const MU_DOC = cb => ctx.neo.onPluginDataChanged(e => { if (e.id === MU_ID && e.name === 'library') cb('music'); });  // un autre PC a changé la bibliothèque
   const neo = new Proxy({}, { get: (_, k) => { const n = ctx.neo;  // cible vide : contextBridge fige les propriétés de neo
     if (typeof k !== 'string') return n[k];
@@ -345,18 +345,18 @@ export default async function (ctx) {
     const m = /^music([A-Z]\w*)$/.exec(k);
     return m ? (...a) => n.pluginMain(MU_ID, 'music:' + (m[1] === 'ImportMuPlayer' ? 'pickMuPlayer' : m[1][0].toLowerCase() + m[1].slice(1)), ...a) : n[k];
   } });
-  if (!ctx.host) { view.textContent = "Ce plugin doit être approuvé par NeoBase pour s'ouvrir."; return; }
+  if (!ctx.host) { view.textContent = "Ce plugin doit être approuvé par NeoDex pour s'ouvrir."; return; }
   const { el, toast, sfx, ask, newTab, pixIcon, PIX, WX } = ctx.host;
   const host = ctx.host;
   const folder = ctx.folder, legacy = ctx.legacy || {};
   if (!document.getElementById('muStyle')) { const st = document.createElement('style'); st.id = 'muStyle'; st.textContent = MU_CSS; document.head.append(st); }  // le style de NeoMusic vit dans le plugin
   view.innerHTML = HTML;
-  const $ = id => id === "musicApp" ? view : (view.querySelector('#' + id) || document.getElementById(id));  // les identifiants de ta vue, sans toucher à ceux du reste de NeoBase
+  const $ = id => id === "musicApp" ? view : (view.querySelector('#' + id) || document.getElementById(id));  // les identifiants de ta vue, sans toucher à ceux du reste de NeoDex
   const doc = async n => { try { return await folder.read(n); } catch { return null; } };
   const ymd = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
   // ---- ton code d'origine ----
-  /* NeoMusic: MuPlayer (NDesumeur) rebuilt inside NeoBase. Same layout, themes, vinyl, spectrum, waveform, playlists online / offline,
+  /* NeoMusic: MuPlayer (NDesumeur) rebuilt inside NeoDex. Same layout, themes, vinyl, spectrum, waveform, playlists online / offline,
      imports, recommendations, stats, achievements, levels. The whole library lives in music.json (synced between PCs and in the backups);
      music files and covers are a cache on each PC (music-main.js), fetched again from their URL when a PC does not have them. Part 2: music2.js. */
 
@@ -664,8 +664,8 @@ export default async function (ctx) {
   function muArt(t, size, cls = '') {  // ArtworkFrame: framed cover, or the "?" placeholder; a cover missing on this PC is fetched again
     const box = mh('div.muArt' + cls, {style: {width: size + 'px', height: size + 'px'}});
     if (t?.cover && !mu.settings.noImages) {
-      const img = mh('img', {src: 'neoplugin://neobase.music/cover/' + encodeURIComponent(t.cover), loading: 'lazy', draggable: 'false', alt: ''});
-      img.onerror = () => { img.remove(); muFetchCover(t).then(ok => { if (ok) box.append(mh('img', {src: 'neoplugin://neobase.music/cover/' + encodeURIComponent(t.cover) + '?r=' + Date.now(), alt: ''})); }); };
+      const img = mh('img', {src: 'neoplugin://neodex.music/cover/' + encodeURIComponent(t.cover), loading: 'lazy', draggable: 'false', alt: ''});
+      img.onerror = () => { img.remove(); muFetchCover(t).then(ok => { if (ok) box.append(mh('img', {src: 'neoplugin://neodex.music/cover/' + encodeURIComponent(t.cover) + '?r=' + Date.now(), alt: ''})); }); };
       box.append(img);
     }
     return box;
@@ -778,7 +778,7 @@ export default async function (ctx) {
   function muVolumeApply() { if (muNodes) muNodes.gain.gain.value = Math.max(0, mu.settings.volume * (mu.settings.replaygain ? mp.gain : 1)); }
   function muSetVolume(v) { mu.settings.volume = Math.max(0, Math.min(1, v)); if ($('muVol')) $('muVol').value = Math.round(mu.settings.volume * 100); muVolumeApply(); muSave(2000); }
   function muSetEq(name) { mu.settings.equalizer = name; $('muEq').value = name; muAudioSettings(); muSave(); }
-  const muSrc = t => t.file && mp.exists[t.file] !== false ? 'neoplugin://neobase.music/file/' + encodeURIComponent(t.file) : t.url ? 'neoplugin://neobase.music/stream/?u=' + encodeURIComponent(t.url) : '';
+  const muSrc = t => t.file && mp.exists[t.file] !== false ? 'neoplugin://neodex.music/file/' + encodeURIComponent(t.file) : t.url ? 'neoplugin://neodex.music/stream/?u=' + encodeURIComponent(t.url) : '';
 
   /* ---------- play, pause, next, previous (anti-bounce 120 ms + 0.5 s between manual changes, like MuPlayer) ---------- */
   function muRequest(i, opts = {}) {
@@ -896,8 +896,8 @@ export default async function (ctx) {
     if (!t?.cover || mu.settings.noImages) return;
     const img = new Image(); img.crossOrigin = 'anonymous';
     img.onload = () => { if (mp.cur === t) { mp.coverImg = img; mp.disc = null; mp.fadeAt = performance.now(); } };
-    img.onerror = () => muFetchCover(t).then(ok => { if (ok && mp.cur === t) img.src = 'neoplugin://neobase.music/cover/' + encodeURIComponent(t.cover) + '?r=' + Date.now(); });
-    img.src = 'neoplugin://neobase.music/cover/' + encodeURIComponent(t.cover);
+    img.onerror = () => muFetchCover(t).then(ok => { if (ok && mp.cur === t) img.src = 'neoplugin://neodex.music/cover/' + encodeURIComponent(t.cover) + '?r=' + Date.now(); });
+    img.src = 'neoplugin://neodex.music/cover/' + encodeURIComponent(t.cover);
   }
   function muDisc(img) {  // the record: dark body, grooves, the cover as the centre label, spindle hole (MuPlayer's build_now_cover_disc)
     const S = 248, c = document.createElement('canvas'); c.width = c.height = S;
@@ -1126,7 +1126,7 @@ export default async function (ctx) {
     }
   }
 
-  /* ---------- portable player: when NeoMusic's tab is left while a song plays, a small player stays in a corner of NeoBase ---------- */
+  /* ---------- portable player: when NeoMusic's tab is left while a song plays, a small player stays in a corner of NeoDex ---------- */
   const MU_PIX = {
     prevt: ['##....#', '##...##', '##..###', '##.####', '##..###', '##...##', '##....#'],
     heart: ['.##.##.', '#######', '#######', '#######', '.#####.', '..###..', '...#...'],
@@ -1158,7 +1158,7 @@ export default async function (ctx) {
     document.body.append(box);
     addEventListener('resize', () => mp.miniOn && muMiniPlace());
   }
-  function muShowTab() { newTab('plugin:neobase.music'); }
+  function muShowTab() { newTab('plugin:neodex.music'); }
   function muMiniPlace() {
     const box = $('muMini'), w = box.offsetWidth || 430, h = box.offsetHeight || 118;
     if (!mp.miniPos) {  // first time: bottom right, above the video mini player if one is shown
@@ -1352,7 +1352,7 @@ export default async function (ctx) {
     return urls.length;
   }
 
-  /* ---------- NeoBase glue: global shortcuts, the tab ---------- */
+  /* ---------- NeoDex glue: global shortcuts, the tab ---------- */
   function muHotkeys() {
     const map = {};
     for (const [key, , , def] of MU_SHORTCUTS) map[key] = key in mu.settings.shortcuts ? mu.settings.shortcuts[key] : def;
@@ -1647,7 +1647,7 @@ export default async function (ctx) {
     const show = (title, url, cover) => {
       if (req !== mp.recoReq) return;
       mp.recoUrl = url || ''; $('muReco').textContent = title || 'Aucune recommandation disponible.';
-      $('muRecoCover').replaceChildren(...(cover && !mu.settings.noImages ? [mh('img', {src: 'neoplugin://neobase.music/cover/' + encodeURIComponent(cover), alt: ''})] : []));
+      $('muRecoCover').replaceChildren(...(cover && !mu.settings.noImages ? [mh('img', {src: 'neoplugin://neodex.music/cover/' + encodeURIComponent(cover), alt: ''})] : []));
     };
     muCaps ||= await neo.musicCaps().catch(() => muDefaultCaps);
     const cur = mp.cur || muPl(mp.pl).tracks.at(-1);
@@ -1838,7 +1838,7 @@ export default async function (ctx) {
 
   /* ---------- Succès ---------- */
   function muAchievements() {
-    const list = MU_ACHIEVEMENTS.filter(a => a[0] !== 'hidden_font' || mu.achievements.unlocked.hidden_font);  // the Discord bonus font has no place in NeoBase
+    const list = MU_ACHIEVEMENTS.filter(a => a[0] !== 'hidden_font' || mu.achievements.unlocked.hidden_font);  // the Discord bonus font has no place in NeoDex
     const w = muWindow('Succès', 760), un = mu.achievements.unlocked;
     w.body.append(mh('div.muWHead', {}, muH('SUCCÈS'), mh('b.muAchCount', {text: `${list.filter(a => un[a[0]]).length} / ${list.length}`})), muNote('Clique sur un succès verrouillé pour voir comment le débloquer.'));
     for (const [id, name, desc] of list) {
@@ -1926,7 +1926,7 @@ export default async function (ctx) {
     })));
     // shortcuts: click a field then press the combination (Échap cancels, Retour arrière / Suppr clears)
     const captured = {};
-    b.append(muSec('RACCOURCIS CLAVIER'), muNote('Clique dans un champ puis appuie sur la combinaison souhaitée (Échap pour annuler, Retour arrière ou Suppr pour désactiver ce raccourci). Un raccourci doit inclure Ctrl, Alt ou Shift, sauf les touches de fonction (F1-F12) qui peuvent être utilisées seules. Ils marchent partout dans Windows, même NeoBase en arrière-plan.'));
+    b.append(muSec('RACCOURCIS CLAVIER'), muNote('Clique dans un champ puis appuie sur la combinaison souhaitée (Échap pour annuler, Retour arrière ou Suppr pour désactiver ce raccourci). Un raccourci doit inclure Ctrl, Alt ou Shift, sauf les touches de fonction (F1-F12) qui peuvent être utilisées seules. Ils marchent partout dans Windows, même NeoDex en arrière-plan.'));
     for (const [key, label, , def] of MU_SHORTCUTS) {
       captured[key] = key in st.shortcuts ? st.shortcuts[key] : def;
       const f = mh('input.muKey', {readonly: true, value: captured[key] || 'Aucun'});
@@ -1946,7 +1946,7 @@ export default async function (ctx) {
     b.append(mh('div.muWBtns', {}, muButton('VÉRIFIER LA BIBLIOTHÈQUE', () => muLibraryCheck())));
     b.append(muSec('JOURNAL'), muNote('Consulte le journal des erreurs de NeoMusic (téléchargements, lecture, imports) pour diagnostiquer un problème.'), mh('div.muWBtns', {}, muButton('VOIR LES LOGS', () => muLogs())));
     b.append(muSec('STOCKAGE'), muNote('Calcule le poids réel de NeoMusic sur le disque, détaillé par catégorie (musiques, pochettes, caches...).'), mh('div.muWBtns', {}, muButton('CALCULER LE POIDS DE L\'APPLI', () => muStorage())));
-    b.append(muSec('SAUVEGARDE / CAPSULE'), muNote('Ta bibliothèque, tes playlists, tes stats et tes succès sont déjà dans la sauvegarde automatique de NeoBase et la synchro entre PC (les musiques se retéléchargent toutes seules sur un autre PC). La capsule regroupe en plus les fichiers audio et les pochettes dans un seul .zip.'),
+    b.append(muSec('SAUVEGARDE / CAPSULE'), muNote('Ta bibliothèque, tes playlists, tes stats et tes succès sont déjà dans la sauvegarde automatique de NeoDex et la synchro entre PC (les musiques se retéléchargent toutes seules sur un autre PC). La capsule regroupe en plus les fichiers audio et les pochettes dans un seul .zip.'),
       mh('div.muWBtns', {}, muButton('EXPORTER UNE CAPSULE', async () => { muStatus('Création de la capsule...', T.ACCENT_2); try { const f = await neo.musicExportCapsule(mu); muStatus(f ? 'Capsule créée : ' + f.split(/[\\/]/).pop() : 'Prêt', T.ACCENT_2); } catch (e) { muStatus('Échec de la sauvegarde', T.DANGER); muNotify('error', 'Sauvegarde', 'Impossible de créer la capsule.\n\n' + e.message); } }),
         muButton('IMPORTER UNE CAPSULE', async () => {
           if (!await muConfirm('Importer une capsule', 'Ceci va remplacer ta bibliothèque NeoMusic actuelle (playlists, stats, succès et réglages) par celle de la capsule, en gardant tous les fichiers audio. Continuer ?')) return;
@@ -2007,13 +2007,13 @@ export default async function (ctx) {
     if (ms.eq_band_gains && typeof ms.eq_band_gains === 'object') set.eqBands = MU_BANDS.map(f => +ms.eq_band_gains[f] || 0);
     const sk = {shortcut_play: 'play', shortcut_previous: 'previous', shortcut_next: 'next', shortcut_volume_up: 'volumeUp', shortcut_volume_down: 'volumeDown', shortcut_mute: 'mute', shortcut_seek_forward: 'seekForward',
       shortcut_seek_backward: 'seekBackward', shortcut_shuffle: 'shuffle', shortcut_favorite: 'favorite', shortcut_fullscreen: 'fullscreen', shortcut_mini_player: 'mini'};
-    for (const [from, to] of Object.entries(sk)) if (from in ms && ms[from] !== 'Ctrl+Alt+N') set.shortcuts[to] = ms[from];  // Ctrl+Alt+N stays NeoBase's
+    for (const [from, to] of Object.entries(sk)) if (from in ms && ms[from] !== 'Ctrl+Alt+N') set.shortcuts[to] = ms[from];  // Ctrl+Alt+N stays NeoDex's
     if (!again) mu.trash.push(...(d.trash || []).map(e => ({item: {...e.item, display_title: e.item.display_title || e.title}, playlist: e.playlist, title: e.title, deleted_at: e.deleted_at})));
     muSave(); muApplyTheme(); muApplySettingsUi(); muLoadPlaylist(mp.pl); muHotkeys();
     muStatus('MuPlayer importé', T.ACCENT_2);
     muNotify('success', 'MuPlayer', `${added} musique(s) dans ${d.playlists.length} playlist(s)\n${d.copied.files} fichier(s) audio et ${d.copied.covers} pochette(s) copiés\n${+s.plays || 0} lecture(s) et ${Object.keys(a.unlocked || {}).length} succès récupérés`);
   }
-  // ---- ce que NeoBase doit savoir de ce plugin ----
+  // ---- ce que NeoDex doit savoir de ce plugin ----
   host.hooks({ onTabChange: () => muMiniSync(), onClose: () => { if (muAudio && !muAudio.paused) muPause(); }, audio: () => muAudio ? { audible: !muAudio.paused && !muAudio.muted, muted: muAudio.muted } : null, mute: on => { if (muAudio) muAudio.muted = on; }, playing: () => !!muAudio && !muAudio.paused && !muAudio.muted });  // son de l'onglet, mini-lecteur, fermeture de l'onglet, NeoMe qui danse
   // ---- fin ----
   ctx.onOpen(() => { muOpen(); });

@@ -1,6 +1,6 @@
 {
-  "pluginId": "neobase.music",
-  "repo": "NDesumeur/neobase-plugin-music",
+  "pluginId": "neodex.music",
+  "repo": "NDesumeur/neodex-plugin-music",
   "version": "1.6.5",
   "sha256": "c30a7ac54a470bdb5bc0dd483241a336052877242f808b152c9c7132ffaeb1b9",
   "approvedAt": "2026-11-04T07:40:54.287Z",

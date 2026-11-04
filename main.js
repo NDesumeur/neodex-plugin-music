@@ -1,4 +1,4 @@
-// NeoMusic, the NeoBase version of MuPlayer (the system side of the plugin, loaded by NeoBase once the plugin is signed and has full access): music files and covers on disk, YouTube / SoundCloud / Deezer through yt-dlp (Python),
+// NeoMusic, the NeoDex version of MuPlayer (the system side of the plugin, loaded by NeoDex once the plugin is signed and has full access): music files and covers on disk, YouTube / SoundCloud / Deezer through yt-dlp (Python),
 // the global shortcuts, capsules and the import of an existing MuPlayer folder. The page keeps the library itself
 // (music.json, synced between PCs): files and covers are only caches here, fetched again from their URL on a PC that does not have them.
 const { app, net, nativeImage, globalShortcut, shell, dialog } = require('electron');
@@ -16,7 +16,7 @@ if (!ffmpeg && fs.existsSync(FF())) ffmpeg = FF();
 
 /* ---------- yt-dlp et ffmpeg : installés tout seuls dans le dossier de NeoMusic (ni Python ni installation à la main), yt-dlp remis à jour ---------- */
 async function grab(url, dest) {
-  const r = await fetch(url, { headers: { 'User-Agent': 'NeoBase' }, signal: AbortSignal.timeout(600000) });
+  const r = await fetch(url, { headers: { 'User-Agent': 'NeoDex' }, signal: AbortSignal.timeout(600000) });
   if (!r.ok) throw new Error('téléchargement impossible (' + r.status + ') : ' + url.split('/').pop());
   fs.mkdirSync(path.dirname(dest), { recursive: true });
   fs.writeFileSync(dest + '.tmp', Buffer.from(await r.arrayBuffer())); fs.renameSync(dest + '.tmp', dest);
@@ -293,7 +293,7 @@ async function serveStream(pageUrl, req) {
   return new Response(r.body, { status: r.status, headers });
 }
 
-/* ---------- global shortcuts (the ones without Ctrl/Alt/Shift stay inside NeoBase) ---------- */
+/* ---------- global shortcuts (the ones without Ctrl/Alt/Shift stay inside NeoDex) ---------- */
 let hotkeys = {}, sendHotkey = () => {};  // sendHotkey : posé par register()
 const accel = s => s.replace(/Ctrl/g, 'Control').replace(/\bEsc\b/, 'Escape');
 function registerHotkeys() {
@@ -352,7 +352,7 @@ const tar = (args, cwd) => new Promise((ok, ko) => { const p = spawn('tar', args
 function register({ ipcMain, getWin, emit, serveFile, protocol, onShortcutReset, readDoc, writeDoc }) {
   sendHotkey = action => emit('music:hotkey', action);
   onShortcutReset(registerHotkeys);  // le cœur défait tous les raccourcis globaux quand il refait le sien
-  protocol(async req => {  // neoplugin://neobase.music/file/<nom> | cover/<nom> | stream/?u=<adresse>
+  protocol(async req => {  // neoplugin://neodex.music/file/<nom> | cover/<nom> | stream/?u=<adresse>
     const u = new URL(req.url), [, kind, ...rest] = u.pathname.split('/'), name = decodeURIComponent(rest.join('/'));
     if (kind === 'file') return serveFile(inside(MUSIC(), name), req);
     if (kind === 'cover') return serveFile(inside(COVERS(), name), req);
