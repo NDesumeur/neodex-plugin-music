@@ -47,8 +47,10 @@ const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strip
 .muCard{background:var(--mcard);border:1px solid var(--mborder);flex:none;animation:muReveal .25s ease-out}
 @keyframes muReveal{from{transform:translateY(6px)}}  /* no fade: a hidden window would leave it half-faded */
 .muNow{display:flex;align-items:center;gap:18px;padding:18px 20px}
-.muCoverWrap{flex:none;width:130px;height:130px;display:grid;place-items:center}
-.muCoverWrap canvas{width:130px;height:130px}
+.muCoverWrap{flex:none;width:270px;height:200px;display:grid;place-items:center}
+.muCoverWrap.rect{width:130px;height:130px}
+.muCoverWrap canvas{width:100%;height:100%}
+@media (max-width:900px){.muCoverWrap{width:200px;height:150px}}
 .muInfo{flex:1;min-width:0;display:flex;flex-direction:column}
 .muKick{color:var(--macc);font-weight:bold;font-size:12px;letter-spacing:.3px} .muKick.alt{color:var(--macc2)}
 .muTitle{margin:4px 0 2px;font-size:20px;font-weight:bold;line-height:1.3;height:2.6em;overflow:hidden;word-break:break-word;user-select:text}
@@ -444,7 +446,7 @@ export default async function (ctx) {
 
   /* ---------- the library (music.json) ---------- */
   const MU_DEFAULT_SETTINGS = {theme: 'Nova', volume: .5, equalizer: 'Normal', eqBands: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], limiter: false, balance: 0, visualizer: true, waveform: true, vinyl: true,
-    replaygain: true, coverFade: true, dateAdded: false, releaseDate: false, mini: false, gallery: false, noImages: false, weeklyWeek: '', superVis: false, pixelDisc: true, recoSeen: [], pixelUi: true, shortcuts: {}};
+    replaygain: true, coverFade: true, dateAdded: false, releaseDate: false, mini: false, gallery: false, noImages: false, weeklyWeek: '', superVis: false, deckLuxe: true, recoSeen: [], pixelUi: true, shortcuts: {}};
   function muBlank() {
     return {v: 1, settings: {...MU_DEFAULT_SETTINGS}, playlists: MU_SYSTEM.map(name => ({name, mode: 'offline', tracks: []})),
       stats: {plays: 0, seconds: 0, songs: {}, songs_time: {}, artists: {}, artists_time: {}, daily: {}, history: [], xp_level_seen: 1},
@@ -537,7 +539,7 @@ export default async function (ctx) {
           ),
         mh('main.muMain', {},
           mh('section.muCard.muNow', {},
-            mh('div.muCoverWrap#muCoverWrap', {}, mh('canvas#muCover', {width: 260, height: 260})),
+            mh('div.muCoverWrap#muCoverWrap', {}, mh('canvas#muCover', {width: 540, height: 400})),
             mh('div.muInfo', {},
               mh('span.muKick', {text: 'LECTURE EN COURS'}), mh('div.muTitle#muTitle', {text: 'Aucune musique sélectionnée'}), mh('span.muTime#muTime', {text: '00:00 / 00:00'}),
               mh('canvas.muProgress#muProgress', {height: 36}), mh('canvas.muSpectrum#muSpectrum', {height: 64}),
@@ -899,83 +901,150 @@ export default async function (ctx) {
     img.onerror = () => muFetchCover(t).then(ok => { if (ok && mp.cur === t) img.src = 'neoplugin://neodex.music/cover/' + encodeURIComponent(t.cover) + '?r=' + Date.now(); });
     img.src = 'neoplugin://neodex.music/cover/' + encodeURIComponent(t.cover);
   }
-  function muDisc(img) {  // the record: dark body, grooves, the cover as the centre label, spindle hole (MuPlayer's build_now_cover_disc)
-    const S = 248, c = document.createElement('canvas'); c.width = c.height = S;
-    const g = c.getContext('2d'), mid = S / 2, vinyl = muShade(T.CARD, -.82), labelR = S * .62 / 2;
-    g.fillStyle = vinyl; g.beginPath(); g.arc(mid, mid, mid, 0, 7); g.fill();
-    g.strokeStyle = muShade(vinyl, .3); g.lineWidth = 2; g.beginPath(); g.arc(mid, mid, mid - 1, 0, 7); g.stroke();
-    g.strokeStyle = muShade(vinyl, .14); g.lineWidth = 1;
-    for (let r = labelR + 10; r < mid - 6; r += 6) { g.beginPath(); g.arc(mid, mid, r, 0, 7); g.stroke(); }
-    g.save(); g.beginPath(); g.arc(mid, mid, labelR, 0, 7); g.clip();
-    if (img) { const s = Math.min(img.width, img.height); g.drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, mid - labelR, mid - labelR, labelR * 2, labelR * 2); }
-    else { g.fillStyle = T.CARD; g.fillRect(0, 0, S, S); }
-    g.restore();
-    g.strokeStyle = muShade(vinyl, -.35); g.lineWidth = 2; g.beginPath(); g.arc(mid, mid, labelR + 1, 0, 7); g.stroke();
-    const hole = Math.max(4, S * .05 / 2 * 2);
-    g.fillStyle = T.CARD; g.beginPath(); g.arc(mid, mid, hole, 0, 7); g.fill(); g.strokeStyle = vinyl; g.lineWidth = 2; g.stroke();
-    return c;
+  /* ---------- la platine : le vinyle tourne à 33 tours ⅓ sur son plateau, la pochette en étiquette (lisse, pas en pixels),
+     le bras se pose quand la musique joue, avance vers le centre avec le morceau et se relève à la pause.
+     Tout est dessiné à la résolution de l'écran ; les parties fixes (corps du disque, étiquette) sont mises en cache. ---------- */
+  const MU_RPM = 200;  // 33 ⅓ tours par minute = 200° par seconde
+  const muLuxe = () => !!mu.settings.deckLuxe && muLevel().level >= 150;  // niveau 150 : socle en bois, bras doré
+  function muRecordBody(R) {  // le corps du disque : noir teinté du thème, sillons fins, plages entre les pistes, bord biseauté
+    const key = Math.round(R) + '|' + T.CARD; if (mp.recKey === key) return mp.recBody;
+    const S = Math.ceil(R * 2), c = document.createElement('canvas'); c.width = c.height = S;
+    const g = c.getContext('2d'), m = S / 2, base = muBlend('#0b0a0e', T.CARD, .1), lab = R * .36;
+    const rg = g.createRadialGradient(m, m, R * .3, m, m, R); rg.addColorStop(0, muShade(base, .05)); rg.addColorStop(1, base);
+    g.fillStyle = rg; g.beginPath(); g.arc(m, m, R, 0, 7); g.fill();
+    let seed = 11; const rnd = () => (seed = seed * 16807 % 2147483647) / 2147483647;
+    g.lineWidth = Math.max(.5, R / 420);
+    for (let r = lab + R * .07; r < R * .965; r += Math.max(.8, R / 240)) { g.strokeStyle = `rgba(255,255,255,${(.02 + rnd() * .04).toFixed(3)})`; g.beginPath(); g.arc(m, m, r, 0, 7); g.stroke(); }
+    for (const f of [.3, .52, .7, .86]) { g.strokeStyle = 'rgba(0,0,0,.6)'; g.lineWidth = Math.max(1.4, R * .011); g.beginPath(); g.arc(m, m, lab + R * .07 + (R * .9 - lab) * f, 0, 7); g.stroke(); }
+    g.fillStyle = muShade(base, -.25); g.beginPath(); g.arc(m, m, lab + R * .06, 0, 7); g.fill();  // la plage lisse autour de l'étiquette
+    g.lineWidth = Math.max(1, R * .014); g.strokeStyle = 'rgba(255,255,255,.16)'; g.beginPath(); g.arc(m, m, R - g.lineWidth / 2, 0, 7); g.stroke();
+    mp.recKey = key; mp.recBody = c; return c;
   }
-  /* ---------- niveau 150 : le disque pixel. Dessiné en 48 x 48 vrais pixels puis agrandi sans lissage. Les sillons, la tranche et le reflet
-     sont ronds : ils restent fixes, comme sur un vrai disque. Seule l'étiquette (la pochette) tourne, en basse résolution, au plus proche
-     voisin et par crans de 15°, comme une animation de sprite. ---------- */
-  const MU_PD = 48;
-  const muPixDiscOn = now => { if (now - (mp.pdAt || -1e9) > 2000) { mp.pdAt = now; mp.pdOn = !!mu.settings.vinyl && !!mu.settings.pixelDisc && muLevel().level >= 150; } return mp.pdOn; };
-  const muPdEach = f => { const C = MU_PD / 2; for (let y = 0; y < MU_PD; y++) for (let x = 0; x < MU_PD; x++) f(x, y, Math.hypot(x + .5 - C, y + .5 - C), Math.atan2(y + .5 - C, x + .5 - C) * 180 / Math.PI); };
-  const muPdCanvas = () => Object.assign(document.createElement('canvas'), { width: MU_PD, height: MU_PD });
-  function muPixDiscBase() {  // le corps du disque (selon le thème) : tranche, sillons, pause entre deux pistes, reflet fixe
-    const c = muPdCanvas(), g = c.getContext('2d'), C = MU_PD / 2, vinyl = muShade(T.CARD, -.85), groove = muShade(vinyl, .16), gap = muShade(vinyl, -.5), edge = muShade(T.ACCENT, -.35), shine = muShade(vinyl, .45);
-    muPdEach((x, y, d, a) => {
-      const col = d > C ? '' : d > C - 1.2 ? edge : d > C - 2.2 ? vinyl : d > 9.6 ? (Math.abs(d - 16) < .6 ? gap : Math.floor(d) % 3 === 0 ? (a > -150 && a < -112 || a > 30 && a < 52 ? shine : groove) : vinyl) : d > 8.7 ? gap : '';
-      if (col) { g.fillStyle = col; g.fillRect(x, y, 1, 1); }
-    });
-    return c;
-  }
-  function muPixDiscLabel(img) {  // l'étiquette : la pochette réduite à 19 x 19 pixels, coupée en rond, et une marque pour voir le disque tourner
-    const c = muPdCanvas(), g = c.getContext('2d'), C = MU_PD / 2;
-    if (img) {
-      const l = document.createElement('canvas'); l.width = l.height = 19; const lg = l.getContext('2d'), sq = Math.min(img.width, img.height);
-      lg.drawImage(img, (img.width - sq) / 2, (img.height - sq) / 2, sq, sq, 0, 0, 19, 19);
-      g.imageSmoothingEnabled = false; g.drawImage(l, C - 9.5, C - 9.5);
+  function muRecordLabel(img, r) {  // l'étiquette : la pochette coupée en rond (ou une étiquette NeoMusic), avec un léger relief
+    const cache = mp.labels ??= new WeakMap(), k = img || muRecordLabel, hit = cache.get(k);
+    if (hit && hit.r === Math.round(r) && hit.t === T) return hit.c;
+    const S = Math.ceil(r * 2), c = document.createElement('canvas'); c.width = c.height = S;
+    const g = c.getContext('2d'), m = S / 2;
+    g.save(); g.beginPath(); g.arc(m, m, m, 0, 7); g.clip();
+    if (img) { const s = Math.min(img.width, img.height); g.imageSmoothingQuality = 'high'; g.drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, S, S); }
+    else {
+      const lg = g.createLinearGradient(0, 0, S, S); lg.addColorStop(0, T.ACCENT); lg.addColorStop(1, muShade(T.ACCENT_2 || T.ACCENT, -.35));
+      g.fillStyle = lg; g.fillRect(0, 0, S, S);
+      g.fillStyle = 'rgba(255,255,255,.92)'; g.textAlign = 'center'; g.font = `bold ${Math.round(S * .15)}px Consolas, monospace`; g.fillText('NeoMusic', m, m - S * .12);
+      g.font = `${Math.round(S * .1)}px Consolas, monospace`; g.fillStyle = 'rgba(255,255,255,.7)'; g.fillText('33 tours', m, m + S * .26);
     }
-    muPdEach((x, y, d) => { if (d > 8.7) g.clearRect(x, y, 1, 1); else if (!img) { g.fillStyle = (x + y) % 4 < 2 ? T.CARD : T.CARD_ALT; g.fillRect(x, y, 1, 1); } });
-    g.fillStyle = T.ACCENT; g.fillRect(C + 5, C - 1, 2, 2); g.fillStyle = muShade(T.ACCENT, .5); g.fillRect(C + 5, C - 1, 1, 1);
-    return c;
+    const sh = g.createRadialGradient(m, m, m * .55, m, m, m); sh.addColorStop(0, 'rgba(0,0,0,0)'); sh.addColorStop(1, 'rgba(0,0,0,.28)');
+    g.fillStyle = sh; g.fillRect(0, 0, S, S); g.restore();
+    g.lineWidth = Math.max(1, S * .018); g.strokeStyle = 'rgba(0,0,0,.45)'; g.beginPath(); g.arc(m, m, m - g.lineWidth / 2, 0, 7); g.stroke();
+    cache.set(k, { r: Math.round(r), t: T, c }); return c;
   }
-  function muPixDiscPaint(g, img, x0, size, alpha = 1) {
-    const C = MU_PD / 2;
-    if (mp.pdTheme !== T) { mp.pdTheme = T; mp.pdBase = muPixDiscBase(); mp.pdLabels = new WeakMap(); }
-    const key = img || muPixDiscPaint; let label = mp.pdLabels.get(key); if (!label) mp.pdLabels.set(key, label = muPixDiscLabel(img));
-    const b = mp.pdBuf ??= muPdCanvas(), bg = b.getContext('2d');
-    bg.setTransform(1, 0, 0, 1, 0, 0); bg.clearRect(0, 0, MU_PD, MU_PD); bg.imageSmoothingEnabled = false;
-    bg.drawImage(mp.pdBase, 0, 0);
-    bg.translate(C, C); bg.rotate(Math.round((mp.angle || 0) / 15) * 15 * Math.PI / 180); bg.drawImage(label, -C, -C); bg.setTransform(1, 0, 0, 1, 0, 0);
-    bg.fillStyle = T.CARD; bg.fillRect(C - 1, C - 1, 2, 2);  // le trou
-    g.save(); g.globalAlpha = alpha; g.imageSmoothingEnabled = false; g.drawImage(b, x0, x0, size, size); g.restore();
+  function muRecord(g, cx, cy, R, angle, img, alpha = 1) {  // le disque qui tourne, son reflet fixe (la lumière ne tourne pas), l'axe
+    g.save(); g.globalAlpha = alpha; g.translate(cx, cy);
+    g.rotate(angle * Math.PI / 180);
+    g.drawImage(muRecordBody(R), -R, -R, R * 2, R * 2);
+    const lr = R * .36; g.drawImage(muRecordLabel(img, lr), -lr, -lr, lr * 2, lr * 2);
+    g.rotate(-angle * Math.PI / 180);
+    const cg = g.createConicGradient(-Math.PI * .8, 0, 0);
+    for (const [at, a] of [[0, 0], [.05, .13], [.1, 0], [.5, 0], [.55, .08], [.6, 0], [1, 0]]) cg.addColorStop(at, `rgba(255,255,255,${a})`);
+    g.fillStyle = cg; g.beginPath(); g.arc(0, 0, R * .985, 0, 7); g.arc(0, 0, R * .43, 0, 7, true); g.fill();
+    const sp = R * .035, sg = g.createRadialGradient(-sp * .3, -sp * .3, 0, 0, 0, sp); sg.addColorStop(0, '#ffffff'); sg.addColorStop(.5, '#b9bcc6'); sg.addColorStop(1, '#55586a');
+    g.fillStyle = sg; g.beginPath(); g.arc(0, 0, sp, 0, 7); g.fill();
+    g.restore();
+  }
+  const muRound = (g, x, y, w, h, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
+  function muMetal(g, x0, y0, x1, y1, gold) {
+    const lg = g.createLinearGradient(x0, y0, x1, y1);
+    (gold ? ['#fff1c4', '#d9a945', '#8a5a14', '#e8c06a'] : ['#f4f5f8', '#a9acb8', '#5f6272', '#c9ccd6']).forEach((c, i, a) => lg.addColorStop(i / (a.length - 1), c));
+    return lg;
+  }
+  function muDeck(g, W, H, now, playing) {
+    const luxe = muLuxe(), pad = H * .07, Rp = H / 2 - pad, cx = pad + Rp + H * .02, cy = H / 2, R = Rp * .93;
+    // le socle
+    g.save(); g.shadowColor = 'rgba(0,0,0,.45)'; g.shadowBlur = H * .05; g.shadowOffsetY = H * .015;
+    muRound(g, H * .015, H * .015, W - H * .03, H - H * .045, H * .06);
+    const pg = g.createLinearGradient(0, 0, 0, H);
+    if (luxe) { pg.addColorStop(0, '#7a4f2c'); pg.addColorStop(1, '#3d2513'); } else { pg.addColorStop(0, muShade(T.CARD, -.38)); pg.addColorStop(1, muShade(T.CARD, -.68)); }
+    g.fillStyle = pg; g.fill(); g.restore();
+    g.save(); muRound(g, H * .015, H * .015, W - H * .03, H - H * .045, H * .06); g.clip();
+    if (luxe) { let s = 3; const rnd = () => (s = s * 16807 % 2147483647) / 2147483647; g.lineWidth = 1; for (let i = 0; i < 46; i++) { const y = rnd() * H; g.strokeStyle = `rgba(30,14,4,${(.08 + rnd() * .14).toFixed(2)})`; g.beginPath(); g.moveTo(0, y); g.bezierCurveTo(W * .3, y + (rnd() - .5) * H * .08, W * .7, y + (rnd() - .5) * H * .08, W, y + (rnd() - .5) * H * .05); g.stroke(); } }
+    g.fillStyle = 'rgba(255,255,255,.07)'; g.fillRect(0, H * .015, W, Math.max(1, H * .008));
+    g.fillStyle = T.ACCENT; g.globalAlpha = .55; g.fillRect(0, H - H * .045, W, Math.max(1, H * .01)); g.globalAlpha = 1;
+    g.restore();
+    // le plateau : ombre, tranche métallique, points stroboscopiques qui tournent
+    g.save(); g.shadowColor = 'rgba(0,0,0,.6)'; g.shadowBlur = H * .04; g.shadowOffsetY = H * .012;
+    g.fillStyle = '#16161b'; g.beginPath(); g.arc(cx, cy, Rp, 0, 7); g.fill(); g.restore();
+    const rim = g.createConicGradient(0, cx, cy); ['#9a9dab', '#e9ebf1', '#7d808e', '#d4d7e0', '#8d909d', '#eef0f5', '#9a9dab'].forEach((c, i, a) => rim.addColorStop(i / (a.length - 1), c));
+    g.fillStyle = rim; g.beginPath(); g.arc(cx, cy, Rp, 0, 7); g.arc(cx, cy, Rp * .955, 0, 7, true); g.fill();
+    g.save(); g.translate(cx, cy); g.rotate(mp.deckAng * Math.PI / 180); g.fillStyle = 'rgba(20,20,26,.55)';
+    for (let i = 0; i < 90; i++) { g.rotate(Math.PI * 2 / 90); g.fillRect(Rp * .962, -Rp * .008, Rp * .03, Rp * .016); }
+    g.restore();
+    // le disque (fondu entre deux pochettes)
+    const fade = mp.coverOld ? Math.min(1, (now - mp.fadeAt) / 260) : 1;
+    if (fade < 1 && mp.coverOld) muRecord(g, cx, cy, R, mp.deckAng, mp.coverOld.img, 1); else mp.coverOld = null;
+    muRecord(g, cx, cy, R, mp.deckAng, mp.coverImg, fade);
+    // le bras : pivot à droite, il se pose sur le bord et avance vers l'étiquette avec le morceau
+    const px = Math.min(W - pad * 1.9, cx + Rp + (W - cx - Rp) * .55), py = pad + H * .12, dx = cx - px, dy = cy - py, D = Math.hypot(dx, dy), L = D * .93;
+    const at = rho => { const c = Math.max(-1, Math.min(1, (D * D + L * L - rho * rho) / (2 * D * L))); return Math.atan2(dy, dx) - Math.acos(c); };
+    const dur = muAudio?.duration || mp.length || 0, pos = muAudio?.currentTime || mp.resume || 0, prog = dur ? Math.max(0, Math.min(1, pos / dur)) : 0;
+    const target = mp.cur ? at(R * .94 - (R * .94 - R * .45) * prog) : at(R * 1.22);
+    const dt = Math.min(64, now - (mp.armAt || now)); mp.armAt = now;
+    mp.arm = mp.arm == null ? at(R * 1.22) : mp.arm + (target - mp.arm) * Math.min(1, dt * .006);
+    mp.lift = (mp.lift ?? 1) + ((playing ? 0 : 1) - (mp.lift ?? 1)) * Math.min(1, dt * .008);
+    const arm = (shadow) => {
+      const o = shadow ? H * (.012 + mp.lift * .03) : 0, a = mp.arm, sx = px + Math.cos(a) * L + o, sy = py + Math.sin(a) * L + o * 1.3, bx = px + o, by = py + o;
+      g.save(); if (shadow) { g.globalAlpha = .32; g.filter = `blur(${Math.max(1, H * .012)}px)`; }
+      const tone = shadow ? '#000' : null, tw = H * .024;
+      // contrepoids
+      const cwx = bx - Math.cos(a) * L * .2, cwy = by - Math.sin(a) * L * .2;
+      g.lineCap = 'round'; g.lineWidth = tw * 2.4; g.strokeStyle = tone || muMetal(g, cwx - tw, cwy - tw, cwx + tw, cwy + tw, false);
+      g.beginPath(); g.moveTo(bx - Math.cos(a) * L * .1, by - Math.sin(a) * L * .1); g.lineTo(cwx, cwy); g.stroke();
+      // le tube
+      const ex = sx - Math.cos(a) * H * .07, ey = sy - Math.sin(a) * H * .07;
+      g.lineWidth = tw; g.strokeStyle = tone || muMetal(g, bx, by - tw, bx + tw, by + tw, luxe);
+      g.beginPath(); g.moveTo(bx, by); g.lineTo(ex, ey); g.stroke();
+      // la tête de lecture et sa cellule
+      g.translate(sx, sy); g.rotate(a + .45);
+      g.fillStyle = tone || '#1d1d24'; muRound(g, -H * .085, -H * .028, H * .11, H * .056, H * .012); g.fill();
+      if (!shadow) { g.fillStyle = T.ACCENT; g.fillRect(-H * .02, -H * .022, H * .035, H * .044); g.fillStyle = 'rgba(255,255,255,.25)'; g.fillRect(-H * .085, -H * .028, H * .11, H * .008); }
+      g.restore();
+      // le pivot
+      g.save(); if (shadow) { g.globalAlpha = .32; g.filter = `blur(${Math.max(1, H * .012)}px)`; }
+      const pr = H * .065, pv = g.createRadialGradient(bx - pr * .35, by - pr * .35, 0, bx, by, pr);
+      if (shadow) pv.addColorStop(0, '#000'), pv.addColorStop(1, '#000'); else (luxe ? ['#fff3cf', '#c99a3e', '#6e4a12'] : ['#ffffff', '#a4a7b4', '#4a4d5c']).forEach((c, i) => pv.addColorStop(i / 2, c));
+      g.fillStyle = pv; g.beginPath(); g.arc(bx, by, pr, 0, 7); g.fill();
+      if (!shadow) { g.fillStyle = '#23232b'; g.beginPath(); g.arc(bx, by, pr * .38, 0, 7); g.fill(); }
+      g.restore();
+    };
+    arm(true); arm(false);
+    // le voyant et le sélecteur de vitesse
+    const lx = W - pad * 1.6, ly = H - pad * 1.7;
+    g.save(); g.fillStyle = playing ? (T.ACCENT_2 || T.ACCENT) : '#3a3a44'; if (playing) { g.shadowColor = T.ACCENT_2 || T.ACCENT; g.shadowBlur = H * .05; }
+    g.beginPath(); g.arc(lx, ly, H * .022, 0, 7); g.fill(); g.restore();
+    g.save(); g.fillStyle = 'rgba(255,255,255,.55)'; g.font = `bold ${Math.round(H * .055)}px Consolas, monospace`; g.textAlign = 'right';
+    g.fillText('33', lx - H * .05, ly + H * .02); g.fillStyle = 'rgba(255,255,255,.22)'; g.fillText('45', lx - H * .14, ly + H * .02); g.restore();
   }
   function muSpin(now) {  // the record speeds up fast and slows down like a real turntable (shared by the big cover and the portable player)
     const playing = muAudio && !muAudio.paused;
     mp.spin = playing ? Math.min(1.4, (mp.spin || 0) + .35) : (mp.spin || 0) * .9 < .01 ? 0 : (mp.spin || 0) * .9;
-    mp.angle = ((mp.angle || 0) + (mp.spin || 0) * (now - (mp.coverAt || now)) / 70) % 360; mp.coverAt = now;
+    const dt = now - (mp.coverAt || now);
+    mp.angle = ((mp.angle || 0) + (mp.spin || 0) * dt / 70) % 360; mp.coverAt = now;
+    mp.deckAng = ((mp.deckAng || 0) + (mp.spin || 0) / 1.4 * MU_RPM * dt / 1000) % 360;
   }
   function muDrawCover(now) {
-    const cv = $('muCover'), g = cv.getContext('2d'), W = cv.width, vinyl = mu.settings.vinyl;
-    g.clearRect(0, 0, W, W);
-    const fade = mp.coverOld ? Math.min(1, (now - mp.fadeAt) / 180) : 1;
-    const pix = muPixDiscOn(now);
-    const paint = (img, disc, alpha) => {
-      if (pix) return muPixDiscPaint(g, img, 2, W - 4, alpha);
+    const cv = $('muCover'), r = cv.getBoundingClientRect(), k = devicePixelRatio || 1, w = Math.round(r.width * k), h = Math.round(r.height * k);
+    if (!w || !h) return;
+    if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+    const g = cv.getContext('2d'); g.imageSmoothingEnabled = true; g.clearRect(0, 0, w, h);
+    if (mu.settings.vinyl) return muDeck(g, w, h, now, !!(muAudio && !muAudio.paused));
+    const W = Math.min(w, h), fade = mp.coverOld ? Math.min(1, (now - mp.fadeAt) / 180) : 1;
+    const paint = (img, alpha) => {
       g.globalAlpha = alpha;
-      if (vinyl) {
-        g.save(); g.translate(W / 2, W / 2); g.rotate(mp.angle * Math.PI / 180); g.drawImage(disc, -124, -124, 248, 248); g.restore();
-      } else if (img) { const s = Math.min(img.width, img.height); g.drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 6, 6, W - 12, W - 12); }
-      else { g.fillStyle = T.CARD_ALT; g.fillRect(6, 6, W - 12, W - 12); g.fillStyle = T.ACCENT; g.font = 'bold 64px Consolas'; g.textAlign = 'center'; g.fillText('?', W / 2, W / 2 + 22); }
+      if (img) { const s = Math.min(img.width, img.height); g.imageSmoothingQuality = 'high'; g.drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, W * .03, W * .03, W * .94, W * .94); }
+      else { g.fillStyle = T.CARD_ALT; g.fillRect(W * .03, W * .03, W * .94, W * .94); g.fillStyle = T.ACCENT; g.font = `bold ${Math.round(W * .3)}px Consolas`; g.textAlign = 'center'; g.fillText('?', W / 2, W / 2 + W * .1); }
       g.globalAlpha = 1;
     };
-    if (vinyl && !pix) { if (!mp.disc) mp.disc = muDisc(mp.coverImg); }
-    if (fade < 1 && mp.coverOld) paint(mp.coverOld.img, pix ? null : mp.coverOld.disc || muDisc(mp.coverOld.img), 1 - fade);
-    else mp.coverOld = null;
-    paint(mp.coverImg, mp.disc, fade);
-    if (vinyl && !pix) { g.strokeStyle = T.ACCENT; g.lineWidth = 4; g.beginPath(); g.arc(W / 2, W / 2, W / 2 - 4, 0, 7); g.stroke(); }
+    if (fade < 1 && mp.coverOld) paint(mp.coverOld.img, 1 - fade); else mp.coverOld = null;
+    paint(mp.coverImg, fade);
   }
   function muProgressEvents() {
     const cv = $('muProgress'), at = e => { const r = cv.getBoundingClientRect(); return Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * (muAudio?.duration || mp.length); };
@@ -1192,11 +1261,9 @@ export default async function (ctx) {
   function muMiniFrame(now) {
     const cv = $('mmDisc'), g = cv.getContext('2d'), W = cv.width;
     g.clearRect(0, 0, W, W);
-    if (muPixDiscOn(now)) muPixDiscPaint(g, mp.coverImg, 2, W - 4);
-    else if (mu.settings.vinyl) {
-      if (!mp.disc) mp.disc = muDisc(mp.coverImg);
-      g.save(); g.translate(W / 2, W / 2); g.rotate(mp.angle * Math.PI / 180); g.drawImage(mp.disc, -W / 2 + 6, -W / 2 + 6, W - 12, W - 12); g.restore();
-      g.strokeStyle = T.ACCENT; g.lineWidth = 6; g.beginPath(); g.arc(W / 2, W / 2, W / 2 - 4, 0, 7); g.stroke();
+    if (mu.settings.vinyl) {
+      muRecord(g, W / 2, W / 2, W / 2 - 7, mp.deckAng || 0, mp.coverImg);
+      g.strokeStyle = T.ACCENT; g.lineWidth = 5; g.beginPath(); g.arc(W / 2, W / 2, W / 2 - 3, 0, 7); g.stroke();
     } else if (mp.coverImg) { const im = mp.coverImg, s = Math.min(im.width, im.height); g.drawImage(im, (im.width - s) / 2, (im.height - s) / 2, s, s, 0, 0, W, W); }
     else { g.fillStyle = T.CARD_ALT; g.fillRect(0, 0, W, W); g.fillStyle = T.ACCENT; g.font = 'bold 80px Consolas'; g.textAlign = 'center'; g.fillText('?', W / 2, W / 2 + 28); }
     const sup = muSuperOn(now); $('mmSpec').parentElement.classList.toggle('sup', sup);  // the super visualiser follows into the portable player
@@ -1750,7 +1817,7 @@ export default async function (ctx) {
     const {level} = muLevel(); if (level <= (+mu.stats.xp_level_seen || 1)) return;
     mu.stats.xp_level_seen = level;
     const theme = Object.entries(MU_THEME_LEVEL).find(([, l]) => l === level)?.[0];
-    muStatus(theme ? `Niveau ${level} atteint — thème « ${theme} » débloqué !` : level === 100 ? 'Niveau 100 atteint — super visualiseur débloqué (Options) !' : level === 150 ? 'Niveau 150 atteint — disque pixel débloqué !' : `Niveau ${level} atteint !`, T.ACCENT);
+    muStatus(theme ? `Niveau ${level} atteint — thème « ${theme} » débloqué !` : level === 100 ? 'Niveau 100 atteint — super visualiseur débloqué (Options) !' : level === 150 ? 'Niveau 150 atteint — platine de collection débloquée (Options) !' : `Niveau ${level} atteint !`, T.ACCENT);
     muSave();
   }
   function muUnlock(id) {
@@ -1900,7 +1967,7 @@ export default async function (ctx) {
     const st = mu.settings, w = muWindow('Options', 620), b = w.body, lv = muLevel();
     const check = (label, key) => { const c = mh('input', {type: 'checkbox', checked: !!st[key]}); c.dataset.k = key; return mh('label.muCheck', {}, c, mh('span', {text: label})); };
     b.append(muH('OPTIONS'));
-    b.append(muSec('AFFICHAGE'), check('Afficher le visualiseur audio', 'visualizer'), lv.level >= 100 ? check('Super visualiseur : reflet, étincelles, lueur et pulsation des basses (niveau 100)', 'superVis') : mh('p.muWNote.ind', {text: 'Super visualiseur : se débloque au niveau 100 (tu es niveau ' + lv.level + ').'}), check('Pochette « lecture en cours » en cercle façon vinyle', 'vinyl'), lv.level >= 150 ? check('Disque pixel : le vinyle dessiné et animé en vrai pixel art (niveau 150)', 'pixelDisc') : mh('p.muWNote.ind', {text: 'Disque pixel : se débloque au niveau 150 (tu es niveau ' + lv.level + ').'}),
+    b.append(muSec('AFFICHAGE'), check('Afficher le visualiseur audio', 'visualizer'), lv.level >= 100 ? check('Super visualiseur : reflet, étincelles, lueur et pulsation des basses (niveau 100)', 'superVis') : mh('p.muWNote.ind', {text: 'Super visualiseur : se débloque au niveau 100 (tu es niveau ' + lv.level + ').'}), check('Pochette « lecture en cours » en cercle façon vinyle', 'vinyl'), lv.level >= 150 ? check('Platine de collection : socle en bois et bras doré (niveau 150)', 'deckLuxe') : mh('p.muWNote.ind', {text: 'Platine de collection : se débloque au niveau 150 (tu es niveau ' + lv.level + ').'}),
       check('Forme d\'onde dans la barre de progression (au lieu d\'une simple ligne)', 'waveform'), check('Afficher la date d\'ajout des musiques dans la liste', 'dateAdded'),
       check('Afficher la date de sortie des musiques dans la liste', 'releaseDate'), check('Appli pixel : cadres, boutons et police façon petit lecteur', 'pixelUi'), check('Mode petit lecteur (playlists et musiques uniquement)', 'mini'),
       check('Vue « mur de pochettes » (grille de pochettes) au lieu de la liste', 'gallery'), check('Mode sans images (masque les pochettes partout) — réduit les lags', 'noImages'));
