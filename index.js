@@ -1,6 +1,6 @@
 // NeoMusic : ton appli d'origine (HTML et code inchangés), livrée en plugin.
 // Ses données sont dans le dossier du plugin, que NeoBase sauvegarde (synchro cloud et sauvegardes) ; à la première ouverture elle reprend ce que tu avais dans NeoBase.
-// Elle demande l'accès complet pour utiliser les outils d'interface de NeoBase. NeoBase ne l'ouvre que si elle est signée.
+// Elle tourne dans le bac à sable de NeoBase, avec ses outils d'interface (ctx.host) et seulement les autorisations de son plugin.json.
 const HTML = "";
 const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strips); colours are the theme's, set on #mu by muApplyTheme */
 #plug_neobase_music{overflow:hidden;background:#101425}

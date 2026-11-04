@@ -1,7 +1,7 @@
 {
   "id": "neobase.music",
   "name": "NeoMusic",
-  "version": "1.6.5",
+  "version": "1.7.0",
   "author": "NDesumeur",
   "description": "Ton lecteur de musique : playlists en ligne et hors ligne, thèmes, spectre, égaliseur, statistiques, succès et raccourcis globaux.",
   "icon": "icon.png",
@@ -13,9 +13,6 @@
   "mobile": true,
   "system": false,
   "dependencies": {},
-  "permissions": [
-    "full"
-  ],
   "main": "main.js",
   "sync": {
     "library": {
@@ -28,5 +25,11 @@
         "stats.history"
       ]
     }
-  }
+  },
+  "sdk": "2.1.0",
+  "permissions": [
+    "storage",
+    "music",
+    "system:main"
+  ]
 }
