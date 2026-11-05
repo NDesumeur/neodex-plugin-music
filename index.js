@@ -156,6 +156,37 @@ body.mmFloat>*:not(.muMini){display:none!important} body.mmFloat{overflow:hidden
 .muMenu{position:fixed;z-index:60;min-width:210px;padding:3px;background:var(--mcard2);border:1px solid var(--mborder);box-shadow:4px 4px 0 #090B12;display:flex;flex-direction:column;font-size:12px}
 .muMenu button{padding:6px 12px;white-space:nowrap;color:var(--mtext)} .muMenu button:hover:not(:disabled){background:var(--macc);color:#17111F}
 .muMenu hr{border:0;border-top:1px solid var(--mborder);margin:3px 2px}
+.muDecks{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:6px 0 8px} .muDecks .muSmall{margin:0 6px 0 0;width:100%} .muDecks .muBtn.on{box-shadow:inset 0 0 0 2px var(--macc)} .muDecks .muBtn.locked{opacity:.45}
+/* Interface Hi-Fi (niveau 200, settings.hifi) : une chaîne hi-fi des années 80. Côtés en bois, façades en aluminium brossé vissées,
+   écrans fluorescents (texte lumineux sur verre fumé), touches arrondies en relief. */
+.mu.hifi{--hwood:repeating-linear-gradient(97deg,#4a2a14 0 7px,#5e3519 7px 11px,#3c2210 11px 19px,#6a3e1e 19px 22px);--halu:repeating-linear-gradient(0deg,#b9bec8 0 1px,#aab0bb 1px 2px,#c3c8d1 2px 3px);--hglass:#07100e;--hvfd:#7dffd8;--hamber:#ffb347;
+  background:var(--hwood);font-family:'Segoe UI',Tahoma,sans-serif;letter-spacing:.2px}
+.mu.hifi .muTop{height:44px;background:linear-gradient(#141414,#050505);box-shadow:inset 0 -2px 0 #000,0 2px 0 #2a2a2a;border-bottom:1px solid #000}
+.mu.hifi .muTopStrip{display:none}
+.mu.hifi .muBrand{font:700 15px Consolas,monospace;letter-spacing:4px;color:var(--hamber);text-shadow:0 0 6px var(--hamber),0 0 14px color-mix(in srgb,var(--hamber) 50%,transparent);margin-left:18px}
+.mu.hifi .muStatus,.mu.hifi .muInd{font-family:Consolas,monospace;color:var(--hvfd);text-shadow:0 0 5px var(--hvfd)}
+.mu.hifi .muSide{background:var(--hwood);box-shadow:inset -3px 0 0 rgba(0,0,0,.45),inset -4px 0 0 rgba(255,255,255,.06)} .mu.hifi .muSideStrip{background:linear-gradient(90deg,#2a160a,#7a4a26,#2a160a)}
+.mu.hifi .muHead{color:#f3dcb8;text-shadow:0 1px 0 #000;letter-spacing:2px;text-transform:uppercase}
+.mu.hifi .muPlBtn,.mu.hifi .muSideBtn{color:#f7ead6;text-shadow:0 1px 0 #000} .mu.hifi .muPlBtn:hover,.mu.hifi .muPlBtn.on,.mu.hifi .muSideBtn:hover{background:rgba(0,0,0,.35);color:var(--hamber)} .mu.hifi .muPlBtn.on i{background:var(--hamber);box-shadow:0 0 6px var(--hamber)}
+.mu.hifi .muCard{position:relative;background:var(--halu);color:#16181d;border:1px solid #6b707b;border-radius:3px;box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 #7d828d,0 4px 0 #1a0e06,0 6px 14px rgba(0,0,0,.55)}
+.mu.hifi .muCard::before,.mu.hifi .muCard::after{content:"";position:absolute;top:6px;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#f4f5f7,#7a7f8a 60%,#3c3f46);box-shadow:inset 0 0 0 1px rgba(0,0,0,.3);z-index:1;pointer-events:none}
+.mu.hifi .muCard::before{left:6px} .mu.hifi .muCard::after{right:6px}
+.mu.hifi .muNow{background:linear-gradient(var(--hglass),#0b1714);border:3px solid #9ba1ac;border-radius:4px;box-shadow:inset 0 0 0 2px #000,inset 0 0 26px rgba(0,0,0,.9),0 0 0 6px #b9bec8,0 0 0 7px #6b707b,0 8px 0 7px #1a0e06;margin:6px;color:var(--hvfd)}
+.mu.hifi .muNow::before,.mu.hifi .muNow::after{display:none}
+.mu.hifi .muTitle,.mu.hifi .muKick,.mu.hifi .muTime,.mu.hifi .muNow .muSmall{font-family:Consolas,monospace;color:var(--hvfd);text-shadow:0 0 6px color-mix(in srgb,var(--hvfd) 70%,transparent)}
+.mu.hifi .muKick.alt{color:var(--hamber);text-shadow:0 0 6px var(--hamber)}
+.mu.hifi .muCard:not(.muNow){--msub:#4a4f5a} .mu.hifi .muCard:not(.muNow) .muKick{color:#1b1d22;text-shadow:none} .mu.hifi .muCard:not(.muNow) .muKick.alt{color:#9a3a00}
+.mu.hifi .muBtn,.mu.hifi .muPill,.mu.hifi .muSelect{background:linear-gradient(#f2f3f6,#b4b9c3);color:#1b1d22;border:1px solid #565b66;border-radius:14px;box-shadow:inset 0 1px 0 #fff,0 2px 0 #3d4048;text-shadow:0 1px 0 rgba(255,255,255,.7);font-family:'Segoe UI',Tahoma,sans-serif;letter-spacing:.6px}
+.mu.hifi .muBtn:hover,.mu.hifi .muPill:hover{background:linear-gradient(#fff,#c9cdd5);color:#000} .mu.hifi .muBtn:active,.mu.hifi .muPill:active{transform:translateY(2px);box-shadow:inset 0 1px 3px rgba(0,0,0,.4)}
+.mu.hifi .muBtn.accent{color:#9a3a00} .mu.hifi .muBtn.danger{color:#b01a1a}
+.mu.hifi .muPlay .fill{fill:#2b2e35} .mu.hifi .muPlay:hover .fill{fill:#c0392b} .mu.hifi .muPlay{box-shadow:0 0 0 4px #d9dce2,0 0 0 5px #6b707b,0 4px 0 5px #3d4048}
+.mu.hifi .muSpectrum,.mu.hifi .muProgress{background:var(--hglass);border-radius:3px;box-shadow:inset 0 0 0 2px #000,inset 0 0 12px rgba(0,0,0,.9)}
+.mu.hifi .muList,.mu.hifi .muRow{background:#0c0f12;color:#e9eef2} .mu.hifi .muList{border:3px solid #9ba1ac;border-radius:4px;box-shadow:inset 0 0 0 2px #000}
+.mu.hifi .muRow:hover{background:#141a1e} .mu.hifi .muRow.sel,.mu.hifi .muTile.sel{background:#11201c;box-shadow:inset 3px 0 0 var(--hvfd)}
+.mu.hifi .muRowText b{font-family:Consolas,monospace;color:var(--hvfd);text-shadow:0 0 4px color-mix(in srgb,var(--hvfd) 60%,transparent)} .mu.hifi .muRowText em,.mu.hifi .muRowDur{color:var(--hamber)}
+.mu.hifi .muFilter,.mu.hifi .muArtFilter{background:var(--hglass);color:var(--hvfd);border:2px solid #6b707b;border-radius:3px;font-family:Consolas,monospace}
+.mu.hifi .muRange{accent-color:#c0392b}
+.mu.hifi .muWin,.mu.hifi .muMenu{background:var(--halu);color:#16181d;border:1px solid #6b707b;border-radius:4px;box-shadow:0 10px 30px rgba(0,0,0,.6)} .mu.hifi .muWinBar{background:var(--hwood);color:#f3dcb8}
 /* Appli pixel (settings.pixelUi): the look of the portable player everywhere */
 .mu.px{font-family:Consolas,'Cascadia Mono',monospace;letter-spacing:.2px}
 .mu.px *{border-radius:0!important;transition-timing-function:steps(3)!important}
@@ -447,7 +478,7 @@ export default async function (ctx) {
 
   /* ---------- the library (music.json) ---------- */
   const MU_DEFAULT_SETTINGS = {theme: 'Nova', volume: .5, equalizer: 'Normal', eqBands: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], limiter: false, balance: 0, visualizer: true, waveform: true, vinyl: true,
-    replaygain: true, coverFade: true, dateAdded: false, releaseDate: false, mini: false, gallery: false, noImages: false, weeklyWeek: '', superVis: false, deckLuxe: true, recoSeen: [], pixelUi: true, shortcuts: {}};
+    replaygain: true, coverFade: true, dateAdded: false, releaseDate: false, mini: false, gallery: false, noImages: false, weeklyWeek: '', superVis: false, deckLuxe: true, deckStyle: '', hifi: false, recoSeen: [], pixelUi: true, shortcuts: {}};
   function muBlank() {
     return {v: 1, settings: {...MU_DEFAULT_SETTINGS}, playlists: MU_SYSTEM.map(name => ({name, mode: 'offline', tracks: []})),
       stats: {plays: 0, seconds: 0, songs: {}, songs_time: {}, artists: {}, artists_time: {}, daily: {}, history: [], xp_level_seen: 1},
@@ -593,7 +624,7 @@ export default async function (ctx) {
     const st = mu.settings;
     $('muVol').value = Math.round(st.volume * 100);
     $('muEq').value = st.equalizer in MU_PRESETS ? st.equalizer : 'Normal';
-    $('mu').classList.toggle('mini', !!st.mini); $('mu').classList.toggle('px', !!st.pixelUi);
+    $('mu').classList.toggle('mini', !!st.mini); const hifi = !!st.hifi && muLevel().level >= 200; $('mu').classList.toggle('hifi', hifi); $('mu').classList.toggle('px', !!st.pixelUi && !hifi);
     $('mu').classList.toggle('novis', !st.visualizer);
     $('mu').classList.toggle('gallery', !!st.gallery);
     $('muCoverWrap').classList.toggle('rect', !st.vinyl);
@@ -906,7 +937,21 @@ export default async function (ctx) {
      Le disque tourne pour de vrai : chaque pixel va chercher sa couleur dans la pochette (réduite en gros pixels) à l'angle du moment.
      Le bras se pose quand la musique joue, avance vers le centre avec le morceau et se relève à la pause. ---------- */
   const MU_RPM = 200;  // 33 tours ⅓ par minute = 200° par seconde
-  const muLuxe = () => !!mu.settings.deckLuxe && muLevel().level >= 150;  // niveau 150 : socle en bois, bras doré
+  /* les platines du niveau 150 et plus : socle (couleur, bois, brossé, rayures, arc-en-ciel), bord du plateau, métal du bras, liseré.
+     'A' / 'B' : les couleurs d'accent du thème. */
+  const MU_DECKS = {
+    Classique: {lv: 150, note: 'aux couleurs du thème'},
+    Collection: {lv: 150, note: 'socle en bois, bras doré', wood: ['#7a4a26', '#5e3519', '#8f5a30'], rim: ['#ffe9a8', '#c99a3e'], metal: ['#ffe9a8', '#c99a3e', '#6e4a12'], band: '#c99a3e'},
+    Chrome: {lv: 160, note: 'aluminium brossé, voyant bleu', base: '#8c93a3', brushed: true, rim: ['#ffffff', '#8a90a0'], metal: ['#ffffff', '#b8bcc8', '#5a5e6c'], band: '#5ef0ff'},
+    'Néon': {lv: 170, note: 'noir, contours lumineux', base: '#0b0714', glow: true, rim: ['B', 'A'], metal: ['B', 'A', '#2a1a40'], band: 'A'},
+    'Rétro': {lv: 180, note: 'crème et rayures des années 70', base: '#ece0c2', stripes: ['#f0a030', '#e8742a', '#c8461e'], rim: ['#e8eaf0', '#9a9ca8'], metal: ['#f2f3f7', '#a4a7b4', '#4a4d5c'], band: '#7a3a1a'},
+    Arcade: {lv: 190, note: 'arc-en-ciel qui défile', base: '#1a1030', rainbow: true, rim: ['#ffe9a8', '#c99a3e'], metal: ['#ffffff', '#b8bcc8', '#5a5e6c'], band: 'R'},
+  };
+  const muDeckName = () => {  // la platine choisie, si le niveau la permet (l'ancien réglage « platine de collection » donne Collection)
+    const n = mu.settings.deckStyle || (mu.settings.deckLuxe ? 'Collection' : 'Classique'), d = MU_DECKS[n];
+    return d && muLevel().level >= d.lv ? n : 'Classique';
+  };
+  const muHsl = h => { const f = n => { const k = (n + h / 30) % 12, v = .62 - .38 * Math.max(-1, Math.min(k - 3, 9 - k, 1)); return Math.round(v * 255).toString(16).padStart(2, '0'); }; return '#' + f(0) + f(8) + f(4); };
   const muCol = c => { const [r, g, b] = muHex(c.length === 4 ? '#' + [...c.slice(1)].map(x => x + x).join('') : c); return (0xff000000 | b << 16 | g << 8 | r) >>> 0; };  // une couleur → un pixel d'ImageData
   function muPixLabel(img, d) {  // l'étiquette : la pochette réduite à d×d pixels, en peu de couleurs (ou une étiquette aux couleurs du thème)
     const cache = mp.pxLabels ??= new WeakMap(), k = img || muPixLabel, hit = cache.get(k);
@@ -965,17 +1010,27 @@ export default async function (ctx) {
   }
   const muLabelR = R => Math.max(3, Math.round(R * .42));
   function muDeck(g, w, h, now, playing) {
-    const s = Math.max(2, Math.round(h / 80)), W = Math.floor(w / s), H = Math.floor(h / s), b = muPixBuf('pxDeck', W, H), {put, rect, disc, line} = muPixKit(b), luxe = muLuxe();
+    const s = Math.max(2, Math.round(h / 80)), W = Math.floor(w / s), H = Math.floor(h / s), b = muPixBuf('pxDeck', W, H), {put, rect, disc, line} = muPixKit(b);
+    const DK = MU_DECKS[muDeckName()], tc = c => c === 'A' ? T.ACCENT : c === 'B' ? T.ACCENT_2 || T.ACCENT : c;
     mp.coverOld = null;
-    // le socle : bloc plat, liseré clair en haut, bande de couleur du thème en bas, coins coupés
-    const base = muShade(muBlend(T.CARD, T.ACCENT, .2), -.3), cB = muCol(base), cBd = muCol(muShade(base, -.5)), OL = muCol(muShade(T.CARD, -.88));  // aux couleurs du thème
+    // le socle : bloc plat, liseré clair en haut, bande de couleur en bas, coins coupés ; la matière dépend de la platine
+    const base = DK.base || (DK.wood ? DK.wood[0] : muShade(muBlend(T.CARD, T.ACCENT, .2), -.3)), cB = muCol(base), cBd = muCol(muShade(base, -.5));
+    const OL = DK.glow ? muCol(T.ACCENT) : muCol(muShade(T.CARD, -.88));
     rect(1, 0, W - 2, H, OL); rect(0, 1, W, H - 2, OL);  // le contour
-    rect(1, 1, W - 2, H - 2, cB); rect(2, 1, W - 4, 1, muCol(muShade(base, .3))); rect(1, H - 4, W - 2, 1, muCol(T.ACCENT)); rect(1, H - 3, W - 2, 2, cBd);
+    rect(1, 1, W - 2, H - 2, cB);
+    if (DK.wood) { const C = DK.wood.map(muCol); for (let y = 1; y < H - 4; y++) for (let x = 1; x < W - 1; x++) put(x, y, C[Math.abs(Math.floor(y / 2 + Math.sin(x * .07 + y * .9) * 1.3)) % 3]); }  // les veines du bois
+    if (DK.brushed) for (let y = 2; y < H - 4; y += 2) rect(1, y, W - 2, 1, muCol(muShade(base, (y * 7 % 5) / 40 - .04)));  // le brossé
+    if (DK.stripes) DK.stripes.forEach((c, i) => rect(1, Math.round(H * .62) + i * 3, W - 2, 2, muCol(c)));
+    if (DK.glow) { rect(2, 2, W - 4, 1, muCol(muShade(T.ACCENT, -.5))); rect(2, H - 6, W - 4, 1, muCol(muShade(T.ACCENT_2 || T.ACCENT, -.5))); }
+    rect(2, 1, W - 4, 1, muCol(muShade(base, .3)));
+    if (DK.band === 'R') for (let x = 1; x < W - 1; x++) put(x, H - 4, muCol(muHsl((x * 6 + now / 8) % 360)));
+    else rect(1, H - 4, W - 2, 1, muCol(tc(DK.band || T.ACCENT)));
+    rect(1, H - 3, W - 2, 2, cBd);
     // le plateau : ombre, bord métallique, points stroboscopiques qui tournent
     const pad = Math.round(H * .08), Rp = Math.floor(H / 2 - pad), cx = pad + Rp + 2, cy = Math.floor((H - 3) / 2), R = Rp - 2;
-    const rim = luxe ? ['#ffe9a8', '#c99a3e'] : [muBlend('#d4d7e0', T.ACCENT, .25), muBlend('#7d808e', T.ACCENT, .25)];
+    const rim = DK.rim ? DK.rim.map(tc) : [muBlend('#d4d7e0', T.ACCENT, .25), muBlend('#7d808e', T.ACCENT, .25)];
     disc(cx + 1, cy + 2, Rp + 1, cBd); disc(cx, cy, Rp + 1, OL); disc(cx, cy, Rp, muCol(rim[1])); disc(cx, cy, Rp - 1, muCol(muShade(T.CARD, -.78)));
-    for (let i = 0; i < 24; i++) { const t = (mp.deckAng + i * 15) * Math.PI / 180; put(cx + Math.cos(t) * Rp, cy + Math.sin(t) * Rp, muCol(i % 2 ? rim[0] : muShade(rim[1], -.4))); }
+    for (let i = 0; i < 24; i++) { const t = (mp.deckAng + i * 15) * Math.PI / 180; put(cx + Math.cos(t) * Rp, cy + Math.sin(t) * Rp, muCol(DK.rainbow ? muHsl(i * 15) : i % 2 ? rim[0] : muShade(rim[1], -.4))); }
     muPixRecord(b, cx, cy, R, mp.deckAng, mp.coverImg);
     // le bras : pivot à droite, il se pose sur le bord et avance vers l'étiquette avec le morceau
     const pvx = Math.round(Math.min(W - pad - 5, cx + Rp + (W - cx - Rp) * .55)), pvy = Math.round(pad + H * .14), dx = cx - pvx, dy = cy - pvy, D = Math.hypot(dx, dy), Lr = D * .93;
@@ -985,7 +1040,7 @@ export default async function (ctx) {
     const dt = Math.min(64, now - (mp.armAt || now)); mp.armAt = now;
     mp.arm = mp.arm == null ? at(R * 1.25) : mp.arm + (target - mp.arm) * Math.min(1, dt * .006);
     mp.lift = (mp.lift ?? 1) + ((playing ? 0 : 1) - (mp.lift ?? 1)) * Math.min(1, dt * .008);
-    const metal = luxe ? ['#ffe9a8', '#c99a3e', '#6e4a12'] : ['#f2f3f7', '#a4a7b4', '#4a4d5c'];
+    const metal = DK.metal ? DK.metal.map(tc) : ['#f2f3f7', '#a4a7b4', '#4a4d5c'];
     const arm = sh => {
       const o = sh ? 1 + Math.round(mp.lift * 2) : 0, A = mp.arm, ax = pvx + o, ay = pvy + o, sx = pvx + Math.cos(A) * Lr + o, sy = pvy + Math.sin(A) * Lr + o;
       const hx = sx - Math.cos(A) * 4, hy = sy - Math.sin(A) * 4;
@@ -1017,7 +1072,12 @@ export default async function (ctx) {
     if (!w || !h) return;
     if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
     const g = cv.getContext('2d'); g.imageSmoothingEnabled = true; g.clearRect(0, 0, w, h);
-    if (mu.settings.vinyl) return muDeck(g, w, h, now, !!(muAudio && !muAudio.paused));
+    if (mu.settings.vinyl && muLevel().level >= 150) return muDeck(g, w, h, now, !!(muAudio && !muAudio.paused));
+    if (mu.settings.vinyl) {  // le disque seul, cerclé de la couleur du thème, comme dans le petit lecteur
+      const s = Math.max(2, Math.round(h / 80)), n = Math.floor(h / s) | 1, c = n >> 1, b = muPixBuf('pxRec', n, n), {disc} = muPixKit(b);
+      mp.coverOld = null; disc(c, c, c, muCol(T.ACCENT)); muPixRecord(b, c, c, c - 2, mp.deckAng || 0, mp.coverImg);
+      const [ox, oy] = muPixShow(g, b, w, h, s); return muSharpLabel(g, ox + (c + .5) * s, oy + (c + .5) * s, (muLabelR(c - 2) - .5) * s, mp.deckAng || 0, mp.coverImg, s);
+    }
     const W = Math.min(w, h), fade = mp.coverOld ? Math.min(1, (now - mp.fadeAt) / 180) : 1;
     const paint = (img, alpha) => {
       g.globalAlpha = alpha;
@@ -1803,7 +1863,7 @@ export default async function (ctx) {
     const {level} = muLevel(); if (level <= (+mu.stats.xp_level_seen || 1)) return;
     mu.stats.xp_level_seen = level;
     const theme = Object.entries(MU_THEME_LEVEL).find(([, l]) => l === level)?.[0];
-    muStatus(theme ? `Niveau ${level} atteint — thème « ${theme} » débloqué !` : level === 100 ? 'Niveau 100 atteint — super visualiseur débloqué (Options) !' : level === 150 ? 'Niveau 150 atteint — platine de collection débloquée (Options) !' : `Niveau ${level} atteint !`, T.ACCENT);
+    muStatus(theme ? `Niveau ${level} atteint — thème « ${theme} » débloqué !` : level === 100 ? 'Niveau 100 atteint — super visualiseur débloqué (Options) !' : level === 200 ? 'Niveau 200 atteint — interface Hi-Fi débloquée (Options) !' : Object.entries(MU_DECKS).find(([, d]) => d.lv === level) ? `Niveau ${level} atteint — platine « ${Object.entries(MU_DECKS).filter(([, d]) => d.lv === level).map(([n]) => n).join(' » et « ')} » débloquée (Options) !` : `Niveau ${level} atteint !`, T.ACCENT);
     muSave();
   }
   function muUnlock(id) {
@@ -1949,11 +2009,19 @@ export default async function (ctx) {
   }
 
   /* ---------- Options ---------- */
+  function muDeckPick(level) {  // le choix de la platine ; celles du niveau suivant restent visibles, verrouillées
+    if (level < 150) return mh('p.muWNote.ind', {text: 'Platine : se débloque au niveau 150, avec ses variantes jusqu\'au niveau 190 (tu es niveau ' + level + ').'});
+    const cur = muDeckName();
+    return mh('div.muDecks', {}, mh('span.muSmall', {text: 'PLATINE'}), ...Object.entries(MU_DECKS).map(([n, d]) => d.lv > level
+      ? mh('button.muBtn.locked', {text: n + ' · niv. ' + d.lv, title: d.note, onclick: () => muStatus(`Platine « ${n} » : niveau ${d.lv}.`, T.WARN)})
+      : mh('button.muBtn' + (n === cur ? '.accent.on' : ''), {text: (n === cur ? '✓ ' : '') + n, title: d.note, onclick: e => { mu.settings.deckStyle = n; muSave(); for (const x of e.target.parentElement.querySelectorAll('.muBtn:not(.locked)')) { const on = x === e.target; x.classList.toggle('on', on); x.classList.toggle('accent', on); x.textContent = (on ? '✓ ' : '') + x.textContent.replace('✓ ', ''); } }})));
+  }
   function muOptions() {
     const st = mu.settings, w = muWindow('Options', 620), b = w.body, lv = muLevel();
     const check = (label, key) => { const c = mh('input', {type: 'checkbox', checked: !!st[key]}); c.dataset.k = key; return mh('label.muCheck', {}, c, mh('span', {text: label})); };
     b.append(muH('OPTIONS'));
-    b.append(muSec('AFFICHAGE'), check('Afficher le visualiseur audio', 'visualizer'), lv.level >= 100 ? check('Super visualiseur : reflet, étincelles, lueur et pulsation des basses (niveau 100)', 'superVis') : mh('p.muWNote.ind', {text: 'Super visualiseur : se débloque au niveau 100 (tu es niveau ' + lv.level + ').'}), check('Pochette « lecture en cours » en cercle façon vinyle', 'vinyl'), lv.level >= 150 ? check('Platine de collection : socle en bois et bras doré (niveau 150)', 'deckLuxe') : mh('p.muWNote.ind', {text: 'Platine de collection : se débloque au niveau 150 (tu es niveau ' + lv.level + ').'}),
+    b.append(muSec('AFFICHAGE'), check('Afficher le visualiseur audio', 'visualizer'), lv.level >= 100 ? check('Super visualiseur : reflet, étincelles, lueur et pulsation des basses (niveau 100)', 'superVis') : mh('p.muWNote.ind', {text: 'Super visualiseur : se débloque au niveau 100 (tu es niveau ' + lv.level + ').'}), check('Pochette « lecture en cours » en cercle façon vinyle (la platine complète à partir du niveau 150)', 'vinyl'), muDeckPick(lv.level),
+      lv.level >= 200 ? check('Interface Hi-Fi : façade en aluminium, écrans lumineux, côtés en bois (niveau 200)', 'hifi') : mh('p.muWNote.ind', {text: 'Interface Hi-Fi : change tout le style de l\'appli, se débloque au niveau 200 (tu es niveau ' + lv.level + ').'}),
       check('Forme d\'onde dans la barre de progression (au lieu d\'une simple ligne)', 'waveform'), check('Afficher la date d\'ajout des musiques dans la liste', 'dateAdded'),
       check('Afficher la date de sortie des musiques dans la liste', 'releaseDate'), check('Appli pixel : cadres, boutons et police façon petit lecteur', 'pixelUi'), check('Mode petit lecteur (playlists et musiques uniquement)', 'mini'),
       check('Vue « mur de pochettes » (grille de pochettes) au lieu de la liste', 'gallery'), check('Mode sans images (masque les pochettes partout) — réduit les lags', 'noImages'));
