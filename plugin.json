@@ -1,7 +1,7 @@
 {
   "id": "neodex.music",
   "name": "NeoMusic",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "author": "NDesumeur",
   "description": "Ton lecteur de musique : playlists en ligne et hors ligne, thèmes, spectre, égaliseur, statistiques, succès et raccourcis globaux.",
   "icon": "icon.png",
