@@ -10,6 +10,8 @@
   "neobase": ">=4.1.0",
   "type": "app",
   "category": "Musique",
+  "syncMode": "fusion",
+  "syncInfo": "Bibliothèque et playlists (ajouts et suppressions des deux côtés) ; statistiques et niveau : le meilleur gagne.",
   "mobile": true,
   "system": false,
   "dependencies": {},
