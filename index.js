@@ -125,6 +125,8 @@ body.mmFloat>*:not(.muMini){display:none!important} body.mmFloat{overflow:hidden
 .muFilter{width:190px;background:var(--mcard2);color:var(--mtext);border:0;padding:6px 8px;font-size:11px;outline:none;caret-color:var(--macc)}
 .muFilter::placeholder{color:var(--msub)} .muFilter:focus{outline:1px solid var(--macc)}
 .muList{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;margin:0 14px 14px;position:relative;outline:none;background:var(--mcard);overscroll-behavior:contain}
+/* petit écran (PC portable) : toute la page défile, et la liste garde presque toute la hauteur une fois en bas */
+@media (max-height:900px){.mu .muMain{overflow-y:auto;overscroll-behavior:contain} .mu .muLib{flex:none;height:calc(100% - 24px);min-height:340px} .mu .muList{overscroll-behavior:auto}}
 #muSpacer{position:relative;width:100%}
 .muRow{position:absolute;left:0;right:0;top:0;height:58px;display:flex;align-items:center;background:var(--mcard);cursor:var(--cp,pointer);backface-visibility:hidden}
 .muRow:hover{background:color-mix(in srgb,var(--mcard) 70%,var(--mcard2))}
