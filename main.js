@@ -10,8 +10,9 @@ const MUSIC = () => path.join(ROOT(), 'musics'), COVERS = () => path.join(ROOT()
 const md5 = s => crypto.createHash('md5').update(String(s)).digest('hex');
 const inside = (dir, name) => { const p = path.join(dir, path.basename(String(name || ''))); return p.startsWith(dir) ? p : null; };  // only plain file names, never a path elsewhere
 let ffmpeg = null;
-try { ffmpeg = execFileSync('where', ['ffmpeg'], { encoding: 'utf8', windowsHide: true }).split(/\r?\n/)[0].trim() || null; } catch {}
-const BIN = () => path.join(ROOT(), 'bin'), YT = () => path.join(BIN(), 'yt-dlp.exe'), FF = () => path.join(BIN(), 'ffmpeg.exe');
+const WIN = process.platform === 'win32', EXE = WIN ? '.exe' : '';
+try { ffmpeg = execFileSync(WIN ? 'where' : 'which', ['ffmpeg'], { encoding: 'utf8', windowsHide: true }).split(/\r?\n/)[0].trim() || null; } catch {}
+const BIN = () => path.join(ROOT(), 'bin'), YT = () => path.join(BIN(), 'yt-dlp' + EXE), FF = () => path.join(BIN(), 'ffmpeg' + EXE);
 if (!ffmpeg && fs.existsSync(FF())) ffmpeg = FF();
 
 /* ---------- yt-dlp et ffmpeg : installés tout seuls dans le dossier de NeoMusic (ni Python ni installation à la main), yt-dlp remis à jour ---------- */
@@ -27,15 +28,15 @@ function ensureTools(force) {  // une seule installation à la fois ; force = yt
   return tools ??= (async () => {
     const yt = YT();
     if (force || !fs.existsSync(yt) || Date.now() - fs.statSync(yt).mtimeMs > 3 * 864e5) {
-      try { await grab('https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe', yt); }
+      try { await grab('https://github.com/yt-dlp/yt-dlp/releases/latest/download/' + (WIN ? 'yt-dlp.exe' : 'yt-dlp_linux'), yt); if (!WIN) fs.chmodSync(yt, 0o755); }
       catch (e) { if (!fs.existsSync(yt)) throw new Error("yt-dlp n'a pas pu être installé : " + e.message); }  // une ancienne copie vaut mieux que rien
     }
     if (!ffmpeg) {
-      const zip = path.join(BIN(), 'ffmpeg.zip');
-      await grab('https://github.com/yt-dlp/FFmpeg-Builds/releases/latest/download/ffmpeg-master-latest-win64-gpl.zip', zip);
-      await new Promise((ok, ko) => execFile('tar', ['-xf', zip, '-C', BIN(), '--strip-components=2', '*/bin/ffmpeg.exe'], { windowsHide: true, timeout: 120000 }, e => e ? ko(new Error('ffmpeg illisible')) : ok()));
+      const zip = path.join(BIN(), WIN ? 'ffmpeg.zip' : 'ffmpeg.tar.xz');
+      await grab('https://github.com/yt-dlp/FFmpeg-Builds/releases/latest/download/ffmpeg-master-latest-' + (WIN ? 'win64-gpl.zip' : 'linux64-gpl.tar.xz'), zip);
+      await new Promise((ok, ko) => execFile('tar', ['-xf', zip, '-C', BIN(), '--strip-components=2', ...(WIN ? [] : ['--wildcards']), '*/bin/ffmpeg' + EXE], { windowsHide: true, timeout: 120000 }, e => e ? ko(new Error('ffmpeg illisible')) : ok()));
       fs.rmSync(zip, { force: true });
-      if (fs.existsSync(FF())) ffmpeg = FF();
+      if (fs.existsSync(FF())) { if (!WIN) fs.chmodSync(FF(), 0o755); ffmpeg = FF(); }
     }
   })().catch(e => { tools = null; throw e; });
 }
