@@ -73,3 +73,8 @@ Ta bibliothèque, tes playlists, tes statistiques, tes succès et tes réglages 
 Dans NeoDex : **NeoStore → À découvrir → NeoMusic → Installer**.
 
 Développer un plugin : voir le [SDK NeoDex](https://github.com/NDesumeur/neodex-sdk).
+
+## Version 2.1.0
+
+- Textes plus grands partout : listes, réglages, statistiques, mini-lecteur.
+- Textes anglais manquants ajoutés (Nouvelle, Favori, Autre, lectures).

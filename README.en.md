@@ -73,3 +73,8 @@ Your library, playlists, statistics, achievements and settings are stored by Neo
 In NeoDex: **NeoStore → Discover → NeoMusic → Install**.
 
 Building a plugin: see the [NeoDex SDK](https://github.com/NDesumeur/neodex-sdk).
+
+## Version 2.1.0
+
+- Larger text everywhere: lists, settings, statistics, mini player.
+- Missing English texts added (New, Favorite, Another, plays).

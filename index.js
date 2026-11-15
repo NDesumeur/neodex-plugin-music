@@ -4,7 +4,7 @@
 const HTML = "";
 const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strips); colours are the theme's, set on #mu by muApplyTheme */
 #plug_neodex_music{overflow:hidden;background:#101425}
-.mu{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--mbg);color:var(--mtext);font:13px Consolas,'Cascadia Mono',monospace;user-select:none;overflow:hidden}
+.mu{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--mbg);color:var(--mtext);font:15px Consolas,'Cascadia Mono',monospace;user-select:none;overflow:hidden}
 :where(.mu) button{all:unset;box-sizing:border-box;cursor:var(--cp,pointer)}
 :where(.mu) :is(input,select){font:inherit;color:inherit}
 :where(.mu) button:disabled{cursor:default;opacity:.45}
@@ -14,9 +14,9 @@ const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strip
 .muTop{height:38px;flex:none;display:flex;align-items:center;background:var(--mside);white-space:nowrap;overflow:hidden}
 .muTopStrip{width:5px;align-self:stretch;background:var(--macc)}
 .muBrand{margin:0 4px 0 14px;color:var(--mwarn);font-size:15px;letter-spacing:.5px}
-.muStatus{margin-left:18px;color:var(--mwarn);font-weight:bold;font-size:12px;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.muStatus{margin-left:18px;color:var(--mwarn);font-weight:bold;font-size:14px;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .muDl{width:120px;height:4px;margin-left:16px;flex:none} .muDl i{display:block;height:100%;width:0;background:var(--macc);transition:width .2s}
-.muInd{margin-left:18px;color:var(--macc2);font-weight:bold;font-size:11px} .muInd:empty{display:none}
+.muInd{margin-left:18px;color:var(--macc2);font-weight:bold;font-size:13px} .muInd:empty{display:none}
 .muMenuBtn{margin-left:8px!important;margin-right:2px!important;color:#fff} .muTopBtn{margin-left:auto;width:44px;align-self:stretch;display:grid;place-items:center;color:var(--msub);font-size:15px;font-weight:bold}
 .muTopBtn:hover{background:var(--mcard);color:var(--mtext)}
 .muBody{flex:1;display:flex;min-height:0}
@@ -26,19 +26,19 @@ const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strip
 .muSideIn{overflow-y:auto;overflow-x:hidden;padding-bottom:16px;min-width:0}
 .muSide.closed{width:0} .muSide.closed .muSideIn{visibility:hidden}
 .muSideToggle{display:grid;place-items:center;color:var(--macc);font-size:20px;font-weight:bold} .muSideToggle:hover{background:var(--mcard);color:var(--mtext)}
-.muHead{padding:14px 10px 6px 24px;color:var(--msub);font-weight:bold;font-size:12px;letter-spacing:.3px}
+.muHead{padding:14px 10px 6px 24px;color:var(--msub);font-weight:bold;font-size:14px;letter-spacing:.3px}
 #muPlaylists{padding:0 0 0 14px}
-.muPlBtn{display:flex;align-items:center;width:100%;margin:1px 0;color:var(--mtext);font-size:13px}
+.muPlBtn{display:flex;align-items:center;width:100%;margin:1px 0;color:var(--mtext);font-size:15px}
 .muPlBtn i{width:3px;align-self:stretch;flex:none}
-.muPlBtn .ic{width:16px;margin:0 8px 0 12px;flex:none;display:grid;place-items:center;font-size:12px;color:#fff} .muPlBtn .ic svg{display:block}
+.muPlBtn .ic{width:16px;margin:0 8px 0 12px;flex:none;display:grid;place-items:center;font-size:14px;color:#fff} .muPlBtn .ic svg{display:block}
 .muPlBtn span:last-of-type{flex:1;min-width:0;text-align:left;padding:8px 10px 8px 2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .muPlBtn em{display:none}
 .muPlBtn:hover,.muPlBtn.on{background:var(--mcard);color:var(--macc)} .muPlBtn.on i{background:var(--macc)} .muPlBtn:active{background:var(--mpress)}
 .muPills{display:flex;gap:8px;margin:6px 0 18px 14px}
-.muPill{flex:1;text-align:center;padding:7px 4px;background:var(--mcard2);color:var(--macc2);font-weight:bold;font-size:11px}
+.muPill{flex:1;text-align:center;padding:7px 4px;background:var(--mcard2);color:var(--macc2);font-weight:bold;font-size:13px}
 .muPill:hover{background:var(--macc);color:#06110C} .muPill.danger{color:var(--mdanger)} .muPill.danger:hover{background:color-mix(in srgb,var(--mdanger) 24%,var(--mcard2));color:var(--mdanger)}
 .muExtra>.muSideBtn:first-child{margin-top:0}
 .muSideIn>.muExtra:last-child{padding:0 0 0 14px}
-.muSideBtn{display:flex;align-items:center;gap:14px;width:100%;margin:2px 0;padding:9px 10px;color:var(--mtext);font-size:13px}
+.muSideBtn{display:flex;align-items:center;gap:14px;width:100%;margin:2px 0;padding:9px 10px;color:var(--mtext);font-size:15px}
 .muSideBtn svg{color:#fff;flex:none;image-rendering:pixelated;margin-right:2px} .muSideBtn:hover{background:var(--mcard);color:var(--macc)} .muSideBtn:active{background:var(--mpress)}
 :where(.mu,.mu *,.muLayer,.muLayer *,.muWin,.muWin *,.muMenu,.muMenu *,.muMini,.muMini *){text-align:left}
 /* main column: three cards */
@@ -52,14 +52,14 @@ const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strip
 .muCoverWrap canvas{width:100%;height:100%}
 @media (max-width:900px){.muCoverWrap{width:200px;height:150px}}
 .muInfo{flex:1;min-width:0;display:flex;flex-direction:column}
-.muKick{color:var(--macc);font-weight:bold;font-size:12px;letter-spacing:.3px} .muKick.alt{color:var(--macc2)}
+.muKick{color:var(--macc);font-weight:bold;font-size:14px;letter-spacing:.3px} .muKick.alt{color:var(--macc2)}
 .muTitle{margin:4px 0 2px;font-size:20px;font-weight:bold;line-height:1.3;height:2.6em;overflow:hidden;word-break:break-word;user-select:text}
-.muTime{color:var(--msub);font-size:12px}
+.muTime{color:var(--msub);font-size:14px}
 .muProgress{width:100%;height:36px;margin:10px 0 14px;cursor:var(--cp,pointer);display:block}
 .muSpectrum{height:64px;margin-bottom:10px;display:block;image-rendering:pixelated}  /* drawn at the size of the art pixels, scaled up crisp */
 /* NeoMusic's portable player: pixel frame (notched corners, accent top), spinning record, pixel spectrum, pixel buttons */
 .muMini{position:fixed;z-index:32;left:0;top:0;width:430px;display:none;grid-template-columns:92px 1fr;gap:14px;padding:12px 14px 10px;
-  background:var(--mcard);color:var(--mtext);font:12px Consolas,'Cascadia Mono',monospace;cursor:var(--cg,grab);touch-action:none;user-select:none;
+  background:var(--mcard);color:var(--mtext);font:14px Consolas,'Cascadia Mono',monospace;cursor:var(--cg,grab);touch-action:none;user-select:none;
   box-shadow:0 -3px 0 0 var(--macc),0 3px 0 0 var(--mborder),-3px 0 0 0 var(--mborder),3px 0 0 0 var(--mborder),0 -6px 0 -3px var(--macc),9px 9px 0 0 rgba(0,0,0,.45)}
 .muMini.on{display:grid;animation:mmIn .2s steps(4)}
 @keyframes mmIn{from{transform:translateY(12px);opacity:.3}}
@@ -68,14 +68,14 @@ const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strip
 #mmDisc{width:92px;height:92px;align-self:center} .muMini.deck{width:460px;grid-template-columns:130px 1fr} .muMini.deck #mmDisc{width:130px;height:96px}  /* 460 : la largeur maxi d’une frame flottante de NeoDex */
 .mmBody{min-width:0;display:flex;flex-direction:column;gap:3px}
 .mmTop{display:flex;align-items:center;gap:6px;height:20px}
-.mmKick{color:var(--macc);font-weight:bold;font-size:10px;letter-spacing:2px} #mmState{flex:1;font-size:10px;font-weight:bold;letter-spacing:1px}
-#mmTitle{font-size:13px;line-height:1.3;min-height:1.3em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#mmArtist{color:var(--msub);font-size:11px;line-height:1.3;min-height:1.3em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mmKick{color:var(--macc);font-weight:bold;font-size:12px;letter-spacing:2px} #mmState{flex:1;font-size:12px;font-weight:bold;letter-spacing:1px}
+#mmTitle{font-size:15px;line-height:1.3;min-height:1.3em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#mmArtist{color:var(--msub);font-size:13px;line-height:1.3;min-height:1.3em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mmSpecBox{height:21px;margin-top:2px} .mmSpecBox.sup{height:39px} #mmSpec{display:block;image-rendering:pixelated}
 .mmBar{display:flex;align-items:center;gap:8px}
 #mmSeek{flex:1;height:6px;background:var(--mcard2);cursor:var(--cp,pointer);box-shadow:0 2px 0 rgba(0,0,0,.35)} #mmSeek:hover{height:8px}
 #mmSeek i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,var(--macc) 0 4px,color-mix(in srgb,var(--macc) 75%,#fff) 4px 6px)}
-#mmTime{color:var(--msub);font-size:10px;white-space:nowrap}
+#mmTime{color:var(--msub);font-size:12px;white-space:nowrap}
 .mmCtl{display:flex;align-items:center;gap:4px;margin-top:3px}
 .mmBtn{all:unset;box-sizing:border-box;cursor:var(--cp,pointer);width:30px;height:26px;display:grid;place-items:center;color:var(--mtext);background:var(--mcard2);
   box-shadow:inset 0 2px 0 rgba(255,255,255,.08),0 2px 0 rgba(0,0,0,.4);transition:background .1s,color .1s}
@@ -83,7 +83,7 @@ const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strip
 #mmPlay{width:38px;background:var(--macc);color:#06110C} #mmPlay:hover{background:var(--macc2);color:#06110C}
 #mmFav.on{color:var(--mheart)}
 .mmTop .mmBtn{width:22px;height:18px;background:transparent;box-shadow:none;color:var(--msub)} .mmTop .mmBtn:hover{background:var(--mcard2);color:var(--mtext)} #mmClose:hover{background:var(--mdanger);color:#fff}
-#mmVol{margin-left:auto;color:var(--msub);font-size:10px;letter-spacing:1px}
+#mmVol{margin-left:auto;color:var(--msub);font-size:12px;letter-spacing:1px}
 body.vfs .muMini{display:none}
 body.mmFloat>*:not(.muMini){display:none!important} body.mmFloat{overflow:hidden;background:transparent!important} body.mmFloat .muMini{left:0!important;top:0!important}
 .mu.novis .muSpectrum{display:none}
@@ -94,21 +94,21 @@ body.mmFloat>*:not(.muMini){display:none!important} body.mmFloat{overflow:hidden
 .muPlay .fill{fill:var(--macc);transition:fill .12s} .muPlay:hover .fill{fill:var(--macc2)} .muPlay:active>svg{transform:scale(.95)}
 .muNowSide{flex:none;width:150px;align-self:flex-start;display:flex;flex-direction:column;align-items:center}
 .muNowSide .muBtn{margin-bottom:10px}
-.muSmall{color:var(--msub);font-weight:bold;font-size:11px;margin-top:4px} .muNowSide .muSmall+.muSelect{margin-top:3px} .muNowSide .muRange+.muSmall{margin-top:12px}
-.muBtn{display:inline-block;padding:8px 12px;background:var(--mcard2);color:var(--mtext);font-weight:bold;font-size:12px;white-space:nowrap;text-align:center}
+.muSmall{color:var(--msub);font-weight:bold;font-size:13px;margin-top:4px} .muNowSide .muSmall+.muSelect{margin-top:3px} .muNowSide .muRange+.muSmall{margin-top:12px}
+.muBtn{display:inline-block;padding:8px 12px;background:var(--mcard2);color:var(--mtext);font-weight:bold;font-size:14px;white-space:nowrap;text-align:center}
 .muBtn:hover{background:var(--mcard)} .muBtn:active{background:var(--mpress)} .muBtn.accent{color:var(--macc)} .muBtn.danger{color:var(--mdanger)}
 .muRange{-webkit-appearance:none;appearance:none;width:130px;height:14px;background:transparent;margin:4px 0;cursor:var(--cp,pointer)}
 .muRange::-webkit-slider-runnable-track{height:6px;background:var(--mcard2)}
 .muRange::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:14px;margin-top:-4px;background:var(--macc);border:1px solid var(--mtext)}
 .muRange:hover::-webkit-slider-thumb{background:var(--macc2)}
-.muSelect{background:var(--mcard2);color:var(--macc);border:0;padding:5px 8px;font-size:11px;outline:none;cursor:var(--cp,pointer);max-width:100%}
+.muSelect{background:var(--mcard2);color:var(--macc);border:0;padding:5px 8px;font-size:13px;outline:none;cursor:var(--cp,pointer);max-width:100%}
 .muSelect.sub{color:var(--msub)} .muSelect option{background:var(--mcard2);color:var(--mtext)}
 .muNowSide .muSelect{width:130px}
 /* recommendation */
 .muReco{display:flex;align-items:center;gap:14px;padding:14px 20px}
 #muRecoCover{width:54px;height:54px}
 .muRecoText{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
-#muReco{font-size:13px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+#muReco{font-size:15px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 /* framed covers (ArtworkFrame): border, hard shadow, accent corner; "?" when there is none */
 .muArt{position:relative;flex:none;background:var(--mcard2);border:2px solid var(--mborder);box-shadow:3px 3px 0 #090B12}
 .muArt::before{content:"";position:absolute;left:-2px;top:-2px;width:45%;height:45%;border-top:2px solid var(--macc);border-left:2px solid var(--macc);pointer-events:none;z-index:1}
@@ -120,9 +120,9 @@ body.mmFloat>*:not(.muMini){display:none!important} body.mmFloat{overflow:hidden
 /* library */
 .muLib{flex:1;min-height:120px;display:flex;flex-direction:column}
 .muLibHead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:16px 20px 8px}
-.muLibHead b{font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .muLibHead span{color:var(--msub);font-size:12px;flex:none}
+.muLibHead b{font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .muLibHead span{color:var(--msub);font-size:14px;flex:none}
 .muFilters{display:flex;flex-wrap:wrap;gap:6px;padding:0 20px 10px}
-.muFilter{width:190px;background:var(--mcard2);color:var(--mtext);border:0;padding:6px 8px;font-size:11px;outline:none;caret-color:var(--macc)}
+.muFilter{width:190px;background:var(--mcard2);color:var(--mtext);border:0;padding:6px 8px;font-size:13px;outline:none;caret-color:var(--macc)}
 .muFilter::placeholder{color:var(--msub)} .muFilter:focus{outline:1px solid var(--macc)}
 .muList{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;margin:0 14px 14px;position:relative;outline:none;background:var(--mcard);overscroll-behavior:contain}
 /* petit écran (PC portable) : toute la page défile, et la liste garde presque toute la hauteur une fois en bas */
@@ -133,29 +133,29 @@ body.mmFloat>*:not(.muMini){display:none!important} body.mmFloat{overflow:hidden
 .muRow .muStrip{width:4px;align-self:stretch;flex:none}
 .muRow .muArt{margin:0 12px 0 10px}
 .muRowText{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
-.muRowText b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.muRowText b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .muRowText div{display:flex;align-items:baseline;gap:8px}
-.muRowText span{flex:1;min-width:0;color:var(--msub);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.muRowText em,.muTile em{font-style:normal;color:var(--macc2);font-weight:bold;font-size:12px;flex:none}
+.muRowText span{flex:1;min-width:0;color:var(--msub);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.muRowText em,.muTile em{font-style:normal;color:var(--macc2);font-weight:bold;font-size:14px;flex:none}
 .muRowFav{padding:6px 8px;margin-left:8px;color:var(--msub);font-size:16px;transition:color .13s} .muRowFav.on{color:var(--mheart)} .muRowFav:hover{color:var(--mheart)}
-.muRowDel{padding:6px 8px;margin-right:4px;color:var(--msub);font-size:13px;transition:color .13s} .muRowDel:hover{color:var(--mdanger)}
+.muRowDel{padding:6px 8px;margin-right:4px;color:var(--msub);font-size:15px;transition:color .13s} .muRowDel:hover{color:var(--mdanger)}
 .muRow.sel,.muTile.sel{background:var(--mcard2);box-shadow:inset 0 0 0 1px var(--macc)}
 .muRow.sel .muStrip,.muTile.sel .muStrip{background:var(--macc)}
 .muRow.playing .muRowText b,.muTile.playing b{color:var(--macc)}
-.muRow.playing .muRowText b::before,.muTile.playing b::before{content:"▶ ";font-size:10px}
+.muRow.playing .muRowText b::before,.muTile.playing b::before{content:"▶ ";font-size:12px}
 .muRow.missing,.muTile.missing{opacity:.5}
 .muTile{position:absolute;left:0;top:0;width:152px;height:196px;display:flex;flex-direction:column;align-items:center;background:var(--mcard);cursor:var(--cp,pointer);backface-visibility:hidden}
 .muTile:hover{background:color-mix(in srgb,var(--mcard) 70%,var(--mcard2))}
 .muTile .muStrip{height:3px;width:100%;flex:none}
 .muTile .muArt{margin:8px 0 4px}
 .muTile b,.muTile>span{width:100%;padding:0 8px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.muTile b,.muTile>span,.muTile em{line-height:1.2} .muTile b{font-size:12px} .muTile>span{color:var(--msub);font-size:11px}
+.muTile b,.muTile>span,.muTile em{line-height:1.2} .muTile b{font-size:14px} .muTile>span{color:var(--msub);font-size:13px}
 .muTileAct{display:flex;justify-content:space-around;width:100%;margin-top:auto}
 .muTileAct .muRowFav,.muTileAct .muRowDel{margin:0;padding:1px 10px 3px}
 .mu.mini .muExtra{display:none!important}
 .mu.mini .muNow{padding:12px 16px} .mu.mini .muSpectrum{display:none}
 /* context menu (Tk Menu colours) */
-.muMenu{position:fixed;z-index:60;min-width:210px;padding:3px;background:var(--mcard2);border:1px solid var(--mborder);box-shadow:4px 4px 0 #090B12;display:flex;flex-direction:column;font-size:12px}
+.muMenu{position:fixed;z-index:60;min-width:210px;padding:3px;background:var(--mcard2);border:1px solid var(--mborder);box-shadow:4px 4px 0 #090B12;display:flex;flex-direction:column;font-size:14px}
 .muMenu button{padding:6px 12px;white-space:nowrap;color:var(--mtext)} .muMenu button:hover:not(:disabled){background:var(--macc);color:#17111F}
 .muMenu hr{border:0;border-top:1px solid var(--mborder);margin:3px 2px}
 .muDecks{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:6px 0} .muDecks .muSmall{margin:0 4px 0 0;width:52px} .muSw{display:inline-block;width:10px;height:10px;margin:0 7px -1px 0;box-shadow:0 0 0 2px #0008} .muDecks .muBtn.on{box-shadow:inset 0 0 0 2px var(--macc)} .muDecks .muBtn.locked{opacity:.45}
@@ -178,7 +178,7 @@ body.mmFloat>*:not(.muMini){display:none!important} body.mmFloat{overflow:hidden
 .mu.lux .muInfo{padding:16px 20px 0;background:color-mix(in srgb,var(--mbg) 55%,#000);background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.04) 0 1px,transparent 1px 4px);
   box-shadow:inset 0 0 0 3px var(--mborder),inset 0 0 0 6px color-mix(in srgb,var(--mbg) 40%,#000),inset 0 9px 0 6px rgba(0,0,0,.3);overflow:hidden}
 .mu.lux .muKick{display:inline-block;align-self:flex-start;padding:4px 10px;background:var(--macc);color:var(--mbg);box-shadow:3px 3px 0 rgba(0,0,0,.45)} .mu.lux .muKick.alt{background:var(--macc2)}
-.mu.lux .muLuxLv{display:inline-block;padding:4px 10px;font-size:11px;font-weight:bold;letter-spacing:2px;color:var(--macc2);box-shadow:inset 0 0 0 2px var(--macc2)}
+.mu.lux .muLuxLv{display:inline-block;padding:4px 10px;font-size:13px;font-weight:bold;letter-spacing:2px;color:var(--macc2);box-shadow:inset 0 0 0 2px var(--macc2)}
 .mu.lux .muTitle{font-size:24px;margin-top:12px;color:var(--mtext);text-shadow:2px 2px 0 #000}
 .mu.lux .muTime{font-size:18px;font-weight:bold;letter-spacing:3px;color:var(--macc2);text-shadow:0 0 0 transparent,2px 2px 0 #000}
 .mu.lux .muSpectrum{margin-bottom:12px;background:transparent;box-shadow:none}
@@ -193,7 +193,7 @@ body.mmFloat>*:not(.muMini){display:none!important} body.mmFloat{overflow:hidden
 .mu.px.lux .muSkip:active,.mu.px.lux .muPlay:active{transform:translateY(4px);box-shadow:inset 0 -2px 0 rgba(0,0,0,.35),0 0 0 2px var(--mborder)}
 /* Deluxe : le panneau des réglages, titré, en rangées */
 .mu.px.lux .muNowSide{width:178px;align-self:stretch;justify-content:flex-start;align-items:stretch;gap:0;padding:16px 16px 16px}
-.mu.px.lux .muNowSide::before{content:"RÉGLAGES";align-self:flex-start;margin:0 0 22px;padding:4px 10px;font-size:12px;font-weight:bold;color:var(--mbg);background:var(--macc);box-shadow:3px 3px 0 rgba(0,0,0,.45)}  /* comme « LECTURE EN COURS » */
+.mu.px.lux .muNowSide::before{content:"RÉGLAGES";align-self:flex-start;margin:0 0 22px;padding:4px 10px;font-size:14px;font-weight:bold;color:var(--mbg);background:var(--macc);box-shadow:3px 3px 0 rgba(0,0,0,.45)}  /* comme « LECTURE EN COURS » */
 .mu.px.lux .muNowSide .muBtn{width:100%;margin-bottom:16px;padding:10px 0}
 .mu.px.lux .muNowSide .muBtn.on{color:var(--mheart);box-shadow:inset 0 0 0 2px var(--mheart),0 4px 0 rgba(0,0,0,.5)}
 .mu.px.lux .muNowSide .muSmall{display:flex;align-items:center;gap:7px;margin:0 0 6px;color:var(--macc);letter-spacing:2px}
@@ -205,20 +205,20 @@ body.mmFloat>*:not(.muMini){display:none!important} body.mmFloat{overflow:hidden
 .mu.px.lux .muEqPick{display:flex;align-items:stretch;height:32px;box-shadow:0 0 0 2px var(--mborder),3px 3px 0 2px rgba(0,0,0,.45)}
 .mu.px.lux .muEqPick button{width:28px;flex:none;display:grid;place-items:center;background:var(--mcard2);color:var(--macc);box-shadow:inset 0 3px 0 rgba(255,255,255,.1),inset 0 -3px 0 rgba(0,0,0,.4)}
 .mu.px.lux .muEqPick button:hover{background:var(--macc);color:var(--mbg)} .mu.px.lux .muEqPick button:active{transform:translateY(2px)}
-.mu.px.lux #muEqName{flex:1;min-width:0;display:grid;place-items:center;padding:0 4px;font-size:11px;font-weight:bold;letter-spacing:1px;color:var(--mtext);background:color-mix(in srgb,var(--mbg) 55%,#000);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.mu.px.lux #muEqName{flex:1;min-width:0;display:grid;place-items:center;padding:0 4px;font-size:13px;font-weight:bold;letter-spacing:1px;color:var(--mtext);background:color-mix(in srgb,var(--mbg) 55%,#000);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 /* Deluxe : la barre du haut (touche menu, logo, afficheur d'état) */
 .mu.px.lux .muTop{height:58px;background:var(--mside);background-image:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.03) 3px 4px);box-shadow:0 3px 0 var(--macc),0 6px 0 var(--mborder),0 10px 0 rgba(0,0,0,.35)}
 .mu.px.lux .muMenuBtn{width:40px;height:36px;margin:0 6px 0 14px!important;background:var(--mcard2);box-shadow:inset 0 3px 0 rgba(255,255,255,.1),inset 0 -4px 0 rgba(0,0,0,.4),0 0 0 2px var(--mborder),3px 3px 0 2px rgba(0,0,0,.45)}
 .mu.px.lux .muBrand{display:flex;align-items:center;gap:0;margin:0 18px 0 12px;padding:0;background:none;clip-path:none;box-shadow:none;color:var(--mtext);font-size:20px;letter-spacing:3px;text-shadow:2px 2px 0 #000}
 .mu.px.lux .muLogo{display:block;margin-right:12px;color:var(--macc);filter:drop-shadow(2px 2px 0 #000)} .mu.px.lux .muLogo svg{display:block}
 .mu.px.lux .muBrand2{color:var(--macc)}
-.mu.px.lux .muBrandTag{display:block;margin-left:12px;padding:3px 7px;font-style:normal;font-size:10px;letter-spacing:2px;color:var(--macc2);text-shadow:none;box-shadow:inset 0 0 0 2px var(--macc2)}
+.mu.px.lux .muBrandTag{display:block;margin-left:12px;padding:3px 7px;font-style:normal;font-size:12px;letter-spacing:2px;color:var(--macc2);text-shadow:none;box-shadow:inset 0 0 0 2px var(--macc2)}
 .mu.px.lux .muStatus{padding:6px 14px;background:color-mix(in srgb,var(--mbg) 55%,#000);background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.04) 0 1px,transparent 1px 3px);box-shadow:inset 0 0 0 2px var(--mborder);letter-spacing:2px}
 /* Deluxe : les playlists en étiquettes (pastille d'icône, nom, nombre de titres) */
 .mu.px.lux #muPlaylists{gap:9px}
 .mu.px.lux .muPlBtn{min-height:42px;padding:0 10px 0 6px;border:0;background:var(--mcard);box-shadow:inset 0 0 0 2px var(--mborder),inset 0 4px 0 rgba(255,255,255,.04),3px 3px 0 1px rgba(0,0,0,.45);transition:transform .08s steps(2)}
 .mu.px.lux .muPlBtn .ic{width:28px;height:28px;margin:0 10px 0 0;background:var(--mcard2);box-shadow:inset 0 0 0 2px var(--mborder);color:var(--macc)}
-.mu.px.lux .muPlBtn em{display:block;flex:none;min-width:30px;padding:2px 6px;font-style:normal;font-size:10px;font-weight:bold;text-align:center;color:var(--msub);background:var(--mside);box-shadow:inset 0 0 0 1px var(--mborder)}
+.mu.px.lux .muPlBtn em{display:block;flex:none;min-width:30px;padding:2px 6px;font-style:normal;font-size:12px;font-weight:bold;text-align:center;color:var(--msub);background:var(--mside);box-shadow:inset 0 0 0 1px var(--mborder)}
 .mu.px.lux .muPlBtn:hover:not(.on){transform:translateX(3px);color:var(--macc);box-shadow:inset 0 0 0 2px var(--macc),3px 3px 0 1px rgba(0,0,0,.45)}
 .mu.px.lux .muPlBtn.on{background:var(--macc);color:var(--mbg);box-shadow:inset 0 4px 0 rgba(255,255,255,.25),inset 0 -4px 0 rgba(0,0,0,.2),3px 3px 0 1px rgba(0,0,0,.45)}
 .mu.px.lux .muPlBtn.on .ic{background:var(--mbg);color:var(--macc);box-shadow:none} .mu.px.lux .muPlBtn.on em{background:var(--mbg);color:var(--macc);box-shadow:none}
@@ -254,7 +254,7 @@ body.mmFloat>*:not(.muMini){display:none!important} body.mmFloat{overflow:hidden
 .mu.px .muTopBtn{background:var(--mcard2);margin:8px 12px 8px auto;width:36px;align-self:auto;height:32px}
 .mu.px .muSide{background:var(--mside);box-shadow:4px 0 0 rgba(0,0,0,.35);position:relative;z-index:2;grid-template-rows:6px 1fr;background-image:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.025) 3px 4px)}
 .mu.px .muSideStrip{background:repeating-linear-gradient(90deg,var(--macc) 0 6px,var(--macc2) 6px 9px)}
-.mu.px .muHead{display:flex;align-items:center;gap:8px;padding:18px 12px 8px 14px;color:var(--macc);font-size:11px;letter-spacing:2px;text-transform:uppercase}
+.mu.px .muHead{display:flex;align-items:center;gap:8px;padding:18px 12px 8px 14px;color:var(--macc);font-size:13px;letter-spacing:2px;text-transform:uppercase}
 .mu.px .muHead::before{content:"";width:8px;height:8px;flex:none;background:var(--macc);box-shadow:3px 3px 0 rgba(0,0,0,.45)}
 .mu.px .muHead::after{content:"";flex:1;height:2px;background:repeating-linear-gradient(90deg,var(--mborder) 0 4px,transparent 4px 7px)}
 .mu.px #muPlaylists{padding:0 12px 0 12px;display:flex;flex-direction:column;gap:7px}
@@ -285,24 +285,24 @@ body.mmFloat>*:not(.muMini){display:none!important} body.mmFloat{overflow:hidden
 .muLayer{position:absolute;inset:0;pointer-events:none;z-index:20}
 .muWin{position:absolute;left:0;top:38px;max-width:100%;max-height:calc(100% - 38px);display:flex;flex-direction:column;background:var(--mcard);border:1px solid var(--mborder);box-shadow:6px 6px 0 rgba(0,0,0,.35);pointer-events:auto;animation:muReveal .18s ease-out}
 .muWinBar{height:34px;flex:none;display:flex;align-items:center;background:var(--mside);cursor:move}
-.muWinBar i{width:4px;align-self:stretch;background:var(--macc)} .muWinBar b{flex:1;padding:0 12px;color:var(--mwarn);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.muWinBar button,.muDlgBar button{width:42px;align-self:stretch;display:grid;place-items:center;color:var(--mdanger);font-weight:bold;font-size:12px}
+.muWinBar i{width:4px;align-self:stretch;background:var(--macc)} .muWinBar b{flex:1;padding:0 12px;color:var(--mwarn);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.muWinBar button,.muDlgBar button{width:42px;align-self:stretch;display:grid;place-items:center;color:var(--mdanger);font-weight:bold;font-size:14px}
 .muWinBar button:hover,.muDlgBar button:hover{background:var(--mdanger);color:var(--mtext)}
 .muWinBody{overflow-y:auto;padding:4px 30px 22px;user-select:text}
 .muWHx{display:none} .muWH{margin:20px 0 8px;color:var(--macc);font-weight:bold;font-size:17px}
-.muWHead{display:flex;align-items:baseline;justify-content:space-between;gap:12px} .muWHead>span{color:var(--msub);font-size:12px}
-.muWSec{margin:22px 0 8px;color:var(--macc2);font-weight:bold;font-size:12px;letter-spacing:.3px}
-.muWNote{margin:4px 0;color:var(--msub);font-size:12px;line-height:1.45} .muWNote.ind{padding-left:24px}
+.muWHead{display:flex;align-items:baseline;justify-content:space-between;gap:12px} .muWHead>span{color:var(--msub);font-size:14px}
+.muWSec{margin:22px 0 8px;color:var(--macc2);font-weight:bold;font-size:14px;letter-spacing:.3px}
+.muWNote{margin:4px 0;color:var(--msub);font-size:14px;line-height:1.45} .muWNote.ind{padding-left:24px}
 .muWEnd{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}
 .muWBtns{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0}
-.muWBtns>span{color:var(--msub);font-size:12px}
+.muWBtns>span{color:var(--msub);font-size:14px}
 .muRows{display:flex;flex-direction:column;gap:6px;margin-top:8px}
 .muWRow{display:flex;align-items:center;gap:12px;padding:8px 10px;background:var(--mcard2)}
 .muWRow>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
-.muWRow b{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .muWRow span{color:var(--msub);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.muWRow b{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .muWRow span{color:var(--msub);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 .muWThumb{width:72px;height:40px;object-fit:cover;flex:none;border:1px solid var(--mborder)}
-.muWin label.muCheck{display:flex;align-items:flex-start;gap:10px;margin:7px 0;cursor:var(--cp,pointer);font-size:12px;line-height:1.4}
+.muWin label.muCheck{display:flex;align-items:flex-start;gap:10px;margin:7px 0;cursor:var(--cp,pointer);font-size:14px;line-height:1.4}
 .muWin label.muCheck input{accent-color:var(--macc);margin:1px 0 0;width:14px;height:14px;flex:none;cursor:inherit}
 .muArtRow input[type=checkbox]{-webkit-appearance:none;appearance:none;margin:1px 0 0;width:16px;height:16px;flex:none;cursor:var(--cp,pointer);background:var(--mbg);border:2px solid var(--mborder);display:grid;place-items:center;transition:background .12s,border-color .12s,box-shadow .12s}
 .muArtRow input[type=checkbox]:hover{border-color:var(--macc)}
@@ -313,53 +313,53 @@ body.mmFloat>*:not(.muMini){display:none!important} body.mmFloat{overflow:hidden
 .muRadios{display:flex;flex-wrap:wrap;gap:4px 18px;padding-left:24px}
 .muBands{display:flex;justify-content:space-between;gap:6px;padding:12px 10px;background:var(--mcard2);margin:8px 0}
 .muBand{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
-.muBand span{color:var(--macc);font-size:10px;font-weight:bold} .muBand b{color:var(--msub);font-size:10px}
+.muBand span{color:var(--macc);font-size:12px;font-weight:bold} .muBand b{color:var(--msub);font-size:12px}
 .muBand input{writing-mode:vertical-lr;direction:rtl;width:18px;height:120px;accent-color:var(--macc);cursor:var(--cp,pointer)}
 .muThemes{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px}
 .muTh{display:flex;flex-direction:column;gap:0;padding:0;border:2px solid transparent;background:none;cursor:pointer;font:inherit;text-align:left;overflow:hidden;transition:transform .12s,border-color .12s}
 .muTh:hover{transform:translateY(-2px)} .muTh.on{transform:translateY(-1px)}
 .muTh .pv{display:grid;grid-template-columns:22% 1fr;height:58px} .muTh .pv i{display:block} .muTh .pv .sd{display:flex;flex-direction:column;gap:5px;padding:7px 5px} .muTh .pv .sd u{display:block;height:4px;border-radius:2px;opacity:.7}
 .muTh .pv .mn{display:flex;flex-direction:column;gap:5px;padding:7px} .muTh .pv .mn u{display:block;height:9px} .muTh .pv .mn s{display:block;height:4px;width:60%} .muTh .pv .mn em{display:block;height:5px;width:35%;margin-top:auto}
-.muTh .nm{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;font-size:11px;font-weight:600} .muTh .nm span{display:flex;gap:3px} .muTh .nm span u{display:block;width:8px;height:8px;border-radius:50%}
+.muTh .nm{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;font-size:13px;font-weight:600} .muTh .nm span{display:flex;gap:3px} .muTh .nm span u{display:block;width:8px;height:8px;border-radius:50%}
 .muTh.locked{opacity:.45;cursor:default}
 .muArtHead{display:flex;align-items:center;gap:14px;padding:14px 16px;margin-bottom:10px;background:linear-gradient(135deg,var(--mcard2),var(--mcard));border-left:4px solid var(--macc)}
 .muArtHead .ic{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--macc);color:var(--mbg);font-size:22px;font-weight:800;flex:none}
-.muArtHead b{display:block;font-size:19px} .muArtHead span{color:var(--msub);font-size:12px}
+.muArtHead b{display:block;font-size:19px} .muArtHead span{color:var(--msub);font-size:14px}
 .muArtTools{display:flex;gap:8px;margin-bottom:8px} .muArtFilter{flex:1;padding:9px 12px;background:var(--mcard2);border:1px solid var(--mborder);color:var(--mtext);font:inherit;outline:none} .muArtFilter:focus{border-color:var(--macc)}
 .muArtList{display:flex;flex-direction:column;max-height:46vh;overflow-y:auto;border:1px solid var(--mborder)}
 .muArtRow{display:grid;grid-template-columns:30px 22px 1fr auto;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;border-bottom:1px solid color-mix(in srgb,var(--mborder) 40%,transparent)}
 .muArtRow:nth-child(even){background:color-mix(in srgb,var(--mcard2) 55%,transparent)} .muArtRow:hover{background:color-mix(in srgb,var(--macc) 14%,var(--mcard2))} .muArtRow.on{background:color-mix(in srgb,var(--macc) 22%,var(--mcard2))}
-.muArtRow .n{color:var(--msub);font-size:11px;text-align:right}  .muArtRow div{min-width:0} .muArtRow b{display:block;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .muArtRow small{color:var(--msub);font-size:11px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .muArtRow .d{color:var(--msub);font-size:12px;font-variant-numeric:tabular-nums}
-.muSwatch{padding:8px 14px;border:2px solid transparent;font-weight:bold;font-size:12px}
+.muArtRow .n{color:var(--msub);font-size:13px;text-align:right}  .muArtRow div{min-width:0} .muArtRow b{display:block;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .muArtRow small{color:var(--msub);font-size:13px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .muArtRow .d{color:var(--msub);font-size:14px;font-variant-numeric:tabular-nums}
+.muSwatch{padding:8px 14px;border:2px solid transparent;font-weight:bold;font-size:14px}
 .muSwatch:hover{filter:brightness(1.2)} .muSwatch.locked{display:flex;align-items:center;gap:8px;background:var(--mcard2);color:var(--msub)}
-.muKeyRow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:3px 0;font-size:12px}
-.muKey{width:220px;flex:none;background:var(--mcard2);color:var(--macc);border:0;padding:6px 8px;text-align:center;font-size:12px;outline:none;cursor:var(--cp,pointer)}
+.muKeyRow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:3px 0;font-size:14px}
+.muKey{width:220px;flex:none;background:var(--mcard2);color:var(--macc);border:0;padding:6px 8px;text-align:center;font-size:14px;outline:none;cursor:var(--cp,pointer)}
 .muKey:focus{outline:1px solid var(--macc);color:var(--mwarn)}
 .muLevel{height:10px;background:var(--mcard2);margin:6px 0} .muLevel i{display:block;height:100%;background:linear-gradient(90deg,var(--macc),var(--macc2))}
 .muStats{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-bottom:10px}
 .muStat{background:var(--mcard2);padding:12px 14px;display:flex;flex-direction:column;gap:4px}
-.muStat b{font-size:20px} .muStat span{color:var(--msub);font-size:11px}
+.muStat b{font-size:20px} .muStat span{color:var(--msub);font-size:13px}
 .muChart{display:flex;align-items:flex-end;gap:6px;height:112px;padding:8px 10px 0;background:var(--mcard2)}
 .muChart>div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%}
-.muChart i{display:block;width:100%;max-width:26px} .muChart span{color:var(--msub);font-size:10px;padding-bottom:4px}
-.muBarRow{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:10px;margin:7px 0;font-size:12px}
+.muChart i{display:block;width:100%;max-width:26px} .muChart span{color:var(--msub);font-size:12px;padding-bottom:4px}
+.muBarRow{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:10px;margin:7px 0;font-size:14px}
 .muBarRow>b{color:var(--msub)} .muBarRow>div{min-width:0;display:flex;flex-direction:column;gap:4px}
 .muBarRow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .muBarRow>div>i{display:block;height:6px;background:var(--mcard2)} .muBarRow>div>i>i{display:block;height:100%}
-.muBarRow em{font-style:normal;color:var(--macc2);font-size:11px;font-weight:bold}
-.muRecent{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--mcard2);font-size:12px}
+.muBarRow em{font-style:normal;color:var(--macc2);font-size:13px;font-weight:bold}
+.muRecent{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--mcard2);font-size:14px}
 .muRecent span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .muRecent em{font-style:normal;color:var(--msub);flex:none}
 .muRecent.total{border:0;font-weight:bold} .muRecent.total em{color:var(--macc)}
 .muAchCount{color:var(--macc2);font-size:16px}
 .muAch{display:flex;align-items:center;gap:16px;margin:6px 0;padding:10px 14px;background:var(--mcard2);border-left:3px solid var(--mborder)}
 .muAch.on{border-left-color:var(--macc)}
-.muAch>b{width:190px;flex:none;color:var(--macc);font-size:13px} .muAch .muLock{width:190px;flex:none;color:var(--msub);display:flex}
-.muAch p{margin:0;font-size:12px} .muAch:not(.on) p{color:var(--msub)} .muAch em{font-style:normal;color:var(--msub);font-size:11px}
+.muAch>b{width:190px;flex:none;color:var(--macc);font-size:15px} .muAch .muLock{width:190px;flex:none;color:var(--msub);display:flex}
+.muAch p{margin:0;font-size:14px} .muAch:not(.on) p{color:var(--msub)} .muAch em{font-style:normal;color:var(--msub);font-size:13px}
 .muTrashList{display:flex;flex-direction:column;gap:3px;max-height:380px;overflow-y:auto;margin:8px 0}
-.muTrashList button{padding:8px 10px;background:var(--mcard2);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.muTrashList button{padding:8px 10px;background:var(--mcard2);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .muTrashList button:hover{background:color-mix(in srgb,var(--macc) 24%,var(--mcard2))} .muTrashList button.on{background:var(--macc);color:#06110C}
-div.muCheck{margin:12px 0;padding:10px 14px;background:var(--mcard2)} div.muCheck b{font-size:13px}
-div.muCheck pre,.muLogs{margin:6px 0 0;white-space:pre-wrap;word-break:break-word;font:11px/1.5 Consolas,monospace;color:var(--msub)}
+div.muCheck{margin:12px 0;padding:10px 14px;background:var(--mcard2)} div.muCheck b{font-size:15px}
+div.muCheck pre,.muLogs{margin:6px 0 0;white-space:pre-wrap;word-break:break-word;font:13px/1.5 Consolas,monospace;color:var(--msub)}
 .muLogs{background:var(--mbg);padding:12px;max-height:420px;overflow-y:auto}
 .muImpStatus{display:block;margin-top:12px;font-size:15px;color:var(--mtext)}
 .muImpBar{height:6px;background:var(--mcard2);margin:12px 0 4px} .muImpBar i{display:block;height:100%;width:0;background:var(--macc2);transition:width .25s}
@@ -367,16 +367,16 @@ div.muCheck pre,.muLogs{margin:6px 0 0;white-space:pre-wrap;word-break:break-wor
 .muShade{position:absolute;inset:0;z-index:40;background:rgba(3,4,10,.55);display:grid;place-items:center}
 .muDlg{width:440px;max-width:calc(100% - 32px);background:var(--mbg);box-shadow:8px 8px 0 rgba(0,0,0,.4);animation:muReveal .15s ease-out}
 .muDlgBar{height:34px;display:flex;align-items:center;background:var(--mcard2)}
-.muDlgBar b{flex:1;padding:0 12px;color:var(--macc);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.muDlgBar b{flex:1;padding:0 12px;color:var(--macc);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .muDlgCard{margin:6px;padding:18px 22px;background:var(--mcard);border:1px solid var(--macc);border-radius:18px;display:flex;flex-direction:column;gap:6px}
-.muDlgTitle{font-size:17px} .muDlgTitle.small{font-size:13px;margin-bottom:6px}
-.muDlgCard p{margin:0 0 6px;color:var(--msub);font-size:13px;line-height:1.4}
+.muDlgTitle{font-size:17px} .muDlgTitle.small{font-size:15px;margin-bottom:6px}
+.muDlgCard p{margin:0 0 6px;color:var(--msub);font-size:15px;line-height:1.4}
 .muDlgIn{background:var(--mbg);color:var(--mtext);border:0;padding:8px 10px;font-size:15px;outline:none;caret-color:var(--macc);width:100%}
 .muDlgIn:focus{outline:1px solid var(--macc)}
 .muDlgBtns{display:flex;justify-content:flex-end;gap:10px;margin-top:12px}
-.muDlgMsg{margin:0;white-space:pre-wrap;word-break:break-word;font:13px/1.5 Consolas,monospace;color:var(--mtext);max-height:50vh;overflow:auto;user-select:text}
+.muDlgMsg{margin:0;white-space:pre-wrap;word-break:break-word;font:15px/1.5 Consolas,monospace;color:var(--mtext);max-height:50vh;overflow:auto;user-select:text}
 .muMode{display:flex;flex-direction:column;gap:4px;padding:12px 14px;background:var(--mcard2);margin-top:4px}
-.muMode b{color:var(--macc);font-size:13px} .muMode.alt b{color:var(--macc2)} .muMode span{color:var(--msub);font-size:12px;line-height:1.4;white-space:normal}
+.muMode b{color:var(--macc);font-size:15px} .muMode.alt b{color:var(--macc2)} .muMode span{color:var(--msub);font-size:14px;line-height:1.4;white-space:normal}
 .muMode:hover{background:color-mix(in srgb,var(--macc) 24%,var(--mcard2))}
 /* buttons: soft relief (light top edge, dark base), rounded, a glow of the accent on hover, pressed on click */
 .muBtn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;border-radius:7px;letter-spacing:.4px;
