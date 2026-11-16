@@ -7,6 +7,8 @@ const fs = require('fs'), path = require('path'), os = require('os'), crypto = r
 
 const ROOT = () => path.join(app.getPath('userData'), 'neomusic');
 const MUSIC = () => path.join(ROOT(), 'musics'), COVERS = () => path.join(ROOT(), 'covers'), CACHE = () => path.join(ROOT(), 'cache.json');
+const pgp = require('./pgp');
+const YT_KEY = 'AC0CBBE6848D6A873464AF4E57CF65933B5A7581';  // la clé qui signe les versions de yt-dlp (public.key de leur dépôt)
 const md5 = s => crypto.createHash('md5').update(String(s)).digest('hex');
 const inside = (dir, name) => { const p = path.join(dir, path.basename(String(name || ''))); return p.startsWith(dir) ? p : null; };  // only plain file names, never a path elsewhere
 let ffmpeg = null;
@@ -16,11 +18,17 @@ const BIN = () => path.join(ROOT(), 'bin'), YT = () => path.join(BIN(), 'yt-dlp'
 if (!ffmpeg && fs.existsSync(FF())) ffmpeg = FF();
 
 /* ---------- yt-dlp et ffmpeg : installés tout seuls dans le dossier de NeoMusic (ni Python ni installation à la main), yt-dlp remis à jour ---------- */
-async function grab(url, dest) {
+async function get(url) {
   const r = await fetch(url, { headers: { 'User-Agent': 'NeoDex' }, signal: AbortSignal.timeout(600000) });
   if (!r.ok) throw new Error('téléchargement impossible (' + r.status + ') : ' + url.split('/').pop());
+  return Buffer.from(await r.arrayBuffer());
+}
+// rien n'est lancé sans contrôle : le fichier doit avoir l'empreinte SHA-256 donnée par `sums` (de la même version)
+async function grab(base, name, dest, sums) {
+  const buf = await get(base + name), want = pgp.sumOf(sums, name);
+  if (!want || pgp.sha256(buf) !== want) throw new Error(name + ' : fichier modifié, téléchargement refusé');
   fs.mkdirSync(path.dirname(dest), { recursive: true });
-  fs.writeFileSync(dest + '.tmp', Buffer.from(await r.arrayBuffer())); fs.renameSync(dest + '.tmp', dest);
+  fs.writeFileSync(dest + '.tmp', buf); fs.renameSync(dest + '.tmp', dest);
 }
 let tools = null;
 function ensureTools(force) {  // une seule installation à la fois ; force = yt-dlp retéléchargé (YouTube change souvent et refuse alors les vieilles versions : erreur 403)
@@ -28,12 +36,18 @@ function ensureTools(force) {  // une seule installation à la fois ; force = yt
   return tools ??= (async () => {
     const yt = YT();
     if (force || !fs.existsSync(yt) || Date.now() - fs.statSync(yt).mtimeMs > 3 * 864e5) {
-      try { await grab('https://github.com/yt-dlp/yt-dlp/releases/latest/download/' + (WIN ? 'yt-dlp.exe' : 'yt-dlp_linux'), yt); if (!WIN) fs.chmodSync(yt, 0o755); }
+      try {  // la liste des empreintes doit être signée par la clé de yt-dlp (empreinte épinglée dans YT_KEY)
+        const base = 'https://github.com/yt-dlp/yt-dlp/releases/latest/download/', sums = await get(base + 'SHA2-256SUMS');
+        if (!pgp.verify(sums, await get(base + 'SHA2-256SUMS.sig'), await get('https://raw.githubusercontent.com/yt-dlp/yt-dlp/master/public.key'), YT_KEY)) throw new Error('signature invalide');
+        await grab(base, WIN ? 'yt-dlp.exe' : 'yt-dlp_linux', yt, sums); if (!WIN) fs.chmodSync(yt, 0o755);
+      }
       catch (e) { if (!fs.existsSync(yt)) throw new Error("yt-dlp n'a pas pu être installé : " + e.message); }  // une ancienne copie vaut mieux que rien
     }
     if (!ffmpeg) {
       const zip = path.join(BIN(), WIN ? 'ffmpeg.zip' : 'ffmpeg.tar.xz');
-      await grab('https://github.com/yt-dlp/FFmpeg-Builds/releases/latest/download/ffmpeg-master-latest-' + (WIN ? 'win64-gpl.zip' : 'linux64-gpl.tar.xz'), zip);
+      // shortcut: ces versions de ffmpeg ne sont pas signées, seule l'empreinte publiée avec elles est contrôlée ; à signer dès que le projet le fait
+      const base = 'https://github.com/yt-dlp/FFmpeg-Builds/releases/latest/download/';
+      await grab(base, 'ffmpeg-master-latest-' + (WIN ? 'win64-gpl.zip' : 'linux64-gpl.tar.xz'), zip, await get(base + 'checksums.sha256'));
       await new Promise((ok, ko) => execFile('tar', ['-xf', zip, '-C', BIN(), '--strip-components=2', ...(WIN ? [] : ['--wildcards']), '*/bin/ffmpeg' + EXE], { windowsHide: true, timeout: 120000 }, e => e ? ko(new Error('ffmpeg illisible')) : ok()));
       fs.rmSync(zip, { force: true });
       if (fs.existsSync(FF())) { if (!WIN) fs.chmodSync(FF(), 0o755); ffmpeg = FF(); }

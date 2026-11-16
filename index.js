@@ -931,7 +931,21 @@ export default async function (ctx) {
     muShuffleAchievement(muId(p.tracks[0]));
     mp.skipAt = 0; muRequest(0);
   }
+  // le widget de l'accueil de NeoDex (widget.js, son petit lecteur) : le morceau en cours, la suite, les couleurs du thème ;
+  // envoyé quand quelque chose change (la progression, il la fait avancer lui-même ; renvoyée toutes les 15 s contre la dérive)
+  let muWLast = '', muWAt = 0;
+  function muWidget() {
+    mp.wAt = performance.now();
+    const t = mp.cur; if (!ctx.widget?.set || !T) return;
+    const playing = !!muAudio && !muAudio.paused, q = mp.queue.length ? mp.queue : mp.view, i = t ? q.findIndex(x => muId(x) === muId(t)) : -1;
+    const theme = { card: T.CARD, card2: T.CARD_ALT, border: T.BORDER, text: T.TEXT, sub: T.SUBTEXT, acc: T.ACCENT, acc2: T.ACCENT_2, heart: T.HEART };
+    const w = t ? { title: t.display_title || t.file || '', artist: t.author || 'Artiste inconnu', cover: mu.settings.noImages ? '' : t.cover || '', playing, fav: mp.favs.has(muId(t)), dur: muAudio?.duration || muDur(t) || 0,
+      next: i < 0 ? [] : [1, 2, 3].map(k => q[(i + k) % q.length]).filter(x => x && x !== t).map(x => (x.display_title || x.file || '') + (x.author ? ' · ' + x.author : '')), theme } : { theme };
+    const k = JSON.stringify(w); if (k === muWLast && Date.now() - muWAt < 15e3) return; muWLast = k; muWAt = Date.now();
+    ctx.widget.set({ data: { ...w, pos: muAudio?.currentTime || 0, at: Date.now() } }).catch(() => {});
+  }
   function muPlayIcon() {
+    muWidget();
     const b = $('muPlay'); if (!b) return;
     const pause = muAudio && !muAudio.paused;
     b.innerHTML = `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="31" fill="none" stroke="var(--mcard2)" stroke-width="2"/><circle class="fill" cx="32" cy="32" r="28"/></svg><span style="color:#06110C">${muPx(MU_PX[pause ? 'pause' : 'play'], 28)}</span>`;
@@ -1398,6 +1412,7 @@ export default async function (ctx) {
       muDrawCover(now); if (mu.settings.visualizer) muSuperOn(now) ? muSuperSpectrum($('muSpectrum'), 112, now) : muPixSpectrum($('muSpectrum'), 64, now);
       if (muAudio && !muAudio.paused && now - (mp.progAt || 0) > 120) { mp.progAt = now; muDrawProgress(); }
     } else muMiniFrame(now);
+    if (muAudio && !muAudio.paused && performance.now() - (mp.wAt || 0) > 5000) muWidget();
   }
 
   /* ---------- listening time, levels, session (every 250 ms like MuPlayer's update_clock) ---------- */
@@ -2214,6 +2229,10 @@ export default async function (ctx) {
   }
   // ---- ce que NeoDex doit savoir de ce plugin ----
   host.hooks({ onTabChange: () => muMiniSync(), onClose: () => { if (muAudio && !muAudio.paused) muPause(); }, audio: () => muAudio ? { audible: !muAudio.paused && !muAudio.muted, muted: muAudio.muted } : null, mute: on => { if (muAudio) muAudio.muted = on; }, playing: () => !!muAudio && !muAudio.paused && !muAudio.muted });  // son de l'onglet, mini-lecteur, fermeture de l'onglet, NeoMe qui danse
+  ctx.commands?.on('toggle', () => muToggle());  // les boutons du widget de l'accueil
+  ctx.commands?.on('next', () => muNext());
+  ctx.commands?.on('prev', () => muPrev());
+  ctx.commands?.on('fav', () => { if (mp.cur) { muToggleFav(); muWidget(); } });
   // ---- fin ----
   ctx.onOpen(() => { muOpen(); });
   ctx.onClose(() => { try { muAudio?.pause(); } catch {} document.querySelectorAll('.muMini').forEach(e => e.remove()); document.getElementById('muStyle')?.remove(); });
