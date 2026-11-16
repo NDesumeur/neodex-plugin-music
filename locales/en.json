@@ -1,5 +1,8 @@
 {
- "Clic : pause / lecture · Double-clic : ouvrir NeoMusic": "Click: pause / play · Double-click: open NeoMusic",
+ "Clic : pause / lecture · Double-clic : ouvrir NeoMusic · Molette : volume": "Click: pause / play · Double-click: open NeoMusic · Wheel: volume",
+ "Monter le volume": "Volume up",
+ "Baisser le volume": "Volume down",
+ "Petit lecteur sur l'accueil même quand le widget NeoMusic y est affiché": "Mini player on the home page even when the NeoMusic widget is shown there",
  "(prochain thème au niveau": "(next theme at level",
  "(tous les thèmes sont débloqués)": "(all themes are unlocked)",
  "0 0 0 2px": "0 0 0 2px",

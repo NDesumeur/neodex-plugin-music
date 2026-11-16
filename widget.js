@@ -15,7 +15,7 @@ body{display:grid;place-items:center}
 .mmKick{color:var(--macc);font-weight:bold;font-size:12px;letter-spacing:2px} #mmState{flex:1;font-size:12px;font-weight:bold;letter-spacing:1px}
 #mmTitle{font-size:15px;line-height:1.3;min-height:1.3em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #mmArtist{color:var(--msub);font-size:13px;line-height:1.3;min-height:1.3em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mmSpecBox{height:21px;margin-top:2px} #mmSpec{display:block;image-rendering:pixelated}
+.mmSpecBox{grid-column:1/-1;height:46px;margin-top:-4px}  .mmVolBox{margin-left:auto;display:flex;align-items:center;gap:4px} .mmVolBox .mmBtn{width:22px;height:22px;font:bold 14px Consolas,monospace} #mmSpec{display:block;image-rendering:pixelated}
 .mmBar{display:flex;align-items:center;gap:8px}
 #mmSeek{flex:1;height:6px;background:var(--mcard2);box-shadow:0 2px 0 rgba(0,0,0,.35)}
 #mmSeek i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,var(--macc) 0 4px,color-mix(in srgb,var(--macc) 75%,#fff) 4px 6px)}
@@ -27,7 +27,7 @@ body{display:grid;place-items:center}
 #mmPlay{width:38px;background:var(--macc);color:#06110C} #mmPlay:hover{background:var(--macc2);color:#06110C}
 #mmFav.on{color:var(--mheart)}
 .mmTop .mmBtn{width:22px;height:18px;background:transparent;box-shadow:none;color:var(--msub)} .mmTop .mmBtn:hover{background:var(--mcard2);color:var(--mtext)}
-#mmVol{margin-left:auto;color:var(--msub);font-size:12px;letter-spacing:1px}
+#mmVol{min-width:68px;text-align:center;color:var(--msub);font-size:12px;letter-spacing:1px}
 .mmBtn svg{display:block;shape-rendering:crispEdges}
 .empty{grid-column:1/-1;text-align:center;color:var(--msub);padding:18px 0} .empty b{display:block;color:var(--macc);letter-spacing:2px;margin-bottom:6px}
 `;
@@ -240,18 +240,21 @@ export default function (ctx) {
   // platine:fin
 
   const box = el('div', 'muMini'), cv = el('canvas'), body = el('div', 'mmBody'), stateEl = el('span'), titleEl = el('b'), artistEl = el('span');
-  const spec = el('canvas'), seek = el('div'), time = el('span'), vol = el('span');
+  const spec = el('canvas'), seek = el('div'), time = el('span'), vol = el('span'), volBox = el('div', 'mmVolBox');
   cv.id = 'mmDisc'; cv.width = cv.height = 184; stateEl.id = 'mmState'; titleEl.id = 'mmTitle'; artistEl.id = 'mmArtist'; spec.id = 'mmSpec'; seek.id = 'mmSeek'; time.id = 'mmTime'; vol.id = 'mmVol';
   const btn = (id, ic, tip, fn) => { const b = el('button', 'mmBtn'); b.id = id; b.innerHTML = icon(ic); b.title = tip; b.onclick = e => { e.stopPropagation(); fn(); }; return b; };
   const top = el('div', 'mmTop'), specBox = el('div', 'mmSpecBox'), bar = el('div', 'mmBar'), ctl = el('div', 'mmCtl');
   top.append(el('span', 'mmKick', 'NEOMUSIC'), stateEl, btn('mmBack', 'ext', 'Ouvrir NeoMusic', () => ctx.widget.open()));
   seek.append(el('i')); specBox.append(spec); bar.append(seek, time);
   const play = btn('mmPlay', 'play', 'Lecture / pause', () => ctx.widget.command('toggle')), fav = btn('mmFav', 'heart', 'Favori', () => ctx.widget.command('fav'));
-  ctl.append(btn('mmPrev', 'prevt', 'Morceau précédent', () => ctx.widget.command('prev')), play, btn('mmNext', 'next', 'Morceau suivant', () => ctx.widget.command('next')), fav, vol);
-  body.append(top, titleEl, artistEl, specBox, bar, ctl);
-  box.title = 'Clic : pause / lecture · Double-clic : ouvrir NeoMusic';
+  const vbtn = (txt, tip, cmd) => { const b = el('button', 'mmBtn', txt); b.title = tip; b.onclick = e => { e.stopPropagation(); ctx.widget.command(cmd); }; return b; };
+  volBox.append(vbtn('−', 'Baisser le volume', 'voldown'), vol, vbtn('+', 'Monter le volume', 'volup'));
+  ctl.append(btn('mmPrev', 'prevt', 'Morceau précédent', () => ctx.widget.command('prev')), play, btn('mmNext', 'next', 'Morceau suivant', () => ctx.widget.command('next')), fav, volBox);
+  body.append(top, titleEl, artistEl, bar, ctl);  // le spectre : sous tout le lecteur, en grand (le petit lecteur l'a sous le titre)
+  box.title = 'Clic : pause / lecture · Double-clic : ouvrir NeoMusic · Molette : volume';
   box.onclick = () => d?.title ? ctx.widget.command('toggle') : ctx.widget.open();
   box.ondblclick = () => ctx.widget.open();
+  box.onwheel = e => { if (!d?.title) return; e.preventDefault(); ctx.widget.command(e.deltaY < 0 ? 'volup' : 'voldown'); };  // la molette règle le volume, comme sur le petit lecteur
   document.body.append(box);
 
   // le petit lecteur garde ses proportions et grandit (ou rétrécit) pour remplir la case du widget
@@ -262,7 +265,7 @@ export default function (ctx) {
     T = d?.T || T;
     if (T) for (const [k, v] of Object.entries({ card: T.CARD, card2: T.CARD_ALT, border: T.BORDER, text: T.TEXT, sub: T.SUBTEXT, acc: T.ACCENT, acc2: T.ACCENT_2, heart: T.HEART })) if (v) box.style.setProperty('--m' + k, v);
     if (!d || !d.title || !T) { mp.cur = null; box.classList.remove('deck'); box.replaceChildren(Object.assign(el('div', 'empty'), { innerHTML: '<b>NEOMUSIC</b>Rien en cours. Clique pour choisir une musique.' })); fit(); return; }
-    if (!box.contains(body)) box.replaceChildren(cv, body);
+    if (!box.contains(body)) box.replaceChildren(cv, body, specBox);
     mp.cur = d; mu.settings = d.deck || {}; muSpec.levels = d.spec || muSpec.levels;
     if (d.cover !== coverKey) {  // la pochette, comme muSetCover
       coverKey = d.cover; mp.coverImg = null;
@@ -293,7 +296,7 @@ export default function (ctx) {
       } else if (mp.coverImg) { const im = mp.coverImg, s = Math.min(im.width, im.height); g.drawImage(im, (im.width - s) / 2, (im.height - s) / 2, s, s, 0, 0, W, W); }
       else { g.fillStyle = T.CARD_ALT; g.fillRect(0, 0, W, W); g.fillStyle = T.ACCENT; g.font = 'bold 80px Consolas'; g.textAlign = 'center'; g.fillText('?', W / 2, W / 2 + 28); }
     }
-    muPixSpectrum(spec, 21, now);
+    muPixSpectrum(spec, 46, now);
     const dur = d.dur || 0, p = pos();
     seek.firstChild.style.width = (dur ? Math.min(100, p / dur * 100) : 0) + '%';
     time.textContent = muClock(p) + ' / ' + muClock(dur);

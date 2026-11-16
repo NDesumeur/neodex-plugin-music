@@ -522,7 +522,7 @@ export default async function (ctx) {
 
   /* ---------- the library (music.json) ---------- */
   const MU_DEFAULT_SETTINGS = {theme: 'Nova', volume: .5, equalizer: 'Normal', eqBands: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], limiter: false, balance: 0, visualizer: true, waveform: true, vinyl: true,
-    replaygain: true, coverFade: true, dateAdded: false, releaseDate: false, mini: false, gallery: false, noImages: false, weeklyWeek: '', superVis: false, deckLuxe: true, deckStyle: '', deckBase: '', deckArm: '', deluxe: false, recoSeen: [], pixelUi: true, shortcuts: {}};
+    replaygain: true, coverFade: true, dateAdded: false, releaseDate: false, mini: false, gallery: false, noImages: false, weeklyWeek: '', superVis: false, deckLuxe: true, deckStyle: '', deckBase: '', deckArm: '', deluxe: false, recoSeen: [], pixelUi: true, miniOverWidget: false, shortcuts: {}};
   function muBlank() {
     return {v: 1, settings: {...MU_DEFAULT_SETTINGS}, playlists: MU_SYSTEM.map(name => ({name, mode: 'offline', tracks: []})),
       stats: {plays: 0, seconds: 0, songs: {}, songs_time: {}, artists: {}, artists_time: {}, daily: {}, history: [], xp_level_seen: 1},
@@ -1371,7 +1371,8 @@ export default async function (ctx) {
     const box = $('muMini'); if (!box) return;
     const away = !view.classList.contains('on'), playing = muAudio && !muAudio.paused && muAudio.currentTime > 0;  // sound really came out: a song still loading or that never started is no reason to appear
     if (!away) mp.miniOff = false;
-    const show = away && !!mp.cur && !mp.miniOff && host.pref('pip') !== false && (playing || mp.miniOn);
+    const homeW = document.body.classList.contains('homeW') && !mu.settings.miniOverWidget;  // l'accueil est affiché avec le widget de NeoMusic : il fait déjà le petit lecteur
+    const show = away && !homeW && !!mp.cur && !mp.miniOff && host.pref('pip') !== false && (playing || mp.miniOn);
     const appear = show && !mp.miniOn;
     box.classList.toggle('on', show);
     if (host.float && show !== mp.miniOn) { document.body.classList.toggle('mmFloat', show); if (!show) host.float(null).catch(() => {}); }
@@ -2125,7 +2126,7 @@ export default async function (ctx) {
     b.append(muSec('AFFICHAGE'), check('Afficher le visualiseur audio', 'visualizer'), lv.level >= 100 ? check('Super visualiseur : reflet, étincelles, lueur et pulsation des basses (niveau 100)', 'superVis') : mh('p.muWNote.ind', {text: 'Super visualiseur : se débloque au niveau 100 (tu es niveau ' + lv.level + ').'}), check('Pochette « lecture en cours » en cercle façon vinyle (la platine complète à partir du niveau 150)', 'vinyl'), muDeckPick(lv.level),
       lv.level >= 200 ? check('Interface Deluxe : l\'appli pixel en grand, cadres doubles, fond tramé, platine en vedette (niveau 200)', 'deluxe') : mh('p.muWNote.ind', {text: 'Interface Deluxe : change tout le style de l\'appli, se débloque au niveau 200 (tu es niveau ' + lv.level + ').'}),
       check('Forme d\'onde dans la barre de progression (au lieu d\'une simple ligne)', 'waveform'), check('Afficher la date d\'ajout des musiques dans la liste', 'dateAdded'),
-      check('Afficher la date de sortie des musiques dans la liste', 'releaseDate'), check('Appli pixel : cadres, boutons et police façon petit lecteur', 'pixelUi'), check('Mode petit lecteur (playlists et musiques uniquement)', 'mini'),
+      check('Afficher la date de sortie des musiques dans la liste', 'releaseDate'), check('Appli pixel : cadres, boutons et police façon petit lecteur', 'pixelUi'), check('Mode petit lecteur (playlists et musiques uniquement)', 'mini'), check('Petit lecteur sur l\'accueil même quand le widget NeoMusic y est affiché', 'miniOverWidget'),
       check('Vue « mur de pochettes » (grille de pochettes) au lieu de la liste', 'gallery'), check('Mode sans images (masque les pochettes partout) — réduit les lags', 'noImages'));
     b.append(muSec('LECTURE'), check('Normaliser le volume entre les morceaux (ReplayGain)', 'replaygain'), check('Fondu de la pochette au changement de morceau', 'coverFade'));
 
@@ -2242,6 +2243,8 @@ export default async function (ctx) {
   ctx.commands?.on('next', () => muNext());
   ctx.commands?.on('prev', () => muPrev());
   ctx.commands?.on('fav', () => { if (mp.cur) { muToggleFav(); muWidget(); } });
+  ctx.commands?.on('volup', () => { muSetVolume(mu.settings.volume + .05); muMiniPaint(); muWidget(); });
+  ctx.commands?.on('voldown', () => { muSetVolume(mu.settings.volume - .05); muMiniPaint(); muWidget(); });
   // ---- fin ----
   ctx.onOpen(() => { muOpen(); });
   ctx.onClose(() => { try { muAudio?.pause(); } catch {} document.querySelectorAll('.muMini').forEach(e => e.remove()); document.getElementById('muStyle')?.remove(); });
