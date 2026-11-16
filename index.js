@@ -512,9 +512,11 @@ export default async function (ctx) {
   const muToday = (d = new Date()) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   const muStamp = (d = new Date()) => muToday(d) + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
   const muWeek = (d = new Date()) => { const y0 = new Date(d.getFullYear(), 0, 1), yday = Math.floor((d - y0) / 864e5), wd = (d.getDay() + 6) % 7; return d.getFullYear() + '-W' + String(Math.floor((yday + 7 - wd) / 7)).padStart(2, '0'); };  // Python's %Y-W%W
+  // platine:début (recopié tel quel dans widget.js par tools/widget-sync.js)
   const muHex = h => [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16));
   const muShade = (h, f) => '#' + muHex(h).map(c => Math.round(f >= 0 ? c + (255 - c) * f : c * (1 + f)).toString(16).padStart(2, '0')).join('');
   const muBlend = (a, b, k) => { const x = muHex(a), y = muHex(b); return '#' + x.map((c, i) => Math.round(c + (y[i] - c) * k).toString(16).padStart(2, '0')).join(''); };
+  // platine:fin
   const muLog = [];
   const muWarn = (where, e) => { muLog.push(muStamp() + '  ' + where + ' : ' + (e?.message || e)); if (muLog.length > 300) muLog.shift(); };
 
@@ -938,11 +940,14 @@ export default async function (ctx) {
     mp.wAt = performance.now();
     const t = mp.cur; if (!ctx.widget?.set || !T) return;
     const playing = !!muAudio && !muAudio.paused, q = mp.queue.length ? mp.queue : mp.view, i = t ? q.findIndex(x => muId(x) === muId(t)) : -1;
-    const theme = { card: T.CARD, card2: T.CARD_ALT, border: T.BORDER, text: T.TEXT, sub: T.SUBTEXT, acc: T.ACCENT, acc2: T.ACCENT_2, heart: T.HEART };
-    const w = t ? { title: t.display_title || t.file || '', artist: t.author || 'Artiste inconnu', cover: mu.settings.noImages ? '' : t.cover || '', playing, fav: mp.favs.has(muId(t)), dur: muAudio?.duration || muDur(t) || 0,
-      next: i < 0 ? [] : [1, 2, 3].map(k => q[(i + k) % q.length]).filter(x => x && x !== t).map(x => (x.display_title || x.file || '') + (x.author ? ' · ' + x.author : '')), theme } : { theme };
-    const k = JSON.stringify(w); if (k === muWLast && Date.now() - muWAt < 15e3) return; muWLast = k; muWAt = Date.now();
+    const s = mu.settings, look = { T, deck: { vinyl: s.vinyl, deckBase: s.deckBase, deckArm: s.deckArm, deckStyle: s.deckStyle, deckLuxe: s.deckLuxe }, level: muLevel().level, vol: s.volume };  // le visuel choisi du petit lecteur
+    const w = t ? { title: t.display_title || t.file || '', artist: t.author || muPlaylistOf(t)?.name || '', cover: s.noImages ? '' : t.cover || '', playing, fav: mp.favs.has(muId(t)), dur: muAudio?.duration || muDur(t) || 0, ...look } : look;
+    const k = JSON.stringify(w); if (k === muWLast && Date.now() - muWAt < 15e3) return; muWLast = k; muWAt = Date.now(); mp.wData = w;
     ctx.widget.set({ data: { ...w, pos: muAudio?.currentTime || 0, at: Date.now() } }).catch(() => {});
+  }
+  function muWidgetSpec(now) {  // le spectre du widget, comme celui du petit lecteur (le widget le lisse lui-même entre deux envois)
+    if (!mp.wData?.title || !ctx.widget?.set || now - (mp.wsAt || 0) < 120) return; mp.wsAt = now;
+    ctx.widget.set({ data: { ...mp.wData, spec: muSpec.levels.map(v => Math.round(v * 100) / 100), pos: muAudio?.currentTime || 0, at: Date.now() } }).catch(() => {});
   }
   function muPlayIcon() {
     muWidget();
@@ -998,6 +1003,7 @@ export default async function (ctx) {
   /* ---------- la platine en pixel art : tout est posé pixel par pixel dans une petite image, agrandie ensuite sans lissage.
      Le disque tourne pour de vrai : chaque pixel va chercher sa couleur dans la pochette (réduite en gros pixels) à l'angle du moment.
      Le bras se pose quand la musique joue, avance vers le centre avec le morceau et se relève à la pause. ---------- */
+  // platine:début (recopié tel quel dans widget.js par tools/widget-sync.js)
   const MU_RPM = 200;  // 33 tours ⅓ par minute = 200° par seconde
   /* les platines du niveau 150 et plus, en deux parties qu'on combine librement :
      le socle (sa matière : aux couleurs du thème, bois ou pierre) et le bras (son métal, qui fait aussi le bord du plateau et le liseré).
@@ -1141,6 +1147,7 @@ export default async function (ctx) {
     mp.angle = ((mp.angle || 0) + (mp.spin || 0) * dt / 70) % 360; mp.coverAt = now;
     mp.deckAng = ((mp.deckAng || 0) + (mp.spin || 0) / 1.4 * MU_RPM * dt / 1000) % 360;
   }
+  // platine:fin
   function muDrawCover(now) {
     const cv = $('muCover'), r = cv.getBoundingClientRect(), k = devicePixelRatio || 1, w = Math.round(r.width * k), h = Math.round(r.height * k);
     if (!w || !h) return;
@@ -1268,6 +1275,7 @@ export default async function (ctx) {
     g.globalAlpha = 1;
   }
   const muSuperOn = now => { if (now - (mp.supAt || -1e9) > 2000) { mp.supAt = now; mp.supOn = !!mu.settings.superVis && muLevel().level >= 100; } return mp.supOn; };
+  // platine:début (recopié tel quel dans widget.js par tools/widget-sync.js)
   const muInner = e => { if (!e) return 0; const cs = getComputedStyle(e); return e.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight); };  // largeur sans le rembourrage (l'écran du Deluxe en a)
   function muPixSpectrum(cv, cssH, now) {
     const avail = muInner(cv.parentElement); if (!avail) return;
@@ -1311,6 +1319,7 @@ export default async function (ctx) {
       if (peak) { g.fillStyle = c.peak; g.fillRect(x, py, inner, 1); }
     }
   }
+  // platine:fin
 
   /* ---------- portable player: when NeoMusic's tab is left while a song plays, a small player stays in a corner of NeoDex ---------- */
   const MU_PIX = {
@@ -1404,15 +1413,15 @@ export default async function (ctx) {
   function muFrame(now) {
     requestAnimationFrame(muFrame);
     const main = view.classList.contains('on');
-    if (document.hidden || (!main && !mp.miniOn)) return;  // nothing on screen: no drawing at all (the music still plays)
+    if (document.hidden || (!main && !mp.miniOn && !mp.wData?.title)) return;  // nothing on screen (nor a song for the home widget): no drawing at all (the music still plays)
     if (muAudio && !muAudio.paused && muNodes) { if (now - muSpec.blockAt >= 64) { muSpec.blockAt = now; muSpectrumBlock(); } }
     else muSpec.ref = 1e-6;
     muSpin(now);
     if (main) {
       muDrawCover(now); if (mu.settings.visualizer) muSuperOn(now) ? muSuperSpectrum($('muSpectrum'), 112, now) : muPixSpectrum($('muSpectrum'), 64, now);
       if (muAudio && !muAudio.paused && now - (mp.progAt || 0) > 120) { mp.progAt = now; muDrawProgress(); }
-    } else muMiniFrame(now);
-    if (muAudio && !muAudio.paused && performance.now() - (mp.wAt || 0) > 5000) muWidget();
+    } else if (mp.miniOn) muMiniFrame(now);
+    if (muAudio && !muAudio.paused) { muWidgetSpec(now); if (performance.now() - (mp.wAt || 0) > 5000) muWidget(); }
   }
 
   /* ---------- listening time, levels, session (every 250 ms like MuPlayer's update_clock) ---------- */
