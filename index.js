@@ -1413,6 +1413,7 @@ export default async function (ctx) {
   }
   function muFrame(now) {
     requestAnimationFrame(muFrame);
+    mp.frameAt = now;
     const main = view.classList.contains('on');
     if (document.hidden || (!main && !mp.miniOn && !mp.wData?.title)) return;  // nothing on screen (nor a song for the home widget): no drawing at all (the music still plays)
     if (muAudio && !muAudio.paused && muNodes) { if (now - muSpec.blockAt >= 64) { muSpec.blockAt = now; muSpectrumBlock(); } }
@@ -1424,6 +1425,15 @@ export default async function (ctx) {
     } else if (mp.miniOn) muMiniFrame(now);
     if (muAudio && !muAudio.paused) { muWidgetSpec(now); if (performance.now() - (mp.wAt || 0) > 5000) muWidget(); }
   }
+
+  // NeoMusic caché (on est sur l'accueil) : le navigateur arrête requestAnimationFrame dans son cadre, et le spectre du widget de
+  // l'accueil restait figé. Ce minuteur prend le relais tant que muFrame ne tourne plus.
+  setInterval(() => {
+    const now = performance.now();
+    if (now - (mp.frameAt || 0) < 250 || !muAudio || muAudio.paused || !mp.wData?.title) return;
+    if (muNodes && now - muSpec.blockAt >= 64) { muSpec.blockAt = now; muSpectrumBlock(); }
+    muWidgetSpec(now); if (now - (mp.wAt || 0) > 5000) muWidget();
+  }, 100);
 
   /* ---------- listening time, levels, session (every 250 ms like MuPlayer's update_clock) ---------- */
   function muClockTick() {
