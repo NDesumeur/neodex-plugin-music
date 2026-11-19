@@ -64,6 +64,10 @@ Total plays, time listened, distinct tracks and artists, average length, active 
 - **Capsule**: exports your library with its audio files and covers into a single .zip, or imports one back (it replaces the current library).
 - **Import from MuPlayer**: brings in playlists, tracks, covers, statistics, achievements, level and settings, adding to what already exists.
 
+## Discord status
+
+Your friends see on Discord the song you are listening to ("Listening to NeoMusic"), with the title, the artist, the cover when the song comes from the Internet and the time left; nothing while music is paused. Discord must be open on the same PC. To turn it on: on [discord.com/developers](https://discord.com/developers/applications), **New Application**, name it *NeoMusic*, copy its **Application ID**, then in NeoMusic **Options → Discord** paste it and tick *Show the current song in my Discord status*. An image named "neomusic" in the application's **Rich Presence → Art Assets** is used as the default cover. Everything goes through the Discord app on the PC: no account or password is asked.
+
 ## Data and sync
 
 Your library, playlists, statistics, achievements and settings are stored by NeoDex, backed up and synced between your PCs when sync is on. Additions and deletions are merged from both sides; for statistics and level, the highest value wins. On another PC, offline tracks download again on their own.

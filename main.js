@@ -456,9 +456,11 @@ function register({ ipcMain, getWin, emit, serveFile, protocol, onShortcutReset,
   });
 }
 
+const discord = require('./discord-rpc');
 module.exports = api => {
   register(api);
-  return () => { for (const combo of Object.values(hotkeys)) if (combo && /(Ctrl|Alt|Shift)\+/.test(combo)) try { globalShortcut.unregister(accel(combo)); } catch {} };
+  api.ipcMain.handle('music:presence', (_, id, act) => discord.set(id, act));  // statut Discord « Écoute NeoMusic » (discord-rpc.js)
+  return () => { discord.close(); for (const combo of Object.values(hotkeys)) if (combo && /(Ctrl|Alt|Shift)\+/.test(combo)) try { globalShortcut.unregister(accel(combo)); } catch {} };
 };
 module.exports.radar = radar;  // pour les tests
 module.exports.artistTracks = artistTracks;

@@ -538,5 +538,15 @@
  "EN PAUSE": "PAUSED",
  "À SUIVRE": "UP NEXT",
  "Ouvrir NeoMusic": "Open NeoMusic",
- "Rien en cours. Clique pour choisir une musique.": "Nothing playing. Click to pick some music."
+ "Rien en cours. Clique pour choisir une musique.": "Nothing playing. Click to pick some music.",
+ "Application ID (que des chiffres)": "Application ID (digits only)",
+ "DISCORD": "DISCORD",
+ "Tes amis voient le morceau en cours dans ton statut Discord (« Écoute NeoMusic »), avec le temps restant ; rien en pause. Discord doit être ouvert sur ce PC. Il faut l'identifiant d'une application Discord : sur discord.com/developers, New Application, nomme-la NeoMusic, puis copie son « Application ID » ici (une image nommée « neomusic » dans Rich Presence → Art Assets sert de pochette par défaut).": "Your friends see the current song in your Discord status (\"Listening to NeoMusic\"), with the time left; nothing while paused. Discord must be open on this PC. It needs the ID of a Discord application: on discord.com/developers, New Application, name it NeoMusic, then copy its \"Application ID\" here (an image named \"neomusic\" in Rich Presence → Art Assets is the default cover).",
+ "Montrer le morceau en cours dans mon statut Discord": "Show the current song in my Discord status",
+ "Identifiant de l'application": "Application ID",
+ "Discord n'est pas ouvert": "Discord is not open",
+ "Discord ne répond pas": "Discord is not responding",
+ "READY": "READY",
+ "ERROR": "ERROR",
+ "refusé par Discord": "refused by Discord"
 }

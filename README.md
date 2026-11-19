@@ -64,6 +64,10 @@ Lectures totales, temps écouté, titres et artistes différents, durée moyenne
 - **Capsule** : exporte dans un seul .zip ta bibliothèque avec ses fichiers audio et ses pochettes, ou en réimporte une (elle remplace la bibliothèque actuelle).
 - **Importer depuis MuPlayer** : reprend playlists, musiques, pochettes, statistiques, succès, niveau et réglages, en complétant ce qui existe déjà.
 
+## Statut Discord
+
+Tes amis voient sur Discord le morceau que tu écoutes (« Écoute NeoMusic »), avec le titre, l'artiste, la pochette quand le morceau vient d'Internet et le temps restant ; rien quand la musique est en pause. Discord doit être ouvert sur le même PC. Pour l'activer : sur [discord.com/developers](https://discord.com/developers/applications), **New Application**, nomme-la *NeoMusic*, copie son **Application ID**, puis dans NeoMusic **Options → Discord** colle-le et coche *Montrer le morceau en cours dans mon statut Discord*. Une image nommée « neomusic » dans **Rich Presence → Art Assets** de l'application sert de pochette par défaut. Tout passe par l'appli Discord du PC : aucun compte ni mot de passe n'est demandé.
+
 ## Données et synchronisation
 
 Ta bibliothèque, tes playlists, tes statistiques, tes succès et tes réglages sont enregistrés par NeoDex, sauvegardés et synchronisés entre tes PC si la synchro est activée. Les ajouts et suppressions sont fusionnés des deux côtés ; pour les statistiques et le niveau, la plus haute valeur l'emporte. Sur un autre PC, les musiques hors ligne se retéléchargent toutes seules.

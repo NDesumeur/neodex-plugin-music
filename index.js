@@ -942,8 +942,21 @@ export default async function (ctx) {
     const playing = !!muAudio && !muAudio.paused, q = mp.queue.length ? mp.queue : mp.view, i = t ? q.findIndex(x => muId(x) === muId(t)) : -1;
     const s = mu.settings, look = { T, deck: { vinyl: s.vinyl, deckBase: s.deckBase, deckArm: s.deckArm, deckStyle: s.deckStyle, deckLuxe: s.deckLuxe }, level: muLevel().level, vol: s.volume };  // le visuel choisi du petit lecteur
     const w = t ? { title: t.display_title || t.file || '', artist: t.author || muPlaylistOf(t)?.name || '', cover: s.noImages ? '' : t.cover || '', playing, fav: mp.favs.has(muId(t)), dur: muAudio?.duration || muDur(t) || 0, ...look } : look;
+    muPresence();
     const k = JSON.stringify(w); if (k === muWLast && Date.now() - muWAt < 15e3) return; muWLast = k; muWAt = Date.now(); mp.wData = w;
     ctx.widget.set({ data: { ...w, pos: muAudio?.currentTime || 0, at: Date.now() } }).catch(() => {});
+  }
+  // le statut Discord « Écoute NeoMusic » (Options → Discord) : le morceau et sa barre de temps ; effacé en pause ou à l'arrêt.
+  // Envoyé seulement quand quelque chose change (morceau, pause, saut dans le morceau de plus de 3 s)
+  let muPrLast = '';
+  function muPresence(force) {
+    const s = mu.settings, t = mp.cur, on = !!(s.discord && s.discordId), playing = on && !!t && !!muAudio && !muAudio.paused;
+    const dur = muAudio?.duration || (t ? muDur(t) : 0) || 0, start = playing ? Date.now() - (muAudio.currentTime || 0) * 1000 : 0;
+    const act = playing ? { title: t.display_title || t.file || 'Musique', artist: t.author || '', image: s.noImages ? '' : t.thumbnail_url || '', start, end: dur > 0 && isFinite(dur) ? start + dur * 1000 : 0 } : null;
+    const k = JSON.stringify([on && s.discordId, act && [act.title, act.artist, act.image, Math.round(act.start / 3000)]]);
+    if (k === muPrLast && !force) return; muPrLast = k;
+    if (!on && !force) return;
+    neo.musicPresence?.(on ? s.discordId : '', act)?.catch?.(() => {});
   }
   function muWidgetSpec(now) {  // le spectre du widget, comme celui du petit lecteur (le widget le lisse lui-même entre deux envois)
     if (!mp.wData?.title || !ctx.widget?.set || now - (mp.wsAt || 0) < 120) return; mp.wsAt = now;
@@ -2177,6 +2190,10 @@ export default async function (ctx) {
       f.onfocus = () => f.value = '…'; f.onblur = () => f.value = captured[key] || 'Aucun';
       b.append(mh('div.muKeyRow', {}, mh('span', {text: label}), f));
     }
+    const did = mh('input.muKey', {value: st.discordId || '', placeholder: 'Application ID (que des chiffres)', spellcheck: false});
+    did.onchange = () => { st.discordId = did.value.replace(/\D/g, ''); did.value = st.discordId; muSave(); muPresence(true); };
+    b.append(muSec('DISCORD'), muNote('Tes amis voient le morceau en cours dans ton statut Discord (« Écoute NeoMusic »), avec le temps restant ; rien en pause. Discord doit être ouvert sur ce PC. Il faut l\'identifiant d\'une application Discord : sur discord.com/developers, New Application, nomme-la NeoMusic, puis copie son « Application ID » ici (une image nommée « neomusic » dans Rich Presence → Art Assets sert de pochette par défaut).'),
+      check('Montrer le morceau en cours dans mon statut Discord', 'discord'), mh('div.muKeyRow', {}, mh('span', {text: 'Identifiant de l\'application'}), did));
     b.append(mh('div.muWBtns', {}, muButton('VÉRIFIER LA BIBLIOTHÈQUE', () => muLibraryCheck())));
     b.append(muSec('JOURNAL'), muNote('Consulte le journal des erreurs de NeoMusic (téléchargements, lecture, imports) pour diagnostiquer un problème.'), mh('div.muWBtns', {}, muButton('VOIR LES LOGS', () => muLogs())));
     b.append(muSec('STOCKAGE'), muNote('Calcule le poids réel de NeoMusic sur le disque, détaillé par catégorie (musiques, pochettes, caches...).'), mh('div.muWBtns', {}, muButton('CALCULER LE POIDS DE L\'APPLI', () => muStorage())));
@@ -2198,7 +2215,7 @@ export default async function (ctx) {
       const vals = Object.values(captured).filter(Boolean);
       if (new Set(vals).size !== vals.length) return muNotify('warning', 'Options', 'Chaque raccourci doit être différent.');
       st.shortcuts = {...captured};
-      muSave(); muHotkeys(); muApplySettingsUi(); muRefresh(); muSetCover(mp.cur); muDrawProgress(true);
+      muSave(); muHotkeys(); muApplySettingsUi(); muRefresh(); muSetCover(mp.cur); muDrawProgress(true); muPresence(true);
       w.close(); muStatus('Options sauvegardées');
     }, 'accent')));
   }
