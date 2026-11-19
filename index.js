@@ -4,7 +4,7 @@
 const HTML = "";
 const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strips); colours are the theme's, set on #mu by muApplyTheme */
 #plug_neodex_music{overflow:hidden;background:#101425}
-.mu{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--mbg);color:var(--mtext);font:15px Consolas,'Cascadia Mono',monospace;user-select:none;overflow:hidden}
+.mu{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--mbg);color:var(--mtext);font:15px var(--mfont,Consolas),'Cascadia Mono',monospace;user-select:none;overflow:hidden}
 :where(.mu) button{all:unset;box-sizing:border-box;cursor:var(--cp,pointer)}
 :where(.mu) :is(input,select){font:inherit;color:inherit}
 :where(.mu) button:disabled{cursor:default;opacity:.45}
@@ -59,7 +59,7 @@ const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strip
 .muSpectrum{height:64px;margin-bottom:10px;display:block;image-rendering:pixelated}  /* drawn at the size of the art pixels, scaled up crisp */
 /* NeoMusic's portable player: pixel frame (notched corners, accent top), spinning record, pixel spectrum, pixel buttons */
 .muMini{position:fixed;z-index:32;left:0;top:0;width:430px;display:none;grid-template-columns:92px 1fr;gap:14px;padding:12px 14px 10px;
-  background:var(--mcard);color:var(--mtext);font:14px Consolas,'Cascadia Mono',monospace;cursor:var(--cg,grab);touch-action:none;user-select:none;
+  background:var(--mcard);color:var(--mtext);font:14px var(--mfont,Consolas),'Cascadia Mono',monospace;cursor:var(--cg,grab);touch-action:none;user-select:none;
   box-shadow:0 -3px 0 0 var(--macc),0 3px 0 0 var(--mborder),-3px 0 0 0 var(--mborder),3px 0 0 0 var(--mborder),0 -6px 0 -3px var(--macc),9px 9px 0 0 rgba(0,0,0,.45)}
 .muMini.on{display:grid;animation:mmIn .2s steps(4)}
 @keyframes mmIn{from{transform:translateY(12px);opacity:.3}}
@@ -230,7 +230,7 @@ body.mmFloat>*:not(.muMini){display:none!important} body.mmFloat{overflow:hidden
 .mu.lux .muBtn,.mu.lux .muPill{box-shadow:inset 0 3px 0 rgba(255,255,255,.12),inset 0 -4px 0 rgba(0,0,0,.35),0 4px 0 rgba(0,0,0,.5)} .mu.lux .muBtn:active,.mu.lux .muPill:active{transform:translateY(4px);box-shadow:inset 0 -2px 0 rgba(0,0,0,.35)}
 .mu.lux .muPlay{filter:drop-shadow(4px 4px 0 rgba(0,0,0,.45))}
 /* Appli pixel (settings.pixelUi): the look of the portable player everywhere */
-.mu.px{font-family:Consolas,'Cascadia Mono',monospace;letter-spacing:.2px}
+.mu.px{font-family:var(--mfont,Consolas),'Cascadia Mono',monospace;letter-spacing:.2px}
 .mu.px *{border-radius:0!important;transition-timing-function:steps(3)!important}
 .mu.px .muCard,.mu.px .muWin,.mu.px .muMenu{border:0;box-shadow:0 -3px 0 0 var(--macc),0 3px 0 0 var(--mborder),-3px 0 0 0 var(--mborder),3px 0 0 0 var(--mborder),0 -6px 0 -3px var(--macc),9px 9px 0 0 rgba(0,0,0,.45)}
 .mu.px .muMain{gap:22px;padding:24px 22px 20px 6px} .mu.px .muWin{margin:8px}
@@ -419,7 +419,7 @@ export default async function (ctx) {
     if (k === 'onDataChanged') return cb => { n.onDataChanged?.(cb); MU_DOC(cb); };
     if (MU_EV[k]) return cb => n.onPluginMain(e => { if (e.id === MU_ID && e.name === MU_EV[k]) cb(e.data); });
     const m = /^music([A-Z]\w*)$/.exec(k);
-    return m ? (...a) => n.pluginMain(MU_ID, 'music:' + (m[1] === 'ImportMuPlayer' ? 'pickMuPlayer' : m[1][0].toLowerCase() + m[1].slice(1)), ...a) : n[k];
+    return m ? (...a) => n.pluginMain(MU_ID, 'music:' + m[1][0].toLowerCase() + m[1].slice(1), ...a) : n[k];
   } });
   if (!ctx.host) { view.textContent = "Ce plugin doit être approuvé par NeoDex pour s'ouvrir."; return; }
   const { el, toast, sfx, ask, newTab, pixIcon, PIX, WX } = ctx.host;
@@ -456,6 +456,10 @@ export default async function (ctx) {
     'Cyber': {BG: '#0C0C0F', SIDEBAR: '#131318', CARD: '#1C1C24', CARD_ALT: '#2A2A36', BORDER: '#FFE600', TEXT: '#F8F8F2', SUBTEXT: '#A6A6B8', ACCENT: '#FFE600', ACCENT_2: '#00F0FF', DANGER: '#FF2E63', WARN: '#FFE600', HEART: '#FF2E93'},
     'Néon': {BG: '#05010D', SIDEBAR: '#0B0316', CARD: '#140626', CARD_ALT: '#1E0A38', BORDER: '#4B3480', TEXT: '#F3ECFF', SUBTEXT: '#B39DDB', ACCENT: '#9C82F2', ACCENT_2: '#B8DE6E', DANGER: '#FF3B5C', WARN: '#FFD166', HEART: '#FF6FB8'},
   };
+  // chaque thème a sa police, comme les styles de NeoDex (polices de NeoDex, fonts.css) ; « Police » dans les options en impose une autre
+  const MU_FONTS = {classique: ['Classique', 'Consolas'], vt: ['Terminal', "'X VT323'"], pixel: ['Ronde', "'Pixelify Sans'"], jersey: ['Arcade', "'Jersey 10'"], dot: ['Grimoire', "'DotGothic16'"]};
+  const MU_THEME_FONT = {Onyx: 'jersey', Aube: 'pixel', Ambre: 'vt', Abyme: 'dot', Sakura: 'pixel', 'Crépuscule': 'pixel', Menthe: 'vt', Rubis: 'jersey', Glacier: 'pixel', Cuivre: 'vt', Lavande: 'dot', 'Forêt': 'dot', Soleil: 'jersey', Cyber: 'jersey', 'Néon': 'vt'};
+  const muFont = (theme = mu.settings.theme) => (MU_FONTS[mu.settings.font] || MU_FONTS[MU_THEME_FONT[theme]] || MU_FONTS.classique)[1];
   const MU_THEME_LEVEL = {Onyx: 3, Grenat: 6, Aube: 10, Ambre: 16, Abyme: 24, Sakura: 35, 'Néon': 50};
   const MU_BANDS = [31, 62, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
   const MU_PRESETS = {
@@ -662,7 +666,7 @@ export default async function (ctx) {
     const v = {bg: 'BG', side: 'SIDEBAR', card: 'CARD', card2: 'CARD_ALT', border: 'BORDER', text: 'TEXT', sub: 'SUBTEXT', acc: 'ACCENT', acc2: 'ACCENT_2', danger: 'DANGER', warn: 'WARN', heart: 'HEART'};
     for (const s of [$('mu').style, $('muMini').style]) {  // the portable player wears the theme too
       for (const [k, c] of Object.entries(v)) s.setProperty('--m' + k, T[c]);
-      s.setProperty('--mpress', muShade(T.CARD, -.18));
+      s.setProperty('--mpress', muShade(T.CARD, -.18)); s.setProperty('--mfont', muFont());
     }
     mp.disc = null; mp.discKey = ''; mp.specKey = '';
     muPlayIcon();
@@ -1613,7 +1617,7 @@ export default async function (ctx) {
   }
   muLoad().catch(e => muWarn('chargement', e));
   /* NeoMusic, part 2: MuPlayer's windows and dialogs (Options, Statistiques, Succès, Corbeille, Artistes à découvrir, imports...),
-     recommendations and weekly playlists, sleep mode and alarm, levels and achievements, MuPlayer folder import. */
+     recommendations and weekly playlists, sleep mode and alarm, levels and achievements. */
 
   /* ---------- dialogs: secondary windows (title bar with accent strip), ModernDialog prompts, NotifyDialog, playlist mode ---------- */
   let muWinZ = 0;
@@ -1669,12 +1673,12 @@ export default async function (ctx) {
       mh('button.muMode', {onclick: () => done('offline')}, mh('b', {text: 'HORS LIGNE'}), mh('span', {text: 'Les musiques ajoutées sont téléchargées et écoutables sans connexion.'})),
       mh('button.muMode.alt', {onclick: () => done('online')}, mh('b', {text: 'EN LIGNE'}), mh('span', {text: 'Rien n\'est téléchargé à part la pochette : la musique est diffusée en streaming au moment de la lecture.'}))]);
   }
-  const muDefaultCaps = {ytdlp: '', ffmpeg: false, muplayer: ''};
+  const muDefaultCaps = {ytdlp: '', ffmpeg: false};
   let muCaps = null;
   async function muNeedYtdlp() {
     muCaps ||= await neo.musicCaps().catch(() => muDefaultCaps);
     if (muCaps.ytdlp) return true;
-    muNotify('error', 'Dépendance manquante', 'yt-dlp n\'est pas installé (il sert aussi à MuPlayer).\n\nCommande : python -m pip install -U yt-dlp');
+    muNotify('error', 'Dépendance manquante', 'yt-dlp n\'est pas installé.\n\nCommande : python -m pip install -U yt-dlp');
     return false;
   }
 
@@ -1851,7 +1855,7 @@ export default async function (ctx) {
         for (const r of rows) { const t = r?.track && typeof r.track === 'object' ? r.track : r || {}; const title = t.track || t.trackName || t.name || t.title; let artist = t.artist || t.artistName || '';
           if (!artist && Array.isArray(t.artists)) artist = t.artists.map(a => a?.name || '').join(', '); if (title) queries.push(`${title} ${artist}`.trim()); }
       } else if (/\.csv$/i.test(file.name)) for (const r of muCsv(text)) { const title = r['Track Name'] || r.track || r.title; if (title) queries.push(`${title} ${r['Artist Name(s)'] || r.artist || r.Artist || ''}`.trim()); }
-      else queries.push(...text.split(/\r?\n/).map(l => l.trim()).filter(Boolean));
+      else queries.push(...text.split(/\r?\n/).map(l => l.trim()).filter(l => l && !l.startsWith('#')));
     } catch (e) { return muNotify('error', 'Import playlist', 'Impossible de lire le fichier :\n\n' + e.message); }
     if (!queries.length) return muNotify('warning', 'Import playlist', 'Aucun titre exploitable dans ce fichier.');
     if (muImporting) return muNotify('warning', 'NeoMusic', 'Un import de playlist est déjà en cours.');
@@ -2127,6 +2131,98 @@ export default async function (ctx) {
     w.body.append(muH('JOURNAL DE NEOMUSIC'), mh('pre.muLogs', {text: muLog.length ? muLog.slice().reverse().join('\n') : 'Aucune erreur pour l\'instant.'}), mh('div.muWEnd', {}, muButton('FERMER', w.close, 'accent')));
   }
 
+  /* ---------- QR codes: the music list of a playlist (Options, EXPORTER EN QR CODE). Encoder copied from Qraft (byte mode, versions 1-40, Reed-Solomon, 8 masks) ---------- */
+  const muQr = (() => {
+  // ---------- l'encodeur ----------
+  const ECL = {L: [0, 1], M: [1, 0], Q: [2, 3], H: [3, 2]};  // [indice dans les tables, bits de format]
+  const ECC_PER_BLOCK = [
+    [-1, 7, 10, 15, 20, 26, 18, 20, 24, 30, 18, 20, 24, 26, 30, 22, 24, 28, 30, 28, 28, 28, 28, 30, 30, 26, 28, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30],
+    [-1, 10, 16, 26, 18, 24, 16, 18, 22, 22, 26, 30, 22, 22, 24, 24, 28, 28, 26, 26, 26, 26, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28],
+    [-1, 13, 22, 18, 26, 18, 24, 18, 22, 20, 24, 28, 26, 24, 20, 30, 24, 28, 28, 26, 30, 28, 30, 30, 30, 30, 28, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30],
+    [-1, 17, 28, 22, 16, 22, 28, 26, 26, 24, 28, 24, 28, 22, 24, 24, 30, 28, 28, 26, 28, 30, 24, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30]];
+  const NUM_BLOCKS = [
+    [-1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 4, 4, 4, 4, 6, 6, 6, 6, 7, 8, 8, 9, 9, 10, 12, 12, 12, 13, 14, 15, 16, 17, 18, 19, 19, 20, 21, 22, 24, 25],
+    [-1, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5, 5, 8, 9, 9, 10, 10, 11, 13, 14, 16, 17, 17, 18, 20, 21, 23, 25, 26, 28, 29, 31, 33, 35, 37, 38, 40, 43, 45, 47, 49],
+    [-1, 1, 1, 2, 2, 4, 4, 6, 6, 8, 8, 8, 10, 12, 16, 12, 17, 16, 18, 21, 20, 23, 23, 25, 27, 29, 34, 34, 35, 38, 40, 43, 45, 48, 51, 53, 56, 59, 62, 65, 68],
+    [-1, 1, 1, 2, 4, 4, 4, 5, 6, 8, 8, 11, 11, 16, 16, 18, 16, 19, 21, 25, 25, 25, 34, 30, 32, 35, 37, 40, 42, 45, 48, 51, 54, 57, 60, 63, 66, 70, 74, 77, 81]];
+  const rawModules = v => { let r = (16 * v + 128) * v + 64; if (v >= 2) { const n = Math.floor(v / 7) + 2; r -= (25 * n - 10) * n - 55; if (v >= 7) r -= 36; } return r; };
+  const dataCodewords = (v, e) => Math.floor(rawModules(v) / 8) - ECC_PER_BLOCK[e][v] * NUM_BLOCKS[e][v];
+  const alignPos = v => { if (v === 1) return []; const n = Math.floor(v / 7) + 2, size = v * 4 + 17, step = Math.floor((v * 8 + n * 3 + 5) / (n * 4 - 4)) * 2, r = []; for (let p = size - 7; r.length < n - 1; p -= step) r.unshift(p); return [6, ...r]; };
+  const gmul = (x, y) => { let z = 0; for (let i = 7; i >= 0; i--) { z = (z << 1) ^ ((z >>> 7) * 0x11d); z ^= ((y >>> i) & 1) * x; } return z & 255; };
+  function rsDivisor(deg) { const r = Array(deg).fill(0); r[deg - 1] = 1; let root = 1; for (let i = 0; i < deg; i++) { for (let j = 0; j < deg; j++) { r[j] = gmul(r[j], root); if (j + 1 < deg) r[j] ^= r[j + 1]; } root = gmul(root, 2); } return r; }
+  function rsRemainder(data, div) { const r = div.map(() => 0); for (const b of data) { const f = b ^ r.shift(); r.push(0); div.forEach((c, i) => r[i] ^= gmul(c, f)); } return r; }
+  const MASKS = [(x, y) => (x + y) % 2 === 0, (x, y) => y % 2 === 0, x => x % 3 === 0, (x, y) => (x + y) % 3 === 0, (x, y) => (Math.floor(x / 3) + Math.floor(y / 2)) % 2 === 0,
+    (x, y) => x * y % 2 + x * y % 3 === 0, (x, y) => (x * y % 2 + x * y % 3) % 2 === 0, (x, y) => ((x + y) % 2 + x * y % 3) % 2 === 0];
+  const formatBits = (e, mask) => { const d = ECL[e][1] << 3 | mask; let r = d; for (let i = 0; i < 10; i++) r = (r << 1) ^ ((r >>> 9) * 0x537); return (d << 10 | r) ^ 0x5412; };
+  // la grille des motifs fixes (repères, synchronisation, alignement, version) : renvoie [modules, estFixe]
+  function functionPatterns(v) {
+    const size = v * 4 + 17, m = Array.from({length: size}, () => Array(size).fill(false)), fn = m.map(r => r.map(() => false));
+    const set = (x, y, d) => { m[y][x] = d; fn[y][x] = true; };
+    for (let i = 0; i < size; i++) { set(6, i, i % 2 === 0); set(i, 6, i % 2 === 0); }
+    for (const [cx, cy] of [[3, 3], [size - 4, 3], [3, size - 4]]) for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) { const x = cx + dx, y = cy + dy, d = Math.max(Math.abs(dx), Math.abs(dy)); if (x >= 0 && y >= 0 && x < size && y < size) set(x, y, d !== 2 && d !== 4); }
+    const ap = alignPos(v), n = ap.length;
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) { if ((i === 0 && j === 0) || (i === 0 && j === n - 1) || (i === n - 1 && j === 0)) continue; for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) set(ap[i] + dx, ap[j] + dy, Math.max(Math.abs(dx), Math.abs(dy)) !== 1); }
+    drawFormat(m, fn, 0, size);  // réserve la place (les vrais bits viennent avec le masque)
+    if (v >= 7) { let r = v; for (let i = 0; i < 12; i++) r = (r << 1) ^ ((r >>> 11) * 0x1f25); const b = v << 12 | r; for (let i = 0; i < 18; i++) { const d = (b >>> i & 1) === 1, a = size - 11 + i % 3, c = Math.floor(i / 3); set(a, c, d); set(c, a, d); } }
+    return [m, fn];
+  }
+  function drawFormat(m, fn, bits, size) {
+    const set = (x, y, d) => { m[y][x] = d; fn[y][x] = true; }, bit = i => (bits >>> i & 1) === 1;
+    for (let i = 0; i <= 5; i++) set(8, i, bit(i)); set(8, 7, bit(6)); set(8, 8, bit(7)); set(7, 8, bit(8)); for (let i = 9; i < 15; i++) set(14 - i, 8, bit(i));
+    for (let i = 0; i < 8; i++) set(size - 1 - i, 8, bit(i)); for (let i = 8; i < 15; i++) set(8, size - 15 + i, bit(i)); set(8, size - 8, true);
+  }
+  // l'ordre de lecture en zigzag des modules libres, colonne par colonne de deux, de droite à gauche
+  function zigzag(fn) { const size = fn.length, out = []; for (let right = size - 1; right >= 1; right -= 2) { if (right === 6) right = 5; for (let vert = 0; vert < size; vert++) for (let j = 0; j < 2; j++) { const x = right - j, up = ((right + 1) & 2) === 0, y = up ? size - 1 - vert : vert; if (!fn[y][x]) out.push([x, y]); } } return out; }
+  function blocksLayout(v, e) { const nb = NUM_BLOCKS[e][v], ecc = ECC_PER_BLOCK[e][v], raw = Math.floor(rawModules(v) / 8), nShort = nb - raw % nb, shortLen = Math.floor(raw / nb); return {nb, ecc, nShort, shortLen}; }
+  function penalty(m) {
+    const n = m.length; let p = 0, dark = 0;
+    const lines = []; for (let i = 0; i < n; i++) { lines.push(m[i]); lines.push(m.map(r => r[i])); }
+    for (const L of lines) { let run = 1; for (let i = 1; i <= n; i++) { if (i < n && L[i] === L[i - 1]) run++; else { if (run >= 5) p += run - 2; run = 1; } }
+      for (let i = 0; i + 11 <= n; i++) { const s = L.slice(i, i + 11).map(Number).join(''); if (s === '10111010000' || s === '00001011101') p += 40; } }
+    for (let y = 0; y < n - 1; y++) for (let x = 0; x < n - 1; x++) { const c = m[y][x]; if (c === m[y][x + 1] && c === m[y + 1][x] && c === m[y + 1][x + 1]) p += 3; }
+    for (const r of m) for (const c of r) if (c) dark++;
+    return p + (Math.ceil(Math.abs(dark * 20 - n * n * 10) / (n * n)) - 1) * 10;
+  }
+  // encode : texte -> {modules, version, mask, ecl, used, cap}
+  function encode(text, eclName, forceMask = -1) {
+    const bytes = [...new TextEncoder().encode(text)], e = ECL[eclName][0];
+    let v = 1; for (; v <= 40; v++) { const need = 4 + (v < 10 ? 8 : 16) + bytes.length * 8; if (need <= dataCodewords(v, e) * 8) break; }
+    if (v > 40) return null;
+    const bits = [], put = (val, len) => { for (let i = len - 1; i >= 0; i--) bits.push(val >>> i & 1); };
+    put(4, 4); put(bytes.length, v < 10 ? 8 : 16); bytes.forEach(b => put(b, 8));
+    const cap = dataCodewords(v, e) * 8; put(0, Math.min(4, cap - bits.length)); put(0, (8 - bits.length % 8) % 8);
+    const data = []; for (let i = 0; i < bits.length; i += 8) data.push(parseInt(bits.slice(i, i + 8).join(''), 2));
+    for (let pad = 0xec; data.length < cap / 8; pad ^= 0xec ^ 0x11) data.push(pad);
+    const {nb, ecc, nShort, shortLen} = blocksLayout(v, e), div = rsDivisor(ecc), blocks = []; let k = 0;
+    for (let i = 0; i < nb; i++) { const dat = data.slice(k, k + shortLen - ecc + (i < nShort ? 0 : 1)); k += dat.length; const r = rsRemainder(dat, div); if (i < nShort) dat.push(0); blocks.push(dat.concat(r)); }
+    const all = []; for (let i = 0; i < blocks[0].length; i++) blocks.forEach((b, j) => { if (i !== shortLen - ecc || j >= nShort) all.push(b[i]); });
+    const [base, fn] = functionPatterns(v), size = base.length, order = zigzag(fn);
+    order.forEach(([x, y], i) => { base[y][x] = i < all.length * 8 ? (all[i >>> 3] >>> (7 - (i & 7)) & 1) === 1 : false; });
+    let best = null;
+    for (let mk = 0; mk < 8; mk++) { if (forceMask >= 0 && mk !== forceMask) continue;
+      const m = base.map((r, y) => r.map((c, x) => fn[y][x] ? c : c !== MASKS[mk](x, y))); drawFormat(m, fn.map(r => r.slice()), formatBits(eclName, mk), size);
+      const p = penalty(m); if (!best || p < best.p) best = {m, p, mask: mk}; }
+    return {modules: best.m, version: v, mask: best.mask, ecl: eclName, size, used: bytes.length, cap: dataCodewords(v, e) - (v < 10 ? 2 : 3)};
+  }
+    return encode;
+  })();
+  const muQrLines = p => p.tracks.map(t => { const id = /(?:youtu\.be\/|[?&]v=)([\w-]{11})/.exec(t.url || '')?.[1]; return id ? 'https://youtu.be/' + id : t.url || t.display_title || ''; }).filter(Boolean);
+  function muQrExport(name) {
+    const p = muPl(name); if (!p?.tracks.length) return muNotify('warning', 'QR code', 'Cette playlist est vide.');
+    const pages = [[]]; let len = 0;  // about 700 characters per code: small enough for a phone to read it on a screen
+    for (const l of muQrLines(p)) { if (pages.at(-1).length && len + l.length > 700) { pages.push([]); len = 0; } pages.at(-1).push(l); len += l.length + 1; }
+    const w = muWindow('QR code', 520), can = mh('canvas', {style: {display: 'block', margin: '10px auto', imageRendering: 'pixelated', maxWidth: '100%'}}), info = mh('p.muWNote'); let i = 0;
+    const show = () => {
+      const q = muQr(`# NeoMusic · ${name} · ${i + 1}/${pages.length}\n` + pages[i].join('\n'), 'L'), n = q.size + 8, k = Math.max(2, Math.floor(400 / n)), g = can.getContext('2d');
+      can.width = can.height = n * k; g.fillStyle = '#fff'; g.fillRect(0, 0, n * k, n * k); g.fillStyle = '#000';
+      q.modules.forEach((r, y) => r.forEach((d, x) => d && g.fillRect((x + 4) * k, (y + 4) * k, k, k)));
+      info.textContent = `« ${name} » · code ${i + 1} sur ${pages.length} · ${pages[i].length} musique(s)`; prev.disabled = i === 0; next.disabled = i === pages.length - 1;
+    };
+    const prev = muButton('◀ PRÉCÉDENT', () => { i--; show(); }), next = muButton('SUIVANT ▶', () => { i++; show(); });
+    w.body.append(muNote('Scanne les codes un par un : chaque code ajoute ses musiques à la playlist ouverte.'), can, info, mh('div.muWEnd', {}, prev, next, muButton('FERMER', w.close, 'accent')));
+    show();
+  }
+
   /* ---------- Options ---------- */
   function muDeckPick(level) {  // le choix de la platine ; celles du niveau suivant restent visibles, verrouillées
     if (level < 150) return mh('p.muWNote.ind', {text: 'Platine : se débloque au niveau 150, avec ses socles et ses bras jusqu\'au niveau 190 (tu es niveau ' + level + ').'});
@@ -2146,7 +2242,8 @@ export default async function (ctx) {
   }
   function muOptions() {
     const st = mu.settings, w = muWindow('Options', 620), b = w.body, lv = muLevel();
-    const check = (label, key) => { const c = mh('input', {type: 'checkbox', checked: !!st[key]}); c.dataset.k = key; return mh('label.muCheck', {}, c, mh('span', {text: label})); };
+    const apply = () => { muSave(); muApplySettingsUi(); muRefresh(); muSetCover(mp.cur); muDrawProgress(true); muPresence(true); };  // chaque réglage s'enregistre dès qu'il change
+    const check = (label, key) => { const c = mh('input', {type: 'checkbox', checked: !!st[key], onchange: () => { st[key] = c.checked; apply(); }}); return mh('label.muCheck', {}, c, mh('span', {text: label})); };
     b.append(muH('OPTIONS'));
     b.append(muSec('AFFICHAGE'), check('Afficher le visualiseur audio', 'visualizer'), lv.level >= 100 ? check('Super visualiseur : reflet, étincelles, lueur et pulsation des basses (niveau 100)', 'superVis') : mh('p.muWNote.ind', {text: 'Super visualiseur : se débloque au niveau 100 (tu es niveau ' + lv.level + ').'}), check('Pochette « lecture en cours » en cercle façon vinyle (la platine complète à partir du niveau 150)', 'vinyl'), muDeckPick(lv.level),
       lv.level >= 200 ? check('Interface Deluxe : l\'appli pixel en grand, cadres doubles, fond tramé, platine en vedette (niveau 200)', 'deluxe') : mh('p.muWNote.ind', {text: 'Interface Deluxe : change tout le style de l\'appli, se débloque au niveau 200 (tu es niveau ' + lv.level + ').'}),
@@ -2157,24 +2254,30 @@ export default async function (ctx) {
 
     // equaliser: 10 bands; moving one switches to "Custom" on save, picking a profile only previews it
     const base = (st.equalizer === 'Custom' ? st.eqBands : MU_PRESETS[st.equalizer] || MU_PRESETS.Normal).slice();
-    const sliders = MU_BANDS.map((f, i) => { const v = mh('span', {text: (+base[i]).toFixed(1)}), r = mh('input', {type: 'range', min: -12, max: 12, step: .5, value: base[i], oninput: () => v.textContent = (+r.value).toFixed(1)}); return {r, v, col: mh('div.muBand', {}, v, r, mh('b', {text: f >= 1000 ? f / 1000 + 'k' : String(f)}))}; });
+    const sliders = MU_BANDS.map((f, i) => { const v = mh('span', {text: (+base[i]).toFixed(1)}), r = mh('input', {type: 'range', min: -12, max: 12, step: .5, value: base[i], oninput: () => { v.textContent = (+r.value).toFixed(1); eqSave(); }}); return {r, v, col: mh('div.muBand', {}, v, r, mh('b', {text: f >= 1000 ? f / 1000 + 'k' : String(f)}))}; });
     const preset = mh('select.muSelect', {}, ...Object.keys(MU_PRESETS).map(k => mh('option', {text: k, selected: k === st.equalizer})));
-    preset.onchange = () => { const g = preset.value === 'Custom' ? st.eqBands : MU_PRESETS[preset.value]; sliders.forEach((s, i) => { s.r.value = g[i]; s.v.textContent = (+g[i]).toFixed(1); }); base.splice(0, 10, ...g); };
-    b.append(muSec('ÉGALISEUR'), muNote('Réglez chaque bande manuellement (en dB). Dès qu\'un curseur est déplacé, le profil « Custom » est utilisé à la sauvegarde.'),
+    preset.onchange = () => { const g = preset.value === 'Custom' ? st.eqBands : MU_PRESETS[preset.value]; sliders.forEach((s, i) => { s.r.value = g[i]; s.v.textContent = (+g[i]).toFixed(1); }); st.equalizer = preset.value; muSave(); muApplySettingsUi(); };
+    const eqSave = () => { st.eqBands = sliders.map(s => +s.r.value); st.equalizer = preset.value = 'Custom'; muSave(); muApplySettingsUi(); };
+    b.append(muSec('ÉGALISEUR'), muNote('Réglez chaque bande manuellement (en dB). Dès qu\'un curseur est déplacé, le profil passe à « Custom ».'),
       mh('div.muBands', {}, ...sliders.map(s => s.col)),
-      mh('div.muWBtns', {}, muButton('RÉINITIALISER', () => sliders.forEach(s => { s.r.value = 0; s.v.textContent = '0.0'; })), mh('span.muWNote', {text: 'ou profil prédéfini :'}), preset));
-    const limiter = check('Limiteur/compresseur (évite la saturation à fort volume)', 'limiter'), bal = mh('input.muRange', {type: 'range', min: -1, max: 1, step: .05, value: st.balance});
-    b.append(muSec('AUDIO'), limiter, mh('span.muSmall', {text: 'BALANCE GAUCHE / DROITE'}), mh('div.muWBtns', {}, mh('span', {text: 'G'}), bal, mh('span', {text: 'D'}), muButton('RÉINITIALISER', () => bal.value = 0)));
+      mh('div.muWBtns', {}, muButton('RÉINITIALISER', () => { sliders.forEach(s => { s.r.value = 0; s.v.textContent = '0.0'; }); eqSave(); }), mh('span.muWNote', {text: 'ou profil prédéfini :'}), preset));
+    const limiter = check('Limiteur/compresseur (évite la saturation à fort volume)', 'limiter'), bal = mh('input.muRange', {type: 'range', min: -1, max: 1, step: .05, value: st.balance, oninput: () => { st.balance = Math.round(+bal.value * 100) / 100; muSave(); muApplySettingsUi(); }});
+    b.append(muSec('AUDIO'), limiter, mh('span.muSmall', {text: 'BALANCE GAUCHE / DROITE'}), mh('div.muWBtns', {}, mh('span', {text: 'G'}), bal, mh('span', {text: 'D'}), muButton('RÉINITIALISER', () => { bal.value = 0; bal.oninput(); })));
     const nextTheme = Object.values(MU_THEME_LEVEL).filter(l => l > lv.level).sort((a, x) => a - x)[0];
     b.append(muSec('NIVEAU'), muNote(`Niveau ${lv.level} — ${Math.floor((+mu.stats.seconds || 0) / 60)} min d'écoute cumulées` + (nextTheme ? ` (prochain thème au niveau ${nextTheme})` : ' (tous les thèmes sont débloqués)')), mh('div.muLevel', {}, mh('i', {style: {width: Math.max(1, lv.progress * 100) + '%'}})));
     b.append(muSec('THÈME'), mh('div.muThemes', {}, ...Object.entries(MU_THEMES).map(([name, c]) => {
       const need = MU_THEME_LEVEL[name], locked = need && lv.level < need;
       if (locked) return mh('button.muTh.locked', {style: {background: c.CARD, color: c.SUBTEXT, borderColor: c.BORDER}, html: `<div class="pv" style="background:${c.BG};place-items:center;display:grid">${muLock(20)}</div><div class="nm" style="background:${c.CARD}"><b>${name}</b><span style="font-weight:400">Niv. ${need}</span></div>`, onclick: () => muStatus(`Thème « ${name} » débloqué au niveau ${need}.`, T.WARN)});
       const bar = (col, w) => mh('u', {style: {background: col, width: w || ''}});
-      return mh('button.muTh' + (name === st.theme ? '.on' : ''), {style: {background: c.CARD, color: c.TEXT, borderColor: name === st.theme ? c.ACCENT : c.BORDER, boxShadow: name === st.theme ? '0 0 0 2px ' + c.ACCENT : ''}, title: name, onclick: () => { if (name === st.theme) return; st.theme = name; muApplyTheme(); muSave(); muUnlock('customizer'); w.close(); muOptions(); muDrawProgress(true); }}, mh('div.pv', {style: {background: c.BG}}, mh('i.sd', {style: {background: c.SIDEBAR}}, bar(c.ACCENT), bar(c.SUBTEXT), bar(c.SUBTEXT)), mh('i.mn', {}, mh('u', {style: {background: c.CARD_ALT}}), mh('s', {style: {background: c.TEXT, opacity: .8}}), mh('s', {style: {background: c.SUBTEXT, opacity: .6}}), mh('em', {style: {background: c.ACCENT}}))), mh('div.nm', {style: {background: c.CARD}}, mh('b', {text: (name === st.theme ? '✓ ' : '') + name}), mh('span', {}, bar(c.ACCENT), bar(c.ACCENT_2), bar(c.HEART)))); 
-    })));
+      return mh('button.muTh' + (name === st.theme ? '.on' : ''), {style: {background: c.CARD, color: c.TEXT, borderColor: name === st.theme ? c.ACCENT : c.BORDER, boxShadow: name === st.theme ? '0 0 0 2px ' + c.ACCENT : ''}, title: name, onclick: () => { if (name === st.theme) return; st.theme = name; muApplyTheme(); muSave(); muUnlock('customizer'); w.close(); muOptions(); muDrawProgress(true); }}, mh('div.pv', {style: {background: c.BG}}, mh('i.sd', {style: {background: c.SIDEBAR}}, bar(c.ACCENT), bar(c.SUBTEXT), bar(c.SUBTEXT)), mh('i.mn', {}, mh('u', {style: {background: c.CARD_ALT}}), mh('s', {style: {background: c.TEXT, opacity: .8}}), mh('s', {style: {background: c.SUBTEXT, opacity: .6}}), mh('em', {style: {background: c.ACCENT}}))), mh('div.nm', {style: {background: c.CARD}}, mh('b', {text: (name === st.theme ? '✓ ' : '') + name, style: {fontFamily: muFont(name)}}), mh('span', {}, bar(c.ACCENT), bar(c.ACCENT_2), bar(c.HEART)))); 
+    })), mh('span.muSmall', {text: 'POLICE'}), mh('div.muWBtns', {}, ...[['', 'Celle du thème'], ...Object.entries(MU_FONTS).map(([k, f]) => [k, f[0]])].map(([k, label]) =>
+      mh('button.muBtn' + ((st.font || '') === k ? '.accent.on' : ''), {text: label, style: {fontFamily: k ? MU_FONTS[k][1] : ''}, onclick: () => { st.font = k; muApplyTheme(); apply(); w.close(); muOptions(); }}))));
     // shortcuts: click a field then press the combination (Échap cancels, Retour arrière / Suppr clears)
-    const captured = {};
+    const captured = {}, keysSave = (key, old) => {
+      const vals = Object.values(captured).filter(Boolean);
+      if (new Set(vals).size !== vals.length) { captured[key] = old; return muNotify('warning', 'Options', 'Ce raccourci sert déjà.'); }
+      st.shortcuts = {...captured}; muSave(); muHotkeys();
+    };
     b.append(muSec('RACCOURCIS CLAVIER'), muNote('Clique dans un champ puis appuie sur la combinaison souhaitée (Échap pour annuler, Retour arrière ou Suppr pour désactiver ce raccourci). Un raccourci doit inclure Ctrl, Alt ou Shift, sauf les touches de fonction (F1-F12) qui peuvent être utilisées seules. Ils marchent partout dans Windows, même NeoDex en arrière-plan.'));
     for (const [key, label, , def] of MU_SHORTCUTS) {
       captured[key] = key in st.shortcuts ? st.shortcuts[key] : def;
@@ -2182,12 +2285,12 @@ export default async function (ctx) {
       f.onkeydown = e => {
         e.preventDefault(); e.stopPropagation();
         if (e.key === 'Escape') return f.blur();
-        if (e.key === 'Backspace' || e.key === 'Delete') { captured[key] = ''; f.value = 'Aucun'; return f.blur(); }
+        if (e.key === 'Backspace' || e.key === 'Delete') { const old = captured[key]; captured[key] = ''; keysSave(key, old); return f.blur(); }
         if (['Control', 'Alt', 'Shift', 'Meta'].includes(e.key)) return;
         const k = {' ': 'Space', ArrowLeft: 'Left', ArrowRight: 'Right', ArrowUp: 'Up', ArrowDown: 'Down'}[e.key] || (e.key.length === 1 ? e.key.toUpperCase() : e.key);
         const combo = (e.ctrlKey ? 'Ctrl+' : '') + (e.altKey ? 'Alt+' : '') + (e.shiftKey ? 'Shift+' : '') + k;
         if (!/^F\d{1,2}$/.test(k) && !/(Ctrl|Alt|Shift)\+/.test(combo)) return muStatus('Un raccourci doit inclure Ctrl, Alt ou Shift', T.WARN);
-        captured[key] = combo; f.value = combo; f.blur();
+        const old = captured[key]; captured[key] = combo; keysSave(key, old); f.blur();
       };
       f.onfocus = () => f.value = '…'; f.onblur = () => f.value = captured[key] || 'Aucun';
       b.append(mh('div.muKeyRow', {}, mh('span', {text: label}), f));
@@ -2197,73 +2300,12 @@ export default async function (ctx) {
     b.append(mh('div.muWBtns', {}, muButton('VÉRIFIER LA BIBLIOTHÈQUE', () => muLibraryCheck())));
     b.append(muSec('JOURNAL'), muNote('Consulte le journal des erreurs de NeoMusic (téléchargements, lecture, imports) pour diagnostiquer un problème.'), mh('div.muWBtns', {}, muButton('VOIR LES LOGS', () => muLogs())));
     b.append(muSec('STOCKAGE'), muNote('Calcule le poids réel de NeoMusic sur le disque, détaillé par catégorie (musiques, pochettes, caches...).'), mh('div.muWBtns', {}, muButton('CALCULER LE POIDS DE L\'APPLI', () => muStorage())));
-    b.append(muSec('SAUVEGARDE / CAPSULE'), muNote('Ta bibliothèque, tes playlists, tes stats et tes succès sont déjà dans la sauvegarde automatique de NeoDex et la synchro entre PC (les musiques se retéléchargent toutes seules sur un autre PC). La capsule regroupe en plus les fichiers audio et les pochettes dans un seul .zip.'),
-      mh('div.muWBtns', {}, muButton('EXPORTER UNE CAPSULE', async () => { muStatus('Création de la capsule...', T.ACCENT_2); try { const f = await neo.musicExportCapsule(mu); muStatus(f ? 'Capsule créée : ' + f.split(/[\\/]/).pop() : 'Prêt', T.ACCENT_2); } catch (e) { muStatus('Échec de la sauvegarde', T.DANGER); muNotify('error', 'Sauvegarde', 'Impossible de créer la capsule.\n\n' + e.message); } }),
-        muButton('IMPORTER UNE CAPSULE', async () => {
-          if (!await muConfirm('Importer une capsule', 'Ceci va remplacer ta bibliothèque NeoMusic actuelle (playlists, stats, succès et réglages) par celle de la capsule, en gardant tous les fichiers audio. Continuer ?')) return;
-          try { const d = await neo.musicImportCapsule(); if (!d) return; mu = muRepair(d); muSave(); w.close(); muApplyTheme(); muApplySettingsUi(); muLoadPlaylist('Favoris'); muHotkeys(); muStatus('Capsule importée', T.ACCENT_2); }
-          catch (e) { muStatus('Échec de l\'import', T.DANGER); muNotify('error', 'Import de capsule', 'Impossible d\'importer cette capsule.\n\n' + e.message); }
-        })));
-    b.append(muSec('MUPLAYER'), muNote('Récupère tout depuis ton dossier MuPlayer : playlists (en ligne et hors ligne), musiques, pochettes, formes d\'onde, statistiques, succès, niveau et réglages. Ce qui existe déjà ici est gardé et complété.'),
-      mh('div.muWBtns', {}, muButton('IMPORTER DEPUIS MUPLAYER', () => { w.close(); muImportMuPlayer(); }, 'accent')));
-    b.append(mh('div.muWEnd', {}, muButton('SAUVEGARDER', () => {
-      for (const c of b.querySelectorAll('input[type=checkbox][data-k]')) st[c.dataset.k] = c.checked;
-      const gains = sliders.map(s => +s.r.value), touched = gains.some((g, i) => Math.abs(g - base[i]) > .01);
-      if (touched) { st.eqBands = gains; st.equalizer = 'Custom'; } else st.equalizer = preset.value;
-      if (preset.value === 'Custom' && !touched) st.eqBands = gains;
-      st.balance = Math.round(+bal.value * 100) / 100;
-      const vals = Object.values(captured).filter(Boolean);
-      if (new Set(vals).size !== vals.length) return muNotify('warning', 'Options', 'Chaque raccourci doit être différent.');
-      st.shortcuts = {...captured};
-      muSave(); muHotkeys(); muApplySettingsUi(); muRefresh(); muSetCover(mp.cur); muDrawProgress(true); muPresence(true);
-      w.close(); muStatus('Options sauvegardées');
-    }, 'accent')));
+    const qrPl = mh('select.muSelect', {}, ...mu.playlists.filter(p => p.tracks.length).map(p => mh('option', {text: p.name, selected: p.name === mp.pl})));
+    b.append(muSec('EXPORTER EN QR CODE'), muNote('La liste des musiques d\'une playlist en QR codes, une musique par ligne (son lien YouTube, sinon son titre) comme un fichier .txt à importer : un autre téléphone la récupère avec IMPORTER UN QR CODE.'),
+      mh('div.muWBtns', {}, qrPl, muButton('AFFICHER LES QR CODES', () => muQrExport(qrPl.value), 'accent'), ));
+    b.append(mh('div.muWEnd', {}, mh('span.muWNote', {text: 'Chaque réglage s\'enregistre tout seul.'}), muButton('FERMER', w.close, 'accent')));
   }
 
-  /* ---------- MuPlayer folder import: playlists + files + covers + waveforms + stats + achievements + settings, merged ---------- */
-  async function muImportMuPlayer() {
-    muCaps ||= await neo.musicCaps().catch(() => muDefaultCaps);
-    if (!await muConfirm('Importer depuis MuPlayer', 'Choisis le dossier de MuPlayer (celui qui contient « jsons », « musics » et « covers »). Les playlists, stats, succès et réglages seront fusionnés avec NeoMusic. Continuer ?')) return;
-    muStatus('Import de MuPlayer...', T.ACCENT_2);
-    let d;
-    try { d = await neo.musicImportMuPlayer(muCaps.muplayer); } catch (e) { muStatus('Import échoué', T.DANGER); return muNotify('error', 'MuPlayer', e.message); }
-    if (!d) return muStatus('Prêt');
-    let added = 0;
-    for (const src of d.playlists) {
-      let p = muPl(src.name);
-      if (!p) { p = {name: src.name, mode: src.mode, tracks: []}; mu.playlists.push(p); }
-      const have = new Set(p.tracks.map(muId));
-      for (const t of src.tracks) if (!have.has(muId(t))) { p.tracks.push(t); have.add(muId(t)); added++; }
-    }
-    Object.assign(muCache, Object.fromEntries(Object.entries(d.waveforms || {}).map(([id, w]) => [id.startsWith('file:') || id.startsWith('url:') ? id : 'url:' + id, {...muCache[id], w}])));
-    muCacheDirty = true;
-    const again = !!mu.settings.muplayerImported;  // a second import completes the playlists but must not count the plays twice
-    mu.settings.muplayerImported = true;
-    const s = again ? {} : d.stats || {}, st = mu.stats, add = (a, b2) => { for (const [k, v] of Object.entries(b2 || {})) a[k] = (+a[k] || 0) + (+v || 0); };
-    st.plays = (+st.plays || 0) + (+s.plays || 0); st.seconds = (+st.seconds || 0) + (+s.seconds || 0);
-    for (const k of ['songs', 'songs_time', 'artists', 'artists_time', 'daily']) add(st[k], s[k]);
-    st.history = [...(s.history || []), ...st.history].sort((a, b2) => String(a.date).localeCompare(String(b2.date))).slice(-100);
-    const a = (again ? {unlocked: d.achievements?.unlocked} : d.achievements) || {}, ach = mu.achievements;
-    for (const [id, at] of Object.entries(a.unlocked || {})) if (!ach.unlocked[id] || at < ach.unlocked[id]) ach.unlocked[id] = at;
-    const pr = ach.progress, ap = a.progress || {};
-    pr.unique_songs = [...new Set([...pr.unique_songs, ...(ap.unique_songs || []).map(x => Array.isArray(x) ? (x[0] === 'url' ? 'url:' + x[1] : 'file:' + String(x[1]).split(/[\\/]/).pop()) : x)])];
-    pr.unique_artists = [...new Set([...pr.unique_artists, ...(ap.unique_artists || [])])];
-    pr.playlists_created = (+pr.playlists_created || 0) + (+ap.playlists_created || 0); pr.shortcut_uses = (+pr.shortcut_uses || 0) + (+ap.shortcut_uses || 0);
-    if (ap.first_seen_date && ap.first_seen_date < pr.first_seen_date) pr.first_seen_date = ap.first_seen_date;
-    if (ap.last_active_date && (!pr.last_active_date || ap.last_active_date > pr.last_active_date)) { pr.last_active_date = ap.last_active_date; pr.streak_count = ap.streak_count; }
-    const ms = d.settings || {}, set = mu.settings, map = {theme_name: 'theme', volume: 'volume', equalizer: 'equalizer', limiter_enabled: 'limiter', audio_balance: 'balance', show_visualizer: 'visualizer', show_waveform: 'waveform',
-      vinyl_cover_frame: 'vinyl', replaygain_enabled: 'replaygain', cover_fade_enabled: 'coverFade', show_date_added: 'dateAdded', show_release_date: 'releaseDate', gallery_view: 'gallery', no_images_mode: 'noImages'};
-    for (const [from, to] of Object.entries(map)) if (from in ms) set[to] = ms[from];
-    if (!(set.theme in MU_THEMES)) set.theme = 'Nova'; if (!(set.equalizer in MU_PRESETS)) set.equalizer = 'Normal';
-    if (ms.eq_band_gains && typeof ms.eq_band_gains === 'object') set.eqBands = MU_BANDS.map(f => +ms.eq_band_gains[f] || 0);
-    const sk = {shortcut_play: 'play', shortcut_previous: 'previous', shortcut_next: 'next', shortcut_volume_up: 'volumeUp', shortcut_volume_down: 'volumeDown', shortcut_mute: 'mute', shortcut_seek_forward: 'seekForward',
-      shortcut_seek_backward: 'seekBackward', shortcut_shuffle: 'shuffle', shortcut_favorite: 'favorite', shortcut_fullscreen: 'fullscreen', shortcut_mini_player: 'mini'};
-    for (const [from, to] of Object.entries(sk)) if (from in ms && ms[from] !== 'Ctrl+Alt+N') set.shortcuts[to] = ms[from];  // Ctrl+Alt+N stays NeoDex's
-    if (!again) mu.trash.push(...(d.trash || []).map(e => ({item: {...e.item, display_title: e.item.display_title || e.title}, playlist: e.playlist, title: e.title, deleted_at: e.deleted_at})));
-    muSave(); muApplyTheme(); muApplySettingsUi(); muLoadPlaylist(mp.pl); muHotkeys();
-    muStatus('MuPlayer importé', T.ACCENT_2);
-    muNotify('success', 'MuPlayer', `${added} musique(s) dans ${d.playlists.length} playlist(s)\n${d.copied.files} fichier(s) audio et ${d.copied.covers} pochette(s) copiés\n${+s.plays || 0} lecture(s) et ${Object.keys(a.unlocked || {}).length} succès récupérés`);
-  }
   // ---- ce que NeoDex doit savoir de ce plugin ----
   host.hooks({ onTabChange: () => muMiniSync(), onClose: () => { if (muAudio && !muAudio.paused) muPause(); }, audio: () => muAudio ? { audible: !muAudio.paused && !muAudio.muted, muted: muAudio.muted } : null, mute: on => { if (muAudio) muAudio.muted = on; }, playing: () => !!muAudio && !muAudio.paused && !muAudio.muted });  // son de l'onglet, mini-lecteur, fermeture de l'onglet, NeoMe qui danse
   ctx.commands?.on('toggle', () => muToggle());  // les boutons du widget de l'accueil

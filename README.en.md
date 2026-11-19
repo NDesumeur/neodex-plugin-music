@@ -49,7 +49,7 @@ Total plays, time listened, distinct tracks and artists, average length, active 
 ## Levels and achievements
 
 - Every minute listened raises your **level**; each level takes longer than the last (about 115 hours of listening for level 100).
-- 18 colour **themes**, 7 of which unlock with your level: Onyx (3), Grenat (6), Aube (10), Ambre (16), Abyme (24), Sakura (35) and Néon (50).
+- 18 colour **themes**, each with its own font (Classic, Terminal, Round, Arcade or Grimoire, to change in Options), 7 of which unlock with your level: Onyx (3), Grenat (6), Aube (10), Ambre (16), Abyme (24), Sakura (35) and Néon (50).
 - Level 100: the **super visualiser** (reflection, sparks, glow and bass pulse).
 - Level 150: the current cover becomes a full **vinyl turntable**, with wood, stone or metal bases and arms to combine, unlocked up to level 190.
 - Level 200: the **Deluxe interface**, which changes the app's whole style.
@@ -61,8 +61,8 @@ Total plays, time listened, distinct tracks and artists, average length, active 
 - **Bin**: a deleted track can be restored for 7 days.
 - **Check library**: finds missing files (to remove or download again), duplicates and files that are in no playlist.
 - Error **log** (downloads, playback, imports) and NeoMusic's **size** on disk, broken down by category.
-- **Capsule**: exports your library with its audio files and covers into a single .zip, or imports one back (it replaces the current library).
-- **Import from MuPlayer**: brings in playlists, tracks, covers, statistics, achievements, level and settings, adding to what already exists.
+- **Export as QR codes**: the track list of a playlist (YouTube link, otherwise title), to scan with NeoMusic on a phone.
+- Every setting is saved as soon as it changes: no button to click.
 
 ## Discord status
 

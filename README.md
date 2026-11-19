@@ -49,7 +49,7 @@ Lectures totales, temps écouté, titres et artistes différents, durée moyenne
 ## Niveaux et succès
 
 - Chaque minute écoutée fait monter ton **niveau** ; il faut de plus en plus de temps d'un niveau au suivant (environ 115 heures d'écoute pour le niveau 100).
-- 18 **thèmes** de couleurs, dont 7 qui se débloquent avec le niveau : Onyx (3), Grenat (6), Aube (10), Ambre (16), Abyme (24), Sakura (35) et Néon (50).
+- 18 **thèmes** de couleurs, chacun avec sa police (Classique, Terminal, Ronde, Arcade ou Grimoire, à changer dans Options), dont 7 qui se débloquent avec le niveau : Onyx (3), Grenat (6), Aube (10), Ambre (16), Abyme (24), Sakura (35) et Néon (50).
 - Niveau 100 : le **super visualiseur** (reflet, étincelles, lueur et pulsation des basses).
 - Niveau 150 : la pochette en cours devient une **platine vinyle** complète, avec des socles et des bras en bois, pierre ou métal à combiner, débloqués jusqu'au niveau 190.
 - Niveau 200 : l'**interface Deluxe**, qui change tout le style de l'appli.
@@ -61,8 +61,8 @@ Lectures totales, temps écouté, titres et artistes différents, durée moyenne
 - **Corbeille** : une musique supprimée se restaure pendant 7 jours.
 - **Vérifier la bibliothèque** : trouve les fichiers manquants (à retirer ou retélécharger), les doublons et les fichiers qui ne sont dans aucune playlist.
 - **Journal** des erreurs (téléchargement, lecture, import) et **poids** de NeoMusic sur le disque, détaillé par catégorie.
-- **Capsule** : exporte dans un seul .zip ta bibliothèque avec ses fichiers audio et ses pochettes, ou en réimporte une (elle remplace la bibliothèque actuelle).
-- **Importer depuis MuPlayer** : reprend playlists, musiques, pochettes, statistiques, succès, niveau et réglages, en complétant ce qui existe déjà.
+- **Exporter en QR codes** : la liste des musiques d'une playlist (lien YouTube, sinon titre), à scanner avec NeoMusic sur un téléphone.
+- Chaque réglage s'enregistre dès qu'il change : plus de bouton à cliquer.
 
 ## Statut Discord
 

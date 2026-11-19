@@ -1,7 +1,7 @@
 // NeoMusic, the NeoDex version of MuPlayer (the system side of the plugin, loaded by NeoDex once the plugin is signed and has full access): music files and covers on disk, YouTube / SoundCloud / Deezer through yt-dlp (Python),
-// the global shortcuts, capsules and the import of an existing MuPlayer folder. The page keeps the library itself
+// the global shortcuts. The page keeps the library itself
 // (music.json, synced between PCs): files and covers are only caches here, fetched again from their URL on a PC that does not have them.
-const { app, net, nativeImage, globalShortcut, shell, dialog } = require('electron');
+const { app, net, nativeImage, globalShortcut, shell } = require('electron');
 const { spawn, execFile, execFileSync } = require('child_process');
 const fs = require('fs'), path = require('path'), os = require('os'), crypto = require('crypto');
 
@@ -321,48 +321,12 @@ function registerHotkeys() {
   return failed;
 }
 
-/* ---------- MuPlayer folder (playlists, stats, achievements, settings, covers, music files) ---------- */
+/* ---------- helpers ---------- */
 const safeName = n => String(n).replace(/[\\/*?:"<>|]/g, '').replace(/\s+/g, ' ').trim().slice(0, 180) || 'musique';
 const readJ = p => { try { return JSON.parse(fs.readFileSync(p, 'utf8').replace(/^﻿/, '')); } catch { return null; } };
-function importMuPlayer(dir) {
-  const jd = path.join(dir, 'jsons');
-  if (!fs.existsSync(path.join(jd, 'playlists.json'))) throw new Error("Ce dossier ne contient pas de bibliothèque MuPlayer (jsons/playlists.json introuvable)");
-  fs.mkdirSync(MUSIC(), { recursive: true }); fs.mkdirSync(COVERS(), { recursive: true });
-  const cfg = readJ(path.join(jd, 'playlists.json')), names = Array.isArray(cfg) ? cfg : cfg?.names || [], modes = cfg?.modes || {};
-  const copied = { files: 0, covers: 0 }, waveforms = {};
-  const here = (p, sub) => !p ? '' : fs.existsSync(p) ? p : path.join(dir, sub, path.win32.basename(p));  // MuPlayer keeps absolute paths: the folder may have moved
-  const copyCover = p => {
-    p = here(p, 'covers');
-    if (!p || !fs.existsSync(p)) return '';
-    const name = md5(p) + path.extname(p).toLowerCase(); const dst = path.join(COVERS(), name);
-    if (!fs.existsSync(dst)) { fs.copyFileSync(p, dst); copied.covers++; }
-    return name;
-  };
-  const copyFile = p => {
-    p = here(p, 'musics');
-    if (!p || !fs.existsSync(p)) return '';
-    let name = path.basename(p), dst = path.join(MUSIC(), name);
-    if (fs.existsSync(dst) && fs.statSync(dst).size !== fs.statSync(p).size) { name = md5(p).slice(0, 8) + '-' + name; dst = path.join(MUSIC(), name); }
-    if (!fs.existsSync(dst)) { fs.copyFileSync(p, dst); copied.files++; }
-    return name;
-  };
-  const playlists = names.map(name => {
-    const data = readJ(path.join(jd, `metadata_${safeName(name)}.json`)) || [];
-    return { name, mode: modes[name] === 'online' ? 'online' : 'offline', tracks: data.filter(x => x && (x.path || x.url)).map(x => {
-      const t = { display_title: x.display_title || path.basename(x.path || '') || 'Musique', author: x.author || '', publish_date: x.publish_date || '', date_added: +x.date_added || Date.now() / 1000,
-        song_length: x.song_length || '', duration: +x.stream_duration || 0, url: x.url || '', thumbnail_url: x.thumbnail_url || '', cover: copyCover(x.cover), file: copyFile(x.path),
-        is_online: !!x.is_online || !x.path, last_played: +x.last_played || 0 };
-      if (Array.isArray(x.waveform) && x.waveform.length) waveforms[t.url || 'file:' + t.file] = x.waveform;
-      return t;
-    }) };
-  });
-  const trash = (readJ(path.join(jd, 'trash.json')) || []).filter(e => e?.item).map(e => ({ ...e, item: { ...e.item, file: copyFile(e.item.path), cover: copyCover(e.item.cover) } }));
-  return { playlists, stats: readJ(path.join(jd, 'stats.json')), achievements: readJ(path.join(jd, 'achievements.json')), settings: readJ(path.join(jd, 'settings.json')), trash, waveforms, copied };
-}
 
-/* ---------- sizes, capsules ---------- */
+/* ---------- sizes ---------- */
 const dirSize = d => { let n = 0, c = 0; try { for (const f of fs.readdirSync(d)) { const s = fs.statSync(path.join(d, f)); if (s.isFile()) { n += s.size; c++; } } } catch {} return { bytes: n, count: c }; };
-const tar = (args, cwd) => new Promise((ok, ko) => { const p = spawn('tar', args, { cwd, windowsHide: true }); let e = ''; p.stderr.on('data', d => e += d); p.on('error', ko); p.on('close', c => c ? ko(new Error(e.trim() || 'tar a échoué')) : ok()); });
 
 function register({ ipcMain, getWin, emit, serveFile, protocol, onShortcutReset, readDoc, writeDoc }) {
   sendHotkey = action => emit('music:hotkey', action);
@@ -384,7 +348,7 @@ function register({ ipcMain, getWin, emit, serveFile, protocol, onShortcutReset,
   ipcMain.handle('music:save', (_, d) => { writeDoc('library', d); return true; });
   ipcMain.handle('music:caps', async () => {
     let version = ''; try { version = (await ytdlp(['--version'], { timeout: 30000 })).trim(); } catch {}
-    return { ytdlp: version, ffmpeg: !!ffmpeg, muplayer: [path.join(app.getPath('downloads'), 'MuPlayerV1.0'), path.join(app.getPath('downloads'), 'muplayer_repo', 'muplayer_repo')].find(d => fs.existsSync(path.join(d, 'jsons', 'playlists.json'))) || '' };
+    return { ytdlp: version, ffmpeg: !!ffmpeg };
   });
   ipcMain.handle('music:search', (_, q, n) => search(q, n));
   ipcMain.handle('music:info', (_, url) => info(url));
@@ -425,34 +389,6 @@ function register({ ipcMain, getWin, emit, serveFile, protocol, onShortcutReset,
     for (const combo of Object.values(hotkeys)) if (combo && /(Ctrl|Alt|Shift)\+/.test(combo)) try { globalShortcut.unregister(accel(combo)); } catch {}
     hotkeys = map || {};
     return registerHotkeys();
-  });
-  ipcMain.handle('music:pickMuPlayer', async (_, def) => {
-    const testDir = process.env.NEO_SELFTEST_MUPLAYER;
-    const { canceled, filePaths } = testDir ? { filePaths: [testDir] } : await dialog.showOpenDialog(getWin(), { title: 'Dossier de MuPlayer (celui qui contient « jsons »)', defaultPath: def || app.getPath('downloads'), properties: ['openDirectory'] });
-    return canceled ? null : importMuPlayer(filePaths[0]);
-  });
-  ipcMain.handle('music:exportCapsule', async (_, json) => {
-    const { canceled, filePath } = await dialog.showSaveDialog(getWin(), { title: 'Exporter une capsule NeoMusic', defaultPath: path.join(app.getPath('documents'), `NeoMusic_capsule_${new Date().toISOString().slice(0, 10)}.zip`), filters: [{ name: 'Capsule NeoMusic', extensions: ['zip'] }] });
-    if (canceled) return '';
-    fs.mkdirSync(MUSIC(), { recursive: true }); fs.mkdirSync(COVERS(), { recursive: true });
-    fs.writeFileSync(path.join(ROOT(), 'music.json'), JSON.stringify(json));
-    try { await tar(['-a', '-c', '-f', filePath, 'musics', 'covers', 'music.json'], ROOT()); } finally { fs.rmSync(path.join(ROOT(), 'music.json'), { force: true }); }
-    return filePath;
-  });
-  ipcMain.handle('music:importCapsule', async () => {
-    const { canceled, filePaths } = await dialog.showOpenDialog(getWin(), { title: 'Importer une capsule NeoMusic', properties: ['openFile'], filters: [{ name: 'Capsule NeoMusic', extensions: ['zip'] }] });
-    if (canceled) return null;
-    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'neomusic-capsule-'));
-    try {
-      await tar(['-x', '-f', filePaths[0]], tmp);
-      const json = readJ(path.join(tmp, 'music.json'));
-      if (!json) throw new Error("Ce fichier n'est pas une capsule NeoMusic");
-      for (const [sub, dst] of [['musics', MUSIC()], ['covers', COVERS()]]) {
-        fs.mkdirSync(dst, { recursive: true });
-        try { for (const f of fs.readdirSync(path.join(tmp, sub))) if (!fs.existsSync(path.join(dst, f))) fs.copyFileSync(path.join(tmp, sub, f), path.join(dst, f)); } catch {}
-      }
-      return json;
-    } finally { fs.rmSync(tmp, { recursive: true, force: true }); }
   });
 }
 
