@@ -948,15 +948,17 @@ export default async function (ctx) {
   }
   // le statut Discord « Écoute NeoMusic » (Options → Discord) : le morceau et sa barre de temps ; effacé en pause ou à l'arrêt.
   // Envoyé seulement quand quelque chose change (morceau, pause, saut dans le morceau de plus de 3 s)
+  // l'application Discord « NeoMusic » de NeoDex : la même pour tout le monde (un identifiant public, pas un secret)
+  const MU_DISCORD_APP = '1572986824257839216';
   let muPrLast = '';
   function muPresence(force) {
-    const s = mu.settings, t = mp.cur, on = !!(s.discord && s.discordId), playing = on && !!t && !!muAudio && !muAudio.paused;
+    const s = mu.settings, t = mp.cur, id = MU_DISCORD_APP, on = !!(s.discord && id), playing = on && !!t && !!muAudio && !muAudio.paused;
     const dur = muAudio?.duration || (t ? muDur(t) : 0) || 0, start = playing ? Date.now() - (muAudio.currentTime || 0) * 1000 : 0;
     const act = playing ? { title: t.display_title || t.file || 'Musique', artist: t.author || '', image: s.noImages ? '' : t.thumbnail_url || '', start, end: dur > 0 && isFinite(dur) ? start + dur * 1000 : 0 } : null;
-    const k = JSON.stringify([on && s.discordId, act && [act.title, act.artist, act.image, Math.round(act.start / 3000)]]);
+    const k = JSON.stringify([on && id, act && [act.title, act.artist, act.image, Math.round(act.start / 3000)]]);
     if (k === muPrLast && !force) return; muPrLast = k;
     if (!on && !force) return;
-    neo.musicPresence?.(on ? s.discordId : '', act)?.catch?.(() => {});
+    neo.musicPresence?.(on ? id : '', act)?.catch?.(() => {});
   }
   function muWidgetSpec(now) {  // le spectre du widget, comme celui du petit lecteur (le widget le lisse lui-même entre deux envois)
     if (!mp.wData?.title || !ctx.widget?.set || now - (mp.wsAt || 0) < 120) return; mp.wsAt = now;
@@ -2190,10 +2192,8 @@ export default async function (ctx) {
       f.onfocus = () => f.value = '…'; f.onblur = () => f.value = captured[key] || 'Aucun';
       b.append(mh('div.muKeyRow', {}, mh('span', {text: label}), f));
     }
-    const did = mh('input.muKey', {value: st.discordId || '', placeholder: 'Application ID (que des chiffres)', spellcheck: false});
-    did.onchange = () => { st.discordId = did.value.replace(/\D/g, ''); did.value = st.discordId; muSave(); muPresence(true); };
-    b.append(muSec('DISCORD'), muNote('Tes amis voient le morceau en cours dans ton statut Discord (« Écoute NeoMusic »), avec le temps restant ; rien en pause. Discord doit être ouvert sur ce PC. Il faut l\'identifiant d\'une application Discord : sur discord.com/developers, New Application, nomme-la NeoMusic, puis copie son « Application ID » ici (une image nommée « neomusic » dans Rich Presence → Art Assets sert de pochette par défaut).'),
-      check('Montrer le morceau en cours dans mon statut Discord', 'discord'), mh('div.muKeyRow', {}, mh('span', {text: 'Identifiant de l\'application'}), did));
+    b.append(muSec('DISCORD'), muNote("Tes amis voient le morceau en cours dans ton statut Discord (« Écoute NeoMusic »), avec le temps restant ; rien en pause. Il suffit que l'appli Discord soit ouverte sur ce PC : aucun compte ni mot de passe n'est demandé."),
+      check('Montrer le morceau en cours dans mon statut Discord', 'discord'));
     b.append(mh('div.muWBtns', {}, muButton('VÉRIFIER LA BIBLIOTHÈQUE', () => muLibraryCheck())));
     b.append(muSec('JOURNAL'), muNote('Consulte le journal des erreurs de NeoMusic (téléchargements, lecture, imports) pour diagnostiquer un problème.'), mh('div.muWBtns', {}, muButton('VOIR LES LOGS', () => muLogs())));
     b.append(muSec('STOCKAGE'), muNote('Calcule le poids réel de NeoMusic sur le disque, détaillé par catégorie (musiques, pochettes, caches...).'), mh('div.muWBtns', {}, muButton('CALCULER LE POIDS DE L\'APPLI', () => muStorage())));

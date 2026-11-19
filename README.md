@@ -66,7 +66,7 @@ Lectures totales, temps écouté, titres et artistes différents, durée moyenne
 
 ## Statut Discord
 
-Tes amis voient sur Discord le morceau que tu écoutes (« Écoute NeoMusic »), avec le titre, l'artiste, la pochette quand le morceau vient d'Internet et le temps restant ; rien quand la musique est en pause. Discord doit être ouvert sur le même PC. Pour l'activer : sur [discord.com/developers](https://discord.com/developers/applications), **New Application**, nomme-la *NeoMusic*, copie son **Application ID**, puis dans NeoMusic **Options → Discord** colle-le et coche *Montrer le morceau en cours dans mon statut Discord*. Une image nommée « neomusic » dans **Rich Presence → Art Assets** de l'application sert de pochette par défaut. Tout passe par l'appli Discord du PC : aucun compte ni mot de passe n'est demandé.
+Tes amis voient sur Discord le morceau que tu écoutes (« Écoute NeoMusic »), avec le titre, l'artiste, la pochette quand le morceau vient d'Internet et le temps restant ; rien quand la musique est en pause. Discord doit être ouvert sur le même PC. Pour l'activer : dans NeoMusic **Options → Discord**, coche *Montrer le morceau en cours dans mon statut Discord*. Rien à créer ni à configurer : tout passe par l'appli Discord du PC, aucun compte ni mot de passe n'est demandé.
 
 ## Données et synchronisation
 

@@ -548,5 +548,6 @@
  "Discord ne répond pas": "Discord is not responding",
  "READY": "READY",
  "ERROR": "ERROR",
- "refusé par Discord": "refused by Discord"
+ "refusé par Discord": "refused by Discord",
+ "Tes amis voient le morceau en cours dans ton statut Discord (« Écoute NeoMusic »), avec le temps restant ; rien en pause. Il suffit que l'appli Discord soit ouverte sur ce PC : aucun compte ni mot de passe n'est demandé.": "Your friends see the current song in your Discord status (“Listening to NeoMusic”), with the time left; nothing while paused. The Discord app just needs to be open on this PC: no account or password is asked."
 }
