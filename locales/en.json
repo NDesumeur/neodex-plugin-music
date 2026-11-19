@@ -73,7 +73,7 @@
  "Backspace": "Backspace",
  "Bass boost": "Bass boost",
  "Bass extreme": "Extreme bass",
- "Bibliothèque et playlists (ajouts et suppressions des deux côtés) ; statistiques et niveau : le meilleur gagne.": "Library and playlists (additions and deletions on both sides); statistics and level: the best wins.",
+ "Seuls les playlists, le niveau et les succès voyagent. Réglages, morceau en cours, file d'attente et historique d'écoute restent sur chaque appareil.": "Only playlists, level and achievements are synced. Settings, the current song, the queue and listening history stay on each device.",
  "CALCULER LE POIDS DE L'APPLI": "CALCULATE THE WEIGHT OF THE APP",
  "CARD": "CARD",
  "CORBEILLE · RESTAURATION SOUS 7 JOURS": "BASKET · RESTORATION WITHIN 7 DAYS",
@@ -549,5 +549,6 @@
  "READY": "READY",
  "ERROR": "ERROR",
  "refusé par Discord": "refused by Discord",
- "Tes amis voient le morceau en cours dans ton statut Discord (« Écoute NeoMusic »), avec le temps restant ; rien en pause. Il suffit que l'appli Discord soit ouverte sur ce PC : aucun compte ni mot de passe n'est demandé.": "Your friends see the current song in your Discord status (“Listening to NeoMusic”), with the time left; nothing while paused. The Discord app just needs to be open on this PC: no account or password is asked."
+ "Tes amis voient le morceau en cours dans ton statut Discord (« Écoute NeoMusic »), avec le temps restant ; rien en pause. Il suffit que l'appli Discord soit ouverte sur ce PC : aucun compte ni mot de passe n'est demandé.": "Your friends see the current song in your Discord status (“Listening to NeoMusic”), with the time left; nothing while paused. The Discord app just needs to be open on this PC: no account or password is asked.",
+ "Écouter": "Listen"
 }

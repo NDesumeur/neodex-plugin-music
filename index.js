@@ -954,7 +954,7 @@ export default async function (ctx) {
   function muPresence(force) {
     const s = mu.settings, t = mp.cur, id = MU_DISCORD_APP, on = !!(s.discord && id), playing = on && !!t && !!muAudio && !muAudio.paused;
     const dur = muAudio?.duration || (t ? muDur(t) : 0) || 0, start = playing ? Date.now() - (muAudio.currentTime || 0) * 1000 : 0;
-    const act = playing ? { title: t.display_title || t.file || 'Musique', artist: t.author || '', image: s.noImages ? '' : t.thumbnail_url || '', start, end: dur > 0 && isFinite(dur) ? start + dur * 1000 : 0 } : null;
+    const act = playing ? { title: t.display_title || t.file || 'Musique', artist: t.author || '', image: s.noImages ? '' : t.thumbnail_url || '', url: t.url || '', start, end: dur > 0 && isFinite(dur) ? start + dur * 1000 : 0 } : null;
     const k = JSON.stringify([on && id, act && [act.title, act.artist, act.image, Math.round(act.start / 3000)]]);
     if (k === muPrLast && !force) return; muPrLast = k;
     if (!on && !force) return;
