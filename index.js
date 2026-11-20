@@ -31,7 +31,7 @@ const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strip
 .muPlBtn{display:flex;align-items:center;width:100%;margin:1px 0;color:var(--mtext);font-size:15px}
 .muPlBtn i{width:3px;align-self:stretch;flex:none}
 .muPlBtn .ic{width:16px;margin:0 8px 0 12px;flex:none;display:grid;place-items:center;font-size:14px;color:#fff} .muPlBtn .ic svg{display:block}
-.muPlBtn span:last-of-type{flex:1;min-width:0;text-align:left;padding:8px 10px 8px 2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .muPlBtn em{display:none}
+.muPlBtn span:last-of-type{flex:1;min-width:0;text-align:left;padding:8px 10px 8px 2px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.25;word-break:break-word} .muPlBtn em{display:none}
 .muPlBtn:hover,.muPlBtn.on{background:var(--mcard);color:var(--macc)} .muPlBtn.on i{background:var(--macc)} .muPlBtn:active{background:var(--mpress)}
 .muPills{display:flex;gap:8px;margin:6px 0 18px 14px}
 .muPill{flex:1;text-align:center;padding:7px 4px;background:var(--mcard2);color:var(--macc2);font-weight:bold;font-size:13px}
@@ -45,6 +45,8 @@ const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strip
 .muMain{flex:1;min-width:0;display:flex;flex-direction:column;gap:16px;padding:18px 18px 18px 0;margin-left:0}
 .mu .muMain{margin:0;height:auto;overflow:hidden;z-index:auto}  /* NeoDex styles every <main> */
 .muCard{background:var(--mcard);border:1px solid var(--mborder);flex:none;animation:muReveal .25s ease-out}
+.mu{isolation:isolate} .muAmb{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;image-rendering:pixelated}
+.mu.amb .muCard{background:color-mix(in srgb,var(--mcard) 88%,transparent)} .mu.amb.amb[data-ms] .muCard{backdrop-filter:none} .mu.amb :is(.muNow,.muReco){background:color-mix(in srgb,var(--mcard) 58%,transparent)}  /* l'ambiance se voit à travers le lecteur ; la liste reste bien lisible */ .mu.amb .muMain{background:none}
 @keyframes muReveal{from{transform:translateY(6px)}}  /* no fade: a hidden window would leave it half-faded */
 .muNow{display:flex;align-items:center;gap:18px;padding:18px 20px}
 .muCoverWrap{flex:none;width:270px;height:200px;display:grid;place-items:center}
@@ -120,7 +122,7 @@ body.mmFloat>*:not(.muMini){display:none!important} body.mmFloat{overflow:hidden
 /* library */
 .muLib{flex:1;min-height:120px;display:flex;flex-direction:column}
 .muLibHead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:16px 20px 8px}
-.muLibHead b{font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .muLibHead span{color:var(--msub);font-size:14px;flex:none}
+.muLibHead b{font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .muLibHead #muWkInfo{flex:1;color:var(--msub);font-size:13px} .muWkBtn{padding:4px 10px;font-size:12px;align-self:center} .muWkBtn[hidden]{display:none} .muLibHead span{color:var(--msub);font-size:14px;flex:none}
 .muFilters{display:flex;flex-wrap:wrap;gap:6px;padding:0 20px 10px}
 .muFilter{width:190px;background:var(--mcard2);color:var(--mtext);border:0;padding:6px 8px;font-size:13px;outline:none;caret-color:var(--macc)}
 .muFilter::placeholder{color:var(--msub)} .muFilter:focus{outline:1px solid var(--macc)}
@@ -231,6 +233,7 @@ body.mmFloat>*:not(.muMini){display:none!important} body.mmFloat{overflow:hidden
 .mu.lux .muPlay{filter:drop-shadow(4px 4px 0 rgba(0,0,0,.45))}
 /* Appli pixel (settings.pixelUi): the look of the portable player everywhere */
 .mu.px{font-family:var(--mfont,Consolas),'Cascadia Mono',monospace;letter-spacing:.2px}
+.mu,.muMini{font-size-adjust:.49}  /* la hauteur des lettres de Consolas, quelle que soit la police du thème */
 .mu.px *{border-radius:0!important;transition-timing-function:steps(3)!important}
 .mu.px .muCard,.mu.px .muWin,.mu.px .muMenu{border:0;box-shadow:0 -3px 0 0 var(--macc),0 3px 0 0 var(--mborder),-3px 0 0 0 var(--mborder),3px 0 0 0 var(--mborder),0 -6px 0 -3px var(--macc),9px 9px 0 0 rgba(0,0,0,.45)}
 .mu.px .muMain{gap:22px;padding:24px 22px 20px 6px} .mu.px .muWin{margin:8px}
@@ -315,13 +318,26 @@ body.mmFloat>*:not(.muMini){display:none!important} body.mmFloat{overflow:hidden
 .muBand{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
 .muBand span{color:var(--macc);font-size:12px;font-weight:bold} .muBand b{color:var(--msub);font-size:12px}
 .muBand input{writing-mode:vertical-lr;direction:rtl;width:18px;height:120px;accent-color:var(--macc);cursor:var(--cp,pointer)}
+.muOpt{display:grid;grid-template-columns:140px 1fr;gap:24px;align-items:start}
+.muOptNav{position:sticky;top:0;display:flex;flex-direction:column;gap:6px;padding-top:18px}
+.muOptTab{text-align:left;padding:10px 12px;background:var(--mcard2);color:var(--msub);font:inherit;font-size:14px;font-weight:bold;border:0;border-left:3px solid transparent;cursor:var(--cp,pointer);transition:color .12s,background .12s}
+.muOptTab:hover{color:var(--mtext)} .muOptTab.on{color:var(--mtext);border-left-color:var(--macc);background:color-mix(in srgb,var(--macc) 20%,var(--mcard2))}
+.muOptPane>.muWSec:first-child,.muOptPane>div:first-child>.muWSec:first-child{margin-top:14px}
+.muWin label.muCheck small{display:block;color:var(--msub);font-size:12px;margin-top:1px}
+.muSoon{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px;margin:10px 0}
+.muSoon div{display:flex;gap:10px;align-items:center;padding:7px 10px;background:var(--mcard2);color:var(--msub);font-size:13px} .muSoon b{color:var(--mwarn);flex:none;min-width:52px}
+.muTh .pv{position:relative} .muTh .pv .dk{position:absolute;right:8px;bottom:8px;width:12px;height:12px;border-radius:50%}
+.muTh .lk{position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.5);color:#fff} .muTh .nm em{font-style:normal;font-weight:400;font-size:12px;opacity:.85}
+.muWinBody{container-type:inline-size}
+@container (max-width:560px){.muOpt{grid-template-columns:1fr}.muOptNav{position:static;flex-direction:row;flex-wrap:wrap}}
+.muEmpty{display:flex;flex-direction:column;align-items:center;gap:8px;padding:56px 20px;text-align:center;color:var(--msub);font-size:14px} .muEmpty b{color:var(--mtext);font-size:16px} .muEmpty .muWBtns{justify-content:center}
 .muThemes{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px}
 .muTh{display:flex;flex-direction:column;gap:0;padding:0;border:2px solid transparent;background:none;cursor:pointer;font:inherit;text-align:left;overflow:hidden;transition:transform .12s,border-color .12s}
 .muTh:hover{transform:translateY(-2px)} .muTh.on{transform:translateY(-1px)}
 .muTh .pv{display:grid;grid-template-columns:22% 1fr;height:58px} .muTh .pv i{display:block} .muTh .pv .sd{display:flex;flex-direction:column;gap:5px;padding:7px 5px} .muTh .pv .sd u{display:block;height:4px;border-radius:2px;opacity:.7}
 .muTh .pv .mn{display:flex;flex-direction:column;gap:5px;padding:7px} .muTh .pv .mn u{display:block;height:9px} .muTh .pv .mn s{display:block;height:4px;width:60%} .muTh .pv .mn em{display:block;height:5px;width:35%;margin-top:auto}
 .muTh .nm{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;font-size:13px;font-weight:600} .muTh .nm span{display:flex;gap:3px} .muTh .nm span u{display:block;width:8px;height:8px;border-radius:50%}
-.muTh.locked{opacity:.45;cursor:default}
+.muTh.locked{opacity:.75;cursor:default}
 .muArtHead{display:flex;align-items:center;gap:14px;padding:14px 16px;margin-bottom:10px;background:linear-gradient(135deg,var(--mcard2),var(--mcard));border-left:4px solid var(--macc)}
 .muArtHead .ic{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--macc);color:var(--mbg);font-size:22px;font-weight:800;flex:none}
 .muArtHead b{display:block;font-size:19px} .muArtHead span{color:var(--msub);font-size:14px}
@@ -512,7 +528,7 @@ export default async function (ctx) {
   };
   // chaque thème a sa police, comme les styles de NeoDex (polices de NeoDex, fonts.css) ; « Police » dans les options en impose une autre
   const MU_FONTS = {classique: ['Classique', 'Consolas'], vt: ['Terminal', "'X VT323'"], pixel: ['Ronde', "'Pixelify Sans'"], jersey: ['Arcade', "'Jersey 10'"], dot: ['Grimoire', "'DotGothic16'"]};
-  const MU_THEME_FONT = {Onyx: 'jersey', Aube: 'pixel', Ambre: 'vt', Abyme: 'dot', Sakura: 'pixel', 'Crépuscule': 'pixel', Menthe: 'vt', Rubis: 'jersey', Glacier: 'pixel', Cuivre: 'vt', Lavande: 'dot', 'Forêt': 'dot', Soleil: 'jersey', Cyber: 'jersey', 'Néon': 'vt'};
+  const MU_THEME_FONT = {Onyx: 'vt', Aube: 'pixel', Ambre: 'vt', Abyme: 'dot', Sakura: 'pixel', 'Crépuscule': 'pixel', Menthe: 'vt', Rubis: 'pixel', Glacier: 'pixel', Cuivre: 'vt', Lavande: 'dot', 'Forêt': 'dot', Soleil: 'pixel', Cyber: 'vt', 'Néon': 'vt'};  // Arcade (très serrée, minuscule en petit) n'est plus la police d'un thème, seulement un choix
   const muFont = (theme = mu.settings.theme) => (MU_FONTS[mu.settings.font] || MU_FONTS[MU_THEME_FONT[theme]] || MU_FONTS.classique)[1];
   const MU_THEME_LEVEL = {Onyx: 3, Grenat: 6, Aube: 10, Ambre: 16, Abyme: 24, Sakura: 35, 'Néon': 50};
   const MU_BANDS = [31, 62, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
@@ -580,7 +596,7 @@ export default async function (ctx) {
 
   /* ---------- the library (music.json) ---------- */
   const MU_DEFAULT_SETTINGS = {theme: 'Nova', volume: .5, equalizer: 'Normal', eqBands: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], limiter: false, balance: 0, visualizer: true, waveform: true, vinyl: true,
-    replaygain: true, coverFade: true, dateAdded: false, releaseDate: false, mini: false, gallery: false, noImages: false, weeklyWeek: '', superVis: false, deckLuxe: true, deckStyle: '', deckBase: '', deckArm: '', deluxe: false, recoSeen: [], pixelUi: true, miniOverWidget: false, shortcuts: {}};
+    replaygain: true, dateAdded: false, releaseDate: false, mini: false, gallery: false, noImages: false, weeklyWeek: '', superVis: false, deckLuxe: true, deckStyle: '', deckBase: '', deckArm: '', deluxe: false, recoSeen: [], pixelUi: true, shortcuts: {}};
   function muBlank() {
     return {v: 1, settings: {...MU_DEFAULT_SETTINGS}, playlists: MU_SYSTEM.map(name => ({name, mode: 'offline', tracks: []})),
       stats: {plays: 0, seconds: 0, songs: {}, songs_time: {}, artists: {}, artists_time: {}, daily: {}, history: [], xp_level_seen: 1},
@@ -659,6 +675,7 @@ export default async function (ctx) {
     const root = $('musicApp');
     const sideBtn = (icon, text, fn) => mh('button.muSideBtn', {onclick: fn, html: muIcon(icon) + '<span>' + text + '</span>'});
     root.replaceChildren(mh('div.mu#mu', {},
+      mh('canvas.muAmb#muAmb'),
       mh('div.muTop', {}, mh('i.muTopStrip'), mh('button.muTopBtn.muMenuBtn', {title: 'Masquer / afficher le menu', html: muIcon('menu', 16), onclick: () => $('muSide').classList.toggle('closed')}), mh('b.muBrand', {html: '<span class="muLogo">' + muPx(MU_PX.disc, 26) + '</span><span>NEO</span><span class="muBrand2">MUSIC</span><em class="muBrandTag">DELUXE</em>'}), mh('span.muStatus#muStatus', {text: '●  Prêt'}),
         mh('div.muDl', {}, mh('i#muDl')), mh('span.muInd#muSleep'), mh('span.muInd#muWake')),
       mh('div.muBody', {},
@@ -689,10 +706,10 @@ export default async function (ctx) {
               mh('span.muSmall', {text: 'VOLUME'}), mh('input.muRange#muVol', {type: 'range', min: 0, max: 100, oninput: e => muSetVolume(e.target.value / 100)}),
               mh('span.muSmall', {text: 'PROFIL AUDIO'}), mh('select.muSelect#muEq', {onchange: e => muSetEq(e.target.value)}), mh('div.muEqPick', {}, mh('button', {title: 'Profil précédent', html: muPx(MU_PX.left, 16), onclick: () => muEqStep(-1)}), mh('span#muEqName'), mh('button', {title: 'Profil suivant', html: muPx(MU_PX.right, 16), onclick: () => muEqStep(1)})))),
           mh('section.muCard.muReco.muExtra', {},
-            mh('div.muArt.alt#muRecoCover'), mh('div.muRecoText', {}, mh('span.muKick.alt', {text: 'RECOMMANDÉ POUR TOI'}), mh('span#muReco', {text: '—'})),
+            mh('div.muArt.alt#muRecoCover'), mh('div.muRecoText', {}, mh('span.muKick.alt', {text: 'RECOMMANDÉ POUR TOI'}), mh('span#muReco', {text: 'Écoute ou ajoute quelques musiques : des idées apparaîtront ici.'})),
             mh('button.muBtn', {text: '↻ AUTRE', title: 'Proposer une autre musique', onclick: () => muScheduleReco()}), mh('button.muBtn.accent', {text: '＋ AJOUTER', onclick: () => muAddReco()})),
           mh('section.muCard.muLib', {},
-            mh('div.muLibHead', {}, mh('b#muLibTitle', {text: 'Favoris'}), mh('span#muCount', {text: '0 titres'})),
+            mh('div.muLibHead', {}, mh('b#muLibTitle', {text: 'Favoris'}), mh('span#muWkInfo'), mh('button.muBtn.muWkBtn#muWkBtn', {text: 'METTRE À JOUR', title: 'Chercher les sorties et les découvertes maintenant', onclick: () => muWeekly(true)}), mh('span#muCount', {text: '0 titres'})),
             mh('div.muFilters.muExtra', {},
               mh('input.muFilter#muFilter', {placeholder: 'Titre ou artiste...', spellcheck: 'false', oninput: () => { clearTimeout(mp.ft); mp.ft = setTimeout(muRefresh, 220); }}),
               mh('select.muSelect.sub#muDurFilter', {onchange: () => muRefresh()}, ...['Toutes durées', 'Moins de 3 min', '3 à 5 min', 'Plus de 5 min'].map(t => mh('option', {text: t}))),
@@ -752,7 +769,7 @@ export default async function (ctx) {
     if (!muPl(name)) name = 'Favoris';
     mp.pl = name; mp.sel.clear(); mp.anchor = null;
     $('muLibTitle').textContent = name;
-    muSidebar(); muRefresh();
+    muSidebar(); muRefresh(); muWkUi();
     $('muList').scrollTop = 0;
     muCheckFiles(muPl(name).tracks);
   }
@@ -778,6 +795,11 @@ export default async function (ctx) {
     $('muCount').textContent = n + ' ' + (n > 1 ? 'titres' : 'titre');
     mp.favs = muFavIds();
     mp.drawn = new Map(); $('muSpacer').replaceChildren();
+    $('muList').querySelector('.muEmpty')?.remove();
+    if (!mp.view.length) $('muList').prepend(n ? mh('div.muEmpty', {}, mh('b', {text: 'Aucune musique ne correspond au filtre.'}), muButton('EFFACER LE FILTRE', () => { $('muFilter').value = ''; $('muDurFilter').selectedIndex = 0; muRefresh(); }))
+      : MU_WEEKLY.includes(mp.pl) ? mh('div.muEmpty', {}, mh('b', {text: mp.pl === 'Radar des sorties' ? 'Les nouvelles sorties de tes artistes arrivent ici.' : 'Des artistes proches de tes goûts arrivent ici.'}), mh('span', {text: 'Elle se remplit toute seule chaque semaine, d\'après tes écoutes et tes favoris.'}), mh('div.muWBtns', {}, muButton('METTRE À JOUR MAINTENANT', () => muWeekly(true), 'accent')))
+      : mh('div.muEmpty', {}, mh('b', {text: 'Cette playlist est vide.'}), mh('span', {text: mp.pl === 'Favoris' ? 'Clique sur le cœur d\'une musique pour la garder ici.' : 'Cherche une musique ou un artiste pour la remplir.'}),
+        mh('div.muWBtns', {}, muButton('RECHERCHER / IMPORTER', () => muSearchDialog(), 'accent'), muButton('CHERCHER UN ARTISTE', () => muArtistDialog()))));
     muDraw();
   }
   function muGeometry() {
@@ -1065,7 +1087,7 @@ export default async function (ctx) {
 
   /* ---------- the "now playing" visuals: vinyl (or square cover) with inertia, waveform progress, spectrum ---------- */
   function muSetCover(t) {
-    mp.coverOld = mp.coverImg && mu.settings.coverFade ? {img: mp.coverImg, disc: mp.disc} : null;
+    mp.coverOld = mp.coverImg ? {img: mp.coverImg, disc: mp.disc} : null;
     mp.fadeAt = performance.now();
     mp.coverImg = null; mp.disc = null;
     if (!t?.cover || mu.settings.noImages) return;
@@ -1445,7 +1467,7 @@ export default async function (ctx) {
     const box = $('muMini'); if (!box) return;
     const away = !view.classList.contains('on'), playing = muAudio && !muAudio.paused && muAudio.currentTime > 0;  // sound really came out: a song still loading or that never started is no reason to appear
     if (!away) mp.miniOff = false;
-    const homeW = document.body.classList.contains('homeW') && !mu.settings.miniOverWidget;  // l'accueil est affiché avec le widget de NeoMusic : il fait déjà le petit lecteur
+    const homeW = document.body.classList.contains('homeW');  // l'accueil est affiché avec le widget de NeoMusic : il fait déjà le petit lecteur
     const show = away && !homeW && !!mp.cur && !mp.miniOff && host.pref('pip') !== false && (playing || mp.miniOn);
     const appear = show && !mp.miniOn;
     box.classList.toggle('on', show);
@@ -1485,6 +1507,62 @@ export default async function (ctx) {
     $('mmSeek').firstChild.style.width = (dur ? Math.min(100, pos / dur * 100) : 0) + '%';
     $('mmTime').textContent = muClock(pos) + ' / ' + muClock(dur);
   }
+  /* ---------- l'ambiance du thème : des pixels animés derrière l'appli (étoiles, pétales, neige, bulles, pluie de code…), plus vifs sur les basses ---------- */
+  // une toile au tiers de la taille de la page (des pixels nets et presque rien à dessiner), 30 images par seconde au plus
+  const MU_AMB = {  // le motif de chaque thème : kind, nombre, couleurs (clés de T)
+    nova: ['star', 70, ['TEXT', 'ACCENT', 'ACCENT_2']], onyx: ['rain', 26, ['ACCENT']], grenat: ['rise', 30, ['ACCENT', 'ACCENT_2']], aube: ['rise', 26, ['ACCENT', 'ACCENT_2'], 'glow'],
+    ambre: ['dust', 46, ['ACCENT', 'WARN']], abyme: ['bubble', 26, ['ACCENT', 'TEXT']], sakura: ['petal', 34, ['ACCENT', 'HEART']], crepuscule: ['fly', 24, ['ACCENT_2', 'WARN']],
+    menthe: ['bubble', 22, ['ACCENT', 'ACCENT_2']], rubis: ['spark', 28, ['ACCENT', 'HEART', 'TEXT']], glacier: ['snow', 110, ['TEXT', 'ACCENT']], cuivre: ['ember', 34, ['ACCENT', 'WARN']],
+    lavande: ['dust', 40, ['ACCENT', 'HEART']], foret: ['leaf', 26, ['ACCENT', 'ACCENT_2']], ocean: ['wave', 18, ['ACCENT', 'ACCENT_2']], soleil: ['rays', 30, ['ACCENT', 'WARN']],
+    cyber: ['rain', 40, ['ACCENT', 'ACCENT_2']], neon: ['grid', 40, ['ACCENT', 'ACCENT_2', 'TEXT']]};
+  const muAmb = {at: 0, ms: '', parts: [], e: 0, t: 0};
+  function muAmbFrame(now) {
+    const cv = $('muAmb'), on = mu.settings.ambiance !== false && !mu.settings.noImages, root = $('mu');
+    root.classList.toggle('amb', on);
+    if (!on) { if (muAmb.ms) { muAmb.ms = ''; cv.getContext('2d').clearRect(0, 0, cv.width, cv.height); } return; }
+    if (now - muAmb.at < 33) return;
+    const dt = Math.min(.1, (now - (muAmb.at || now)) / 1000); muAmb.at = now; muAmb.t += dt;
+    const W = Math.ceil(root.clientWidth / 3), H = Math.ceil(root.clientHeight / 3); if (!W || !H) return;
+    if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; muAmb.ms = ''; }
+    const ms = root.dataset.ms || 'nova', [kind, n, keys, extra] = MU_AMB[ms] || MU_AMB.nova, cols = keys.map(k => T[k]), R = Math.random;
+    if (muAmb.ms !== ms) {  // un nouveau thème : de nouvelles particules, réparties sur toute la page
+      muAmb.ms = ms; muAmb.parts = Array.from({length: n}, () => ({x: R() * W, y: R() * H, v: .3 + R() * .7, ph: R() * 6.28, c: cols[Math.floor(R() * cols.length)], s: R() < .4 ? 2 : 1}));
+    }
+    const playing = muAudio && !muAudio.paused, bass = playing ? (muSpec.levels[0] + muSpec.levels[1] + muSpec.levels[2]) / 3 : 0;
+    muAmb.e = Math.max(bass, muAmb.e * .9);  // monte d'un coup sur un coup de basse, retombe doucement
+    const e = muAmb.e, sp = (1 + 2.2 * e) * dt * 60 / 3, t = muAmb.t, x = cv.getContext('2d');
+    x.clearRect(0, 0, W, H);
+    const dot = (p, w, h, a) => { x.globalAlpha = Math.min(1, a * 1.25); x.fillStyle = p.c; x.fillRect(Math.round(p.x), Math.round(p.y), w, h); };
+    const wrapDown = p => { if (p.y > H + 4) { p.y = -4; p.x = R() * W; } if (p.x < -4) p.x = W + 2; if (p.x > W + 4) p.x = -2; };
+    const wrapUp = p => { if (p.y < -4) { p.y = H + 4; p.x = R() * W; } };
+    if (extra === 'glow') { const gr = x.createLinearGradient(0, H * .55, 0, H); gr.addColorStop(0, 'transparent'); gr.addColorStop(1, cols[0]); x.globalAlpha = .12 + .1 * e; x.fillStyle = gr; x.fillRect(0, H * .55, W, H * .45); }
+    for (const p of muAmb.parts) {
+      if (kind === 'star') { const a = .25 + .6 * Math.abs(Math.sin(t * (1 + p.v) + p.ph)) * (.7 + .5 * e); dot(p, p.s, p.s, Math.min(1, a)); }
+      else if (kind === 'spark') { const a = Math.max(0, Math.sin(t * (1.4 + p.v) + p.ph)) * (.6 + .5 * e); if (a > .05) { dot(p, 1, 1, a); x.globalAlpha = a * .6; x.fillRect(Math.round(p.x) - 1, Math.round(p.y), 3, 1); x.fillRect(Math.round(p.x), Math.round(p.y) - 1, 1, 3); } }
+      else if (kind === 'snow') { p.y += p.v * sp * .5 * p.s; p.x += Math.sin(t + p.ph) * .2; wrapDown(p); dot(p, p.s, p.s, .55 + .3 * e); }
+      else if (kind === 'petal' || kind === 'leaf') { p.y += p.v * sp * .45; p.x += Math.sin(t * 1.3 + p.ph) * .45 + .15; wrapDown(p); const f = Math.sin(t * 2 + p.ph) > 0; dot(p, f ? 3 : 2, f ? 2 : 3, .7); if (kind === 'leaf') x.fillRect(Math.round(p.x) + 1, Math.round(p.y) + 1, 1, 1); }
+      else if (kind === 'rise' || kind === 'ember') { p.y -= p.v * sp * (kind === 'ember' ? .9 : .35); p.x += Math.sin(t + p.ph) * .15; wrapUp(p); dot(p, 1, kind === 'ember' ? 1 : p.s, (kind === 'ember' ? .4 + .6 * (p.y / H) : .45) + .3 * e); }
+      else if (kind === 'bubble') { p.y -= p.v * sp * .4; p.x += Math.sin(t * 1.5 + p.ph) * .25; wrapUp(p); const r = p.s + 1, X = Math.round(p.x), Y = Math.round(p.y); x.globalAlpha = .45 + .3 * e; x.fillStyle = p.c; x.fillRect(X - r + 1, Y - r, 2 * r - 1, 1); x.fillRect(X - r + 1, Y + r, 2 * r - 1, 1); x.fillRect(X - r, Y - r + 1, 1, 2 * r - 1); x.fillRect(X + r, Y - r + 1, 1, 2 * r - 1); }
+      else if (kind === 'fly') { p.x += Math.sin(t * .7 + p.ph) * .3; p.y += Math.cos(t * .5 + p.ph * 2) * .2; const a = Math.max(0, Math.sin(t * 2 * p.v + p.ph)); dot(p, 1, 1, a * (.8 + .4 * e)); if (a > .7) { x.globalAlpha = .25 * a; x.fillRect(Math.round(p.x) - 1, Math.round(p.y) - 1, 3, 3); } }
+      else if (kind === 'dust') { p.x += Math.sin(t * .4 + p.ph) * .18 + .05; p.y += Math.cos(t * .3 + p.ph) * .12 - .03 * sp; wrapDown(p); wrapUp(p); if (p.x > W + 2) p.x = -2; dot(p, 1, 1, .3 + .3 * Math.abs(Math.sin(t + p.ph)) + .3 * e); }
+      else if (kind === 'rain') { p.y += p.v * sp * 1.6; if (p.y > H + 8) { p.y = -8 - R() * H * .5; p.x = Math.round(R() * W / 4) * 4; } const L = 4 + Math.round(p.v * 5); for (let k = 0; k < L; k++) { x.globalAlpha = (k === 0 ? .9 : .5 * (1 - k / L)) * (.7 + .4 * e); x.fillStyle = p.c; x.fillRect(Math.round(p.x), Math.round(p.y) - k * 2, 1, 1); } }
+    }
+    if (kind === 'wave') for (let k = 0; k < 3; k++) {  // trois vagues en bas de la page
+      x.globalAlpha = .18 + k * .06 + .15 * e; x.fillStyle = cols[k % cols.length]; const base = H - 6 - k * 5, amp = 2 + k + 3 * e;
+      for (let i = 0; i < W; i += 2) { const y = Math.round(base + Math.sin(i / (14 + k * 6) + t * (.8 + k * .3)) * amp); x.fillRect(i, y, 2, H - y); }
+    }
+    if (kind === 'rays') { x.globalAlpha = .07 + .08 * e; x.fillStyle = cols[0]; const cx = W, cy = 0, r = Math.hypot(W, H);
+      for (let k = 0; k < 14; k++) { const a0 = Math.PI / 2 + k * Math.PI / 14 + t * .05; x.beginPath(); x.moveTo(cx, cy); x.lineTo(cx + Math.cos(a0) * r, cy + Math.sin(a0) * r); x.lineTo(cx + Math.cos(a0 + .06) * r, cy + Math.sin(a0 + .06) * r); x.fill(); }
+      for (const p of muAmb.parts) { p.y -= .05 * sp; wrapUp(p); dot(p, 1, 1, .25 + .4 * Math.abs(Math.sin(t * 2 + p.ph))); } }
+    if (kind === 'grid') {  // un horizon façon synthwave : soleil rayé, lignes qui avancent vers toi
+      const hy = Math.round(H * .62), sx = Math.round(W * .5), sr = Math.round(H * .16);
+      x.globalAlpha = .22 + .2 * e; x.fillStyle = cols[1]; for (let yy = -sr; yy < 0; yy++) if ((yy & 3) !== 3) { const w = Math.round(Math.sqrt(sr * sr - yy * yy)); x.fillRect(sx - w, hy + yy, 2 * w, 1); }
+      x.fillStyle = cols[0]; x.globalAlpha = .3 + .25 * e; x.fillRect(0, hy, W, 1);
+      for (let k = 1; k < 9; k++) { const f = ((k + (t * (.6 + 1.5 * e)) % 1) / 9) ** 2, y = Math.round(hy + f * (H - hy)); x.globalAlpha = (.12 + .25 * f) * (1 + e); x.fillRect(0, y, W, 1); }
+      for (let k = -10; k <= 10; k++) { x.globalAlpha = .15 + .1 * e; x.beginPath(); x.moveTo(sx + k * 3, hy); x.lineTo(sx + k * W / 6, H); x.lineTo(sx + k * W / 6 + 1, H); x.lineTo(sx + k * 3 + 1, hy); x.fill(); }
+      for (const p of muAmb.parts) if (p.y < hy - 2) dot(p, 1, 1, .2 + .5 * Math.abs(Math.sin(t + p.ph))); }
+    x.globalAlpha = 1;
+  }
   function muFrame(now) {
     requestAnimationFrame(muFrame);
     mp.frameAt = now;
@@ -1494,7 +1572,7 @@ export default async function (ctx) {
     else muSpec.ref = 1e-6;
     muSpin(now);
     if (main) {
-      muDrawCover(now); if (mu.settings.visualizer) muSuperOn(now) ? muSuperSpectrum($('muSpectrum'), 112, now) : muPixSpectrum($('muSpectrum'), 64, now);
+      muAmbFrame(now); muDrawCover(now); if (mu.settings.visualizer) muSuperOn(now) ? muSuperSpectrum($('muSpectrum'), 112, now) : muPixSpectrum($('muSpectrum'), 64, now);
       if (muAudio && !muAudio.paused && now - (mp.progAt || 0) > 120) { mp.progAt = now; muDrawProgress(); }
     } else if (mp.miniOn) muMiniFrame(now);
     if (muAudio && !muAudio.paused) { muWidgetSpec(now); if (performance.now() - (mp.wAt || 0) > 5000) muWidget(); }
@@ -1961,30 +2039,48 @@ export default async function (ctx) {
     if (mp.pl === 'Favoris') return muNotify('warning', 'NeoMusic', 'Sélectionne une vraie playlist pour ajouter une musique.');
     muAddUrl(mp.recoUrl);
   }
-  async function muWeekly() {  // "Radar des sorties" and "Découvertes de la semaine", refilled once a week
+  const MU_WEEKLY = ['Radar des sorties', 'Découvertes de la semaine'];
+  function muWkUi() {  // le bouton METTRE À JOUR, seulement sur le Radar et les Découvertes
+    const b = $('muWkBtn'); if (!b) return; const on = MU_WEEKLY.includes(mp.pl);
+    b.hidden = !on; b.disabled = !!mp.weeklyBusy; b.textContent = mp.weeklyBusy ? 'MISE À JOUR…' : 'METTRE À JOUR';
+    $('muWkInfo').textContent = on && mu.settings.weeklyAt ? 'mise à jour du ' + new Date(mu.settings.weeklyAt).toLocaleDateString('fr-FR') : '';
+  }
+  // « Radar des sorties » et « Découvertes de la semaine », remplies une fois par semaine (ou avec METTRE À JOUR).
+  // La semaine n'est comptée faite qu'une fois les listes remplies : après une panne de réseau, on réessaie à la prochaine ouverture ;
+  // une recherche qui ne trouve rien garde les musiques d'avant au lieu de vider la liste.
+  async function muWeekly(force) {
     const wk = muWeek();
-    if (mu.settings.weeklyWeek === wk && mu.settings.weeklyAlgo === 3) return;  // weeklyAlgo : refait une fois les listes avec les nouveaux calculs
+    if (mp.weeklyBusy || (!force && mu.settings.weeklyWeek === wk && mu.settings.weeklyAlgo === 4)) return;
     muCaps ||= await neo.musicCaps().catch(() => muDefaultCaps);
-    if (!muCaps.ytdlp) return;
+    if (!muCaps.ytdlp) { if (force) muNotify('warning', 'NeoMusic', 'Le téléchargement n\'est pas encore prêt : réessaie dans un instant.'); return; }
     const taste = muTaste(), artists = taste.map(x => x.artist);
     if (!artists.length) return muStatus('Radar : ajoute des favoris ou écoute quelques musiques');
-    mu.settings.weeklyWeek = wk; mu.settings.weeklyAlgo = 3; muSave();
-    muQueue(async () => {
+    mp.weeklyBusy = true; muWkUi();
+    return muQueue(async () => {
       try {
         let news = await neo.musicRadar(artists.slice(0, 30)).catch(() => []);
-        if (news.length < 3) news = [...news, ...await neo.musicWeekly(artists.slice(0, 6).map(a => a + ' new release'), true)];  // sans Deezer : la recherche YouTube d'avant
-        await muFillWeekly('Radar des sorties', news.slice(0, 24));
-        await muFillWeekly('Découvertes de la semaine', (await neo.musicMix(taste.slice(0, 8), muLibraryArtists())).slice(0, 12));
-        muStatus('Playlists hebdomadaires mises à jour');
+        if (news.length < 3) news = [...news, ...await neo.musicWeekly(artists.slice(0, 6).map(a => a + ' new release'), true).catch(() => [])];  // sans Deezer : la recherche YouTube d'avant
+        const nr = await muFillWeekly('Radar des sorties', news.slice(0, 24));
+        const nd = await muFillWeekly('Découvertes de la semaine', (await neo.musicMix(taste.slice(0, 8), muLibraryArtists()).catch(() => [])).slice(0, 12));
+        if (nr + nd) { Object.assign(mu.settings, {weeklyWeek: wk, weeklyAlgo: 4, weeklyAt: Date.now()}); muSave(); muStatus(`Cette semaine : ${nr} sortie${nr > 1 ? 's' : ''} et ${nd} découverte${nd > 1 ? 's' : ''}`); }
+        else muStatus('Rien trouvé cette fois : nouvel essai à la prochaine ouverture', T.WARN);
       } catch (e) { muStatus('Mise à jour hebdomadaire indisponible', T.DANGER); muWarn('hebdo', e); }
+      finally { mp.weeklyBusy = false; muWkUi(); }
     });
   }
   async function muFillWeekly(name, entries) {
-    const p = muPl(name), old = p.tracks, elsewhere = new Set(mu.playlists.filter(x => x !== p).flatMap(x => x.tracks.map(t => t.url)));
-    const items = [];
-    for (const e of entries) { if (elsewhere.has(e.url)) continue; try { items.push(muTrack(await muDownload(e.url))); } catch (err) { muWarn(name, err); } }
+    const p = muPl(name), old = p.tracks, elsewhere = new Set(mu.playlists.filter(x => x !== p).flatMap(x => x.tracks.map(t => t.url))), keep = new Map(old.map(t => [t.url, t]));
+    const todo = entries.filter(e => e.url && !elsewhere.has(e.url)), items = [];
+    for (const [i, e] of todo.entries()) {
+      muStatus(`${name} : ${i + 1} / ${todo.length}`);
+      if (keep.has(e.url)) { items.push(keep.get(e.url)); continue; }  // déjà là la semaine d'avant : pas de nouveau téléchargement
+      try { items.push(muTrack(await muDownload(e.url))); } catch (err) { muWarn(name, err); }
+    }
+    if (!items.length) return 0;  // rien de neuf : on garde la liste d'avant
+    const now = new Set(items.map(t => t.url));
     p.tracks = items; muSave(); if (mp.pl === name) muRefresh();
-    for (const t of old) if (t.file && !muUsedElsewhere(t.file)) neo.musicDeleteFile(t.file);  // last week's songs go, unless kept in another playlist
+    for (const t of old) if (!now.has(t.url) && t.file && !muUsedElsewhere(t.file)) neo.musicDeleteFile(t.file);  // les musiques de la semaine d'avant s'en vont, sauf si gardées ailleurs
+    return items.length;
   }
 
   /* ---------- sleep mode, music alarm ---------- */
@@ -2303,17 +2399,29 @@ export default async function (ctx) {
       row('SOCLE', MU_BASES, 'deckBase', cb, d => d.mat ? d.mat[0] : theme),
       row('BRAS', MU_ARMS, 'deckArm', ca, d => d.metal ? d.metal[1] : muBlend('#a4a7b4', T.ACCENT, .25)));
   }
+  let muOptTab = 'look';
   function muOptions() {
-    const st = mu.settings, w = muWindow('Options', 620), b = w.body, lv = muLevel();
+    const st = mu.settings, w = muWindow('Options', 780), b = w.body, lv = muLevel();
     const apply = () => { muSave(); muApplySettingsUi(); muRefresh(); muSetCover(mp.cur); muDrawProgress(true); muPresence(true); };  // chaque réglage s'enregistre dès qu'il change
-    const check = (label, key) => { const c = mh('input', {type: 'checkbox', checked: !!st[key], onchange: () => { st[key] = c.checked; apply(); }}); return mh('label.muCheck', {}, c, mh('span', {text: label})); };
+    const check = (label, key, hint) => { const c = mh('input', {type: 'checkbox', checked: !!st[key], onchange: () => { st[key] = c.checked; apply(); }}); return mh('label.muCheck', {}, c, mh('span', {}, label, ...(hint ? [mh('small', {text: hint})] : []))); };
     b.append(muH('OPTIONS'));
-    b.append(muSec('AFFICHAGE'), check('Afficher le visualiseur audio', 'visualizer'), lv.level >= 100 ? check('Super visualiseur : reflet, étincelles, lueur et pulsation des basses (niveau 100)', 'superVis') : mh('p.muWNote.ind', {text: 'Super visualiseur : se débloque au niveau 100 (tu es niveau ' + lv.level + ').'}), check('Pochette « lecture en cours » en cercle façon vinyle (la platine complète à partir du niveau 150)', 'vinyl'), muDeckPick(lv.level),
-      lv.level >= 200 ? check('Interface Deluxe : l\'appli pixel en grand, cadres doubles, fond tramé, platine en vedette (niveau 200)', 'deluxe') : mh('p.muWNote.ind', {text: 'Interface Deluxe : change tout le style de l\'appli, se débloque au niveau 200 (tu es niveau ' + lv.level + ').'}),
-      check('Forme d\'onde dans la barre de progression (au lieu d\'une simple ligne)', 'waveform'), check('Afficher la date d\'ajout des musiques dans la liste', 'dateAdded'),
-      check('Afficher la date de sortie des musiques dans la liste', 'releaseDate'), check('Appli pixel : cadres, boutons et police façon petit lecteur', 'pixelUi'), check('Mode petit lecteur (playlists et musiques uniquement)', 'mini'), check('Petit lecteur sur l\'accueil même quand le widget NeoMusic y est affiché', 'miniOverWidget'),
-      check('Vue « mur de pochettes » (grille de pochettes) au lieu de la liste', 'gallery'), check('Mode sans images (masque les pochettes partout) — réduit les lags', 'noImages'));
-    b.append(muSec('LECTURE'), check('Normaliser le volume entre les morceaux (ReplayGain)', 'replaygain'), check('Fondu de la pochette au changement de morceau', 'coverFade'));
+    // des onglets : Apparence, Son, Raccourcis, Plus (l'onglet ouvert reste le même quand la fenêtre se rouvre, après un changement de thème)
+    const TABS = [['look', 'Apparence'], ['sound', 'Son'], ['keys', 'Raccourcis'], ['more', 'Plus']], pane = {}, nav = mh('div.muOptNav'), panes = mh('div.muOptPanes');
+    for (const [k, label] of TABS) {
+      pane[k] = mh('div.muOptPane'); pane[k].hidden = k !== muOptTab; panes.append(pane[k]);
+      nav.append(mh('button.muOptTab' + (k === muOptTab ? '.on' : ''), {text: label, onclick: e => { muOptTab = k; for (const [x] of TABS) pane[x].hidden = x !== k; for (const t of nav.children) t.classList.toggle('on', t === e.currentTarget); panes.parentElement.parentElement.scrollTop = 0; }}));
+    }
+    b.append(mh('div.muOpt', {}, nav, panes));
+    const lookTop = mh('div'); pane.look.append(lookTop);
+    const dateNow = st.dateAdded ? 'add' : st.releaseDate ? 'rel' : '';
+    const dateSel = mh('select.muSelect', {onchange: () => { st.dateAdded = dateSel.value === 'add'; st.releaseDate = dateSel.value === 'rel'; apply(); }}, ...[['', 'Aucune'], ['add', 'Date d\'ajout'], ['rel', 'Date de sortie']].map(([v, t]) => mh('option', {value: v, text: t, selected: v === dateNow})));
+    st.ambiance ??= true;  // les réglages d'avant la 2.4.2 n'ont pas cette clé : l'ambiance est là par défaut
+    pane.look.append(muSec('AFFICHAGE'), check('Ambiance animée du thème', 'ambiance', 'Étoiles, pétales, neige, bulles… qui bougent avec les basses'), check('Visualiseur audio', 'visualizer'), ...(lv.level >= 100 ? [check('Super visualiseur', 'superVis', 'Reflet, étincelles et lueur des basses')] : []),
+      check('Pochette en disque vinyle', 'vinyl'), check('Forme d\'onde dans la barre de progression', 'waveform'), check('Appli pixel', 'pixelUi', 'Cadres, boutons et police de petit lecteur'),
+      ...(lv.level >= 200 ? [check('Interface Deluxe', 'deluxe', 'L\'appli pixel en grand, la platine en vedette')] : []),
+      check('Mur de pochettes', 'gallery', 'Une grille de pochettes au lieu de la liste'), check('Petit lecteur', 'mini', 'Seulement les playlists et les musiques'),
+      mh('div.muWBtns', {}, mh('span', {text: 'Date dans la liste'}), dateSel), ...(lv.level >= 150 ? [muDeckPick(lv.level)] : []));
+    pane.sound.append(muSec('LECTURE'), check('Même volume pour tous les morceaux', 'replaygain', 'ReplayGain : les morceaux trop forts ou trop faibles sont rééquilibrés'));
 
     // equaliser: 10 bands; moving one switches to "Custom" on save, picking a profile only previews it
     const base = (st.equalizer === 'Custom' ? st.eqBands : MU_PRESETS[st.equalizer] || MU_PRESETS.Normal).slice();
@@ -2321,19 +2429,21 @@ export default async function (ctx) {
     const preset = mh('select.muSelect', {}, ...Object.keys(MU_PRESETS).map(k => mh('option', {text: k, selected: k === st.equalizer})));
     preset.onchange = () => { const g = preset.value === 'Custom' ? st.eqBands : MU_PRESETS[preset.value]; sliders.forEach((s, i) => { s.r.value = g[i]; s.v.textContent = (+g[i]).toFixed(1); }); st.equalizer = preset.value; muSave(); muApplySettingsUi(); };
     const eqSave = () => { st.eqBands = sliders.map(s => +s.r.value); st.equalizer = preset.value = 'Custom'; muSave(); muApplySettingsUi(); };
-    b.append(muSec('ÉGALISEUR'), muNote('Réglez chaque bande manuellement (en dB). Dès qu\'un curseur est déplacé, le profil passe à « Custom ».'),
+    pane.sound.append(muSec('ÉGALISEUR'), muNote('Chaque bande en dB. En déplacer une passe le profil en « Custom ».'),
       mh('div.muBands', {}, ...sliders.map(s => s.col)),
       mh('div.muWBtns', {}, muButton('RÉINITIALISER', () => { sliders.forEach(s => { s.r.value = 0; s.v.textContent = '0.0'; }); eqSave(); }), mh('span.muWNote', {text: 'ou profil prédéfini :'}), preset));
-    const limiter = check('Limiteur/compresseur (évite la saturation à fort volume)', 'limiter'), bal = mh('input.muRange', {type: 'range', min: -1, max: 1, step: .05, value: st.balance, oninput: () => { st.balance = Math.round(+bal.value * 100) / 100; muSave(); muApplySettingsUi(); }});
-    b.append(muSec('AUDIO'), limiter, mh('span.muSmall', {text: 'BALANCE GAUCHE / DROITE'}), mh('div.muWBtns', {}, mh('span', {text: 'G'}), bal, mh('span', {text: 'D'}), muButton('RÉINITIALISER', () => { bal.value = 0; bal.oninput(); })));
-    const nextTheme = Object.values(MU_THEME_LEVEL).filter(l => l > lv.level).sort((a, x) => a - x)[0];
-    b.append(muSec('NIVEAU'), muNote(`Niveau ${lv.level} — ${Math.floor((+mu.stats.seconds || 0) / 60)} min d'écoute cumulées` + (nextTheme ? ` (prochain thème au niveau ${nextTheme})` : ' (tous les thèmes sont débloqués)')), mh('div.muLevel', {}, mh('i', {style: {width: Math.max(1, lv.progress * 100) + '%'}})));
-    b.append(muSec('THÈME'), mh('div.muThemes', {}, ...Object.entries(MU_THEMES).map(([name, c]) => {
+    const limiter = check('Limiteur', 'limiter', 'Évite que le son sature à fort volume'), bal = mh('input.muRange', {type: 'range', min: -1, max: 1, step: .05, value: st.balance, oninput: () => { st.balance = Math.round(+bal.value * 100) / 100; muSave(); muApplySettingsUi(); }});
+    pane.sound.append(muSec('AUDIO'), limiter, mh('span.muSmall', {text: 'BALANCE GAUCHE / DROITE'}), mh('div.muWBtns', {}, mh('span', {text: 'G'}), bal, mh('span', {text: 'D'}), muButton('RÉINITIALISER', () => { bal.value = 0; bal.oninput(); })));
+    const soon = [[100, 'Super visualiseur'], [150, 'Platine'], [170, 'Socles et bras de platine'], [200, 'Interface Deluxe'], ...Object.entries(MU_THEME_LEVEL).map(([n, l]) => [l, 'Thème ' + n])].filter(([l]) => l > lv.level).sort((x, y) => x[0] - y[0]);
+    pane.look.append(muSec('NIVEAU ' + lv.level), muNote(Math.floor((+mu.stats.seconds || 0) / 60) + ' min d\'écoute' + (soon.length ? ' · prochain cadeau au niveau ' + soon[0][0] : ' · tout est débloqué')), mh('div.muLevel', {}, mh('i', {style: {width: Math.max(1, lv.progress * 100) + '%'}})),
+      ...(soon.length ? [mh('div.muSoon', {}, ...soon.slice(0, 6).map(([l, t]) => mh('div', {}, mh('b', {text: 'Niv. ' + l}), mh('span', {text: t}))))] : []));
+    lookTop.append(muSec('THÈME'), mh('div.muThemes', {}, ...Object.entries(MU_THEMES).map(([name, c]) => {
       const need = MU_THEME_LEVEL[name], locked = need && lv.level < need;
-      if (locked) return mh('button.muTh.locked', {style: {background: c.CARD, color: c.SUBTEXT, borderColor: c.BORDER}, html: `<div class="pv" style="background:${c.BG};place-items:center;display:grid">${muLock(20)}</div><div class="nm" style="background:${c.CARD}"><b>${name}</b><span style="font-weight:400">Niv. ${need}</span></div>`, onclick: () => muStatus(`Thème « ${name} » débloqué au niveau ${need}.`, T.WARN)});
       const bar = (col, w) => mh('u', {style: {background: col, width: w || ''}});
-      return mh('button.muTh' + (name === st.theme ? '.on' : ''), {style: {background: c.CARD, color: c.TEXT, borderColor: name === st.theme ? c.ACCENT : c.BORDER, boxShadow: name === st.theme ? '0 0 0 2px ' + c.ACCENT : ''}, title: name, onclick: () => { if (name === st.theme) return; st.theme = name; muApplyTheme(); muSave(); muUnlock('customizer'); w.close(); muOptions(); muDrawProgress(true); }}, mh('div.pv', {style: {background: c.BG}}, mh('i.sd', {style: {background: c.SIDEBAR}}, bar(c.ACCENT), bar(c.SUBTEXT), bar(c.SUBTEXT)), mh('i.mn', {}, mh('u', {style: {background: c.CARD_ALT}}), mh('s', {style: {background: c.TEXT, opacity: .8}}), mh('s', {style: {background: c.SUBTEXT, opacity: .6}}), mh('em', {style: {background: c.ACCENT}}))), mh('div.nm', {style: {background: c.CARD}}, mh('b', {text: (name === st.theme ? '✓ ' : '') + name, style: {fontFamily: muFont(name)}}), mh('span', {}, bar(c.ACCENT), bar(c.ACCENT_2), bar(c.HEART)))); 
-    })), mh('span.muSmall', {text: 'POLICE'}), mh('div.muWBtns', {}, ...[['', 'Celle du thème'], ...Object.entries(MU_FONTS).map(([k, f]) => [k, f[0]])].map(([k, label]) =>
+      const pv = () => mh('div.pv', {style: {background: c.BG}}, mh('i.sd', {style: {background: c.SIDEBAR}}, bar(c.ACCENT), bar(c.SUBTEXT), bar(c.SUBTEXT)), mh('i.mn', {}, mh('u', {style: {background: c.CARD_ALT}}), mh('s', {style: {background: c.TEXT, opacity: .8}}), mh('s', {style: {background: c.SUBTEXT, opacity: .6}}), mh('em', {style: {background: c.ACCENT}})), mh('i.dk', {style: {background: c.ACCENT, boxShadow: '0 0 0 3px ' + c.CARD_ALT + ', 0 0 0 5px ' + c.BORDER}}));
+      if (locked) { const p = pv(); p.append(mh('span.lk', {html: muLock(18)})); return mh('button.muTh.locked', {style: {background: c.CARD, color: c.SUBTEXT, borderColor: c.BORDER}, title: `Thème « ${name} » : niveau ${need}`, onclick: () => muStatus(`Thème « ${name} » débloqué au niveau ${need}.`, T.WARN)}, p, mh('div.nm', {style: {background: c.CARD}}, mh('b', {text: name}), mh('em', {text: 'Niv. ' + need}))); }
+      return mh('button.muTh' + (name === st.theme ? '.on' : ''), {style: {background: c.CARD, color: c.TEXT, borderColor: name === st.theme ? c.ACCENT : c.BORDER, boxShadow: name === st.theme ? '0 0 0 2px ' + c.ACCENT : ''}, title: name, onclick: () => { if (name === st.theme) return; st.theme = name; muApplyTheme(); muSave(); muUnlock('customizer'); w.close(); muOptions(); muDrawProgress(true); }}, pv(), mh('div.nm', {style: {background: c.CARD}}, mh('b', {text: (name === st.theme ? '✓ ' : '') + name}), mh('span', {}, bar(c.ACCENT), bar(c.ACCENT_2), bar(c.HEART)))); 
+    })), muSec('POLICE'), mh('div.muWBtns', {}, ...[['', 'Celle du thème'], ...Object.entries(MU_FONTS).map(([k, f]) => [k, f[0]])].map(([k, label]) =>
       mh('button.muBtn' + ((st.font || '') === k ? '.accent.on' : ''), {text: label, style: {fontFamily: k ? MU_FONTS[k][1] : ''}, onclick: () => { st.font = k; muApplyTheme(); apply(); w.close(); muOptions(); }}))));
     // shortcuts: click a field then press the combination (Échap cancels, Retour arrière / Suppr clears)
     const captured = {}, keysSave = (key, old) => {
@@ -2341,7 +2451,7 @@ export default async function (ctx) {
       if (new Set(vals).size !== vals.length) { captured[key] = old; return muNotify('warning', 'Options', 'Ce raccourci sert déjà.'); }
       st.shortcuts = {...captured}; muSave(); muHotkeys();
     };
-    b.append(muSec('RACCOURCIS CLAVIER'), muNote('Clique dans un champ puis appuie sur la combinaison souhaitée (Échap pour annuler, Retour arrière ou Suppr pour désactiver ce raccourci). Un raccourci doit inclure Ctrl, Alt ou Shift, sauf les touches de fonction (F1-F12) qui peuvent être utilisées seules. Ils marchent partout dans Windows, même NeoDex en arrière-plan.'));
+    pane.keys.append(muSec('RACCOURCIS CLAVIER'), muNote('Clique sur un champ puis tape la combinaison : avec Ctrl, Alt ou Shift, ou une touche F1 à F12 seule. Échap annule, Suppr retire le raccourci. Ils marchent partout dans Windows, même NeoDex derrière.'));
     for (const [key, label, , def] of MU_SHORTCUTS) {
       captured[key] = key in st.shortcuts ? st.shortcuts[key] : def;
       const f = mh('input.muKey', {readonly: true, value: captured[key] || 'Aucun'});
@@ -2356,16 +2466,14 @@ export default async function (ctx) {
         const old = captured[key]; captured[key] = combo; keysSave(key, old); f.blur();
       };
       f.onfocus = () => f.value = '…'; f.onblur = () => f.value = captured[key] || 'Aucun';
-      b.append(mh('div.muKeyRow', {}, mh('span', {text: label}), f));
+      pane.keys.append(mh('div.muKeyRow', {}, mh('span', {text: label}), f));
     }
-    b.append(muSec('DISCORD'), muNote("Tes amis voient le morceau en cours dans ton statut Discord (« Écoute NeoMusic »), avec le temps restant ; rien en pause. Il suffit que l'appli Discord soit ouverte sur ce PC : aucun compte ni mot de passe n'est demandé."),
-      check('Montrer le morceau en cours dans mon statut Discord', 'discord'));
-    b.append(mh('div.muWBtns', {}, muButton('VÉRIFIER LA BIBLIOTHÈQUE', () => muLibraryCheck())));
-    b.append(muSec('JOURNAL'), muNote('Consulte le journal des erreurs de NeoMusic (téléchargements, lecture, imports) pour diagnostiquer un problème.'), mh('div.muWBtns', {}, muButton('VOIR LES LOGS', () => muLogs())));
-    b.append(muSec('STOCKAGE'), muNote('Calcule le poids réel de NeoMusic sur le disque, détaillé par catégorie (musiques, pochettes, caches...).'), mh('div.muWBtns', {}, muButton('CALCULER LE POIDS DE L\'APPLI', () => muStorage())));
+    pane.more.append(muSec('DISCORD'), check('Montrer le morceau en cours dans mon statut Discord', 'discord', 'Avec le temps restant, rien en pause. L\'appli Discord ouverte sur ce PC suffit : ni compte ni mot de passe.'));
+    pane.more.append(muSec('PC LENT'), check('Sans pochettes', 'noImages', 'Masque les pochettes partout : l\'appli est plus légère'));
+    pane.more.append(muSec('ENTRETIEN'), muNote('Pour trouver un problème : les musiques abîmées ou manquantes, le journal des erreurs, et ce que NeoMusic prend sur le disque.'), mh('div.muWBtns', {}, muButton('VÉRIFIER LA BIBLIOTHÈQUE', () => muLibraryCheck()), muButton('VOIR LES LOGS', () => muLogs()), muButton('POIDS SUR LE DISQUE', () => muStorage())));
     const qrPl = mh('select.muSelect', {}, ...mu.playlists.filter(p => p.tracks.length).map(p => mh('option', {text: p.name, selected: p.name === mp.pl})));
-    b.append(muSec('EXPORTER EN QR CODE'), muNote('La liste des musiques d\'une playlist dans un seul QR code très serré (les vidéos YouTube en premier, puis les titres) ; au-delà d\'environ 250 musiques, il en faut plusieurs. Un autre téléphone la récupère avec IMPORTER UN QR CODE.'),
-      mh('div.muWBtns', {}, qrPl, muButton('AFFICHER LE QR CODE', () => muQrExport(qrPl.value), 'accent'), ));
+    pane.more.append(muSec('EXPORTER EN QR CODE'), muNote('Les musiques d\'une playlist dans un QR code (plusieurs au-delà de 250 musiques). Un téléphone la récupère avec IMPORTER UN QR CODE.'),
+      qrPl.options.length ? mh('div.muWBtns', {}, qrPl, muButton('AFFICHER LE QR CODE', () => muQrExport(qrPl.value), 'accent')) : muNote('Aucune playlist n\'a encore de musiques.'));
     b.append(mh('div.muWEnd', {}, mh('span.muWNote', {text: 'Chaque réglage s\'enregistre tout seul.'}), muButton('FERMER', w.close, 'accent')));
   }
 

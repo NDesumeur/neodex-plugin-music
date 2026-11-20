@@ -17,6 +17,7 @@ L'ajout et le téléchargement de musiques passent par **yt-dlp**, un outil grat
   - **Favoris** : les morceaux marqués d'un cœur ;
   - **Radar des sorties** : jusqu'à 24 nouveautés des artistes que tu écoutes, mises à jour chaque semaine ;
   - **Découvertes de la semaine** : 12 morceaux proches de tes goûts, mis à jour chaque semaine.
+  - Le Radar ne prend que ce qui est déjà sorti (pas les albums annoncés, ni les rééditions, compilations ou lives), le titre le plus écouté de chaque sortie, et vérifie que YouTube donne bien la bonne chanson. Le bouton **METTRE À JOUR** relance la recherche tout de suite ; si rien n'est trouvé, les musiques d'avant restent.
 - Dans une playlist : recherche par titre ou artiste, filtre par durée (moins de 3 min, 3 à 5 min, plus de 5 min) et tri (ajout récent, lecture récente, alphabétique, artiste, date de sortie). La vue **mur de pochettes** remplace la liste par une grille.
 - Sélectionne plusieurs morceaux pour les ajouter à une autre playlist, les mettre en favoris ou les supprimer d'un coup. Pour un morceau hors ligne, **Afficher le fichier** ouvre son dossier.
 
@@ -49,7 +50,7 @@ Lectures totales, temps écouté, titres et artistes différents, durée moyenne
 ## Niveaux et succès
 
 - Chaque minute écoutée fait monter ton **niveau** ; il faut de plus en plus de temps d'un niveau au suivant (environ 115 heures d'écoute pour le niveau 100).
-- 18 **thèmes** de couleurs, chacun avec sa police (Classique, Terminal, Ronde, Arcade ou Grimoire, à changer dans Options), dont 7 qui se débloquent avec le niveau : Onyx (3), Grenat (6), Aube (10), Ambre (16), Abyme (24), Sakura (35) et Néon (50).
+- 18 **thèmes** de couleurs, chacun avec sa police (Classique, Terminal, Ronde ou Grimoire ; Arcade se choisit dans Options), toutes à la même hauteur de lettres pour rester lisibles, dont 7 qui se débloquent avec le niveau : Onyx (3), Grenat (6), Aube (10), Ambre (16), Abyme (24), Sakura (35) et Néon (50).
 - Niveau 100 : le **super visualiseur** (reflet, étincelles, lueur et pulsation des basses).
 - Niveau 150 : la pochette en cours devient une **platine vinyle** complète, avec des socles et des bras en bois, pierre ou métal à combiner, débloqués jusqu'au niveau 190.
 - Niveau 200 : l'**interface Deluxe**, qui change tout le style de l'appli.
@@ -57,7 +58,14 @@ Lectures totales, temps écouté, titres et artistes différents, durée moyenne
 
 ## Options
 
-- **Affichage** : visualiseur, pochette en cercle, forme d'onde, dates d'ajout et de sortie, style compact, mode petit lecteur, mur de pochettes, mode sans images pour les PC lents, fondu de pochette.
+La fenêtre a quatre onglets :
+
+- **Apparence** : le thème (même les thèmes pas encore débloqués montrent leurs couleurs, avec leur niveau), la police, l'**ambiance animée** du thème (neige, étoiles, pétales, pluie de code… qui bougent avec les basses), l'affichage (visualiseur, pochette en vinyle, forme d'onde, appli pixel, mur de pochettes, petit lecteur, la date montrée dans la liste : aucune, d'ajout ou de sortie), la platine, et ton niveau avec ce qu'il débloque ensuite.
+- **Son** : même volume pour tous les morceaux, égaliseur, limiteur et balance.
+- **Raccourcis** : les raccourcis globaux.
+- **Plus** : le statut Discord, le mode **sans pochettes** pour les PC lents, l'entretien (vérifier la bibliothèque, journal, poids sur le disque) et l'export en QR code.
+
+Une playlist vide dit quoi faire, avec les boutons RECHERCHER / IMPORTER et CHERCHER UN ARTISTE.
 - **Corbeille** : une musique supprimée se restaure pendant 7 jours.
 - **Vérifier la bibliothèque** : trouve les fichiers manquants (à retirer ou retélécharger), les doublons et les fichiers qui ne sont dans aucune playlist.
 - **Journal** des erreurs (téléchargement, lecture, import) et **poids** de NeoMusic sur le disque, détaillé par catégorie.

@@ -39,15 +39,18 @@ module.exports = async ({ pj, js, sleep, shot = async () => {} }) => {
   await js(`pluginTabChange(), 0`); await sleep(300);
   const homeW = pf ? await pf.executeJavaScript(`document.body.classList.contains('homeW')`) : 'pas de frame';
   if (homeW !== true) throw new Error('NeoMusic ne sait pas que son widget est sur l’accueil : ' + homeW);
-  // Options : plus de bouton SAUVEGARDER ni de MuPlayer, chaque réglage gardé dès qu'il change, la police choisie, l'export en QR codes
+  // Options : 4 onglets, sans les réglages retirés, plus de bouton SAUVEGARDER ni de MuPlayer ; la liste vide dit quoi faire ; chaque réglage gardé dès qu'il change, la police choisie, l'export en QR codes
   const opt = `[...document.querySelectorAll('.muSideBtn')].find(b => b.textContent === 'Options').click()`, txt = `document.querySelector('.muWin').textContent`;
   await pf.executeJavaScript(opt); await sleep(300);
   const o = await pf.executeJavaScript(`(() => { const t = ${txt}, c = document.querySelector('.muWin input[type=checkbox]'), was = c.checked; c.click();
-    [...document.querySelectorAll('.muWin .muBtn')].find(b => b.textContent === 'Ronde').click(); return { save: t.includes('SAUVEGARDER'), mup: /MUPLAYER|CAPSULE/.test(t), qr: t.includes('EXPORTER EN QR CODE'), was }; })()`); await sleep(300);
+    [...document.querySelectorAll('.muWin .muBtn')].find(b => b.textContent === 'Ronde').click(); return { save: t.includes('SAUVEGARDER'), mup: /MUPLAYER|CAPSULE/.test(t), qr: t.includes('EXPORTER EN QR CODE'), was, tabs: document.querySelectorAll('.muWin .muOptTab').length, old: /Fondu de la pochette|même quand le widget|date de sortie des musiques/.test(t), empty: !!document.querySelector('.muEmpty') }; })()`); await sleep(300);
   await pf.executeJavaScript(`document.querySelector('.muWin .muWinBar button').click()`); await pf.executeJavaScript(opt); await sleep(300);
   const o2 = await pf.executeJavaScript(`({ now: document.querySelector('.muWin input[type=checkbox]').checked, font: getComputedStyle(document.getElementById('mu')).getPropertyValue('--mfont') })`);
   await pf.executeJavaScript(`document.querySelector('.muWin input[type=checkbox]').click(), [...document.querySelectorAll('.muWin .muBtn')].find(b => b.textContent === 'Celle du thème').click(), document.querySelector('.muWin .muWinBar button').click()`);
-  if (o.save || o.mup || !o.qr || o2.now === o.was || !o2.font.includes('Pixelify')) throw new Error('Options : ' + JSON.stringify({ ...o, ...o2 }));
+  if (o.save || o.mup || !o.qr || o.tabs !== 4 || o.old || !o.empty || o2.now === o.was || !o2.font.includes('Pixelify')) throw new Error('Options : ' + JSON.stringify({ ...o, ...o2 }));
+  // l'ambiance du thème : la toile derrière l'appli se dessine (des pixels non transparents)
+  { await sleep(600); const px = await pf.executeJavaScript(`(() => { const c = document.getElementById('muAmb'); if (!c || !c.width) return -1; const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; let n = 0; for (let i = 3; i < d.length; i += 4) if (d[i]) n++; return n; })()`);
+    if (!(px > 20)) throw new Error('ambiance du thème : ' + px + ' pixels dessinés'); }
   // chaque thème a son décor : fond et cartes différents d'un thème à l'autre (captures « theme-<nom> »)
   await js(`newTab('plugin:neodex.music'), 0`); await sleep(800);
   const looks = new Set(), ms = ['nova', 'onyx', 'grenat', 'aube', 'ambre', 'abyme', 'sakura', 'crepuscule', 'menthe', 'rubis', 'glacier', 'cuivre', 'lavande', 'foret', 'ocean', 'soleil', 'cyber', 'neon'];

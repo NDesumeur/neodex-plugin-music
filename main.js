@@ -160,8 +160,14 @@ async function dzArtist(name) {  // l'artiste de ce nom exact (pour que « Air �
   dzCache.set(k, a); return a;
 }
 async function inBatches(list, size, fn) { for (let i = 0; i < list.length; i += size) await Promise.all(list.slice(i, i + size).map(fn)); }
+const titleWords = t => normName((t || '').replace(/\((?:feat|ft|with|prod)[^)]*\)|\[[^\]]*\]|\s(?:feat|ft)\.?\s.*$/gi, '')).split(' ').filter(w => w.length > 1);
+function sameSong(e, artist, title) {  // l'artiste dans le titre ou la chaîne, et au moins 60 % des mots du titre
+  const hay = ' ' + normName((e.title || '') + ' ' + (e.author || '')) + ' ', a = normName(artist), tw = titleWords(title);
+  if (a && !hay.includes(' ' + a + ' ')) return false;
+  return !tw.length || tw.filter(w => hay.includes(' ' + w + ' ')).length >= Math.ceil(tw.length * .6);
+}
 async function realSong(artist, title) {  // la vraie chanson sur YouTube
-  return (await search(artist + ' ' + title + ' official audio', 4)).find(e => isSong(e) && (!e.duration || (e.duration >= 90 && e.duration <= 600))) || null;
+  return (await search(artist + ' ' + title + ' official audio', 5)).find(e => isSong(e) && (!e.duration || (e.duration >= 90 && e.duration <= 600)) && sameSong(e, artist, title)) || null;
 }
 async function similar(seeds, exclude = [], max = 12) {
   const skip = new Set([...exclude, ...seeds.map(s => s.artist)].map(normName)), pool = new Map();
@@ -190,13 +196,13 @@ async function mix(seeds, exclude = []) {  // seeds : des noms, ou { artist, w }
   return out.length ? out : mixYt(ws.map(s => s.artist), exclude);  // sans Deezer : l'ancien mix YouTube
 }
 async function radar(artists) {  // les sorties des 4 derniers mois des artistes écoutés ET d'artistes proches (albums et singles de Deezer), des titres de chaque sortie retrouvés sur YouTube
-  const cutoff = new Date(Date.now() - 120 * 864e5).toISOString().slice(0, 10), albums = [], seen = new Set(), names = artists.slice(0, 30);
+  const cutoff = new Date(Date.now() - 120 * 864e5).toISOString().slice(0, 10), today = new Date().toISOString().slice(0, 10), albums = [], seen = new Set(), names = artists.slice(0, 30);
   const known = new Set(names.map(normName)), close = [];
   await inBatches(names.slice(0, 5), 5, async name => {  // les artistes proches des plus écoutés : on n'écoute pas que ses favoris
     try { const a = await dzArtist(name); if (a) for (const x of ((await deezer('/artist/' + a.id + '/related?limit=6')).data || []).slice(0, 4)) if (!known.has(normName(x.name))) { known.add(normName(x.name)); close.push(x); } } catch {}
   });
   const take = async (a, n) => {
-    for (const al of ((await deezer('/artist/' + a.id + '/albums?limit=100')).data || []).filter(x => x.release_date >= cutoff).slice(0, n)) if (!seen.has(al.id)) { seen.add(al.id); albums.push({ ...al, artist: a.name }); }
+    for (const al of ((await deezer('/artist/' + a.id + '/albums?limit=100')).data || []).filter(x => x.release_date >= cutoff && x.release_date <= today && x.record_type !== 'compile' && !/remaster|anniversary|reissue|réédition|edition|best of|greatest hits|collection|\blive\b/i.test(x.title || '')).slice(0, n)) if (!seen.has(al.id)) { seen.add(al.id); albums.push({ ...al, artist: a.name }); }
   };
   await inBatches(names, 6, async name => { try { const a = await dzArtist(name); if (a) await take(a, 3); } catch {} });
   await inBatches(close, 6, async x => { try { await take(x, 1); } catch {} });
@@ -204,7 +210,8 @@ async function radar(artists) {  // les sorties des 4 derniers mois des artistes
   const out = [];
   await inBatches(albums.slice(0, 30), 5, async al => {
     try {
-      for (const t of ((await deezer('/album/' + al.id + '/tracks?limit=3')).data || []).slice(0, 2)) {
+      const tr = ((await deezer('/album/' + al.id + '/tracks?limit=50')).data || []).filter(t => !/\b(intro|outro|interlude|skit)\b/i.test(t.title)).sort((x, y) => (y.rank || 0) - (x.rank || 0));
+      for (const t of tr.slice(0, al.record_type === 'single' ? 1 : 2)) {
         const y = await realSong(al.artist, t.title); if (y && !out.some(o => o.url === y.url)) out.push({ ...y, artist: al.artist, released: al.release_date });
       }
     } catch {}
@@ -399,4 +406,6 @@ module.exports = api => {
   return () => { discord.close(); for (const combo of Object.values(hotkeys)) if (combo && /(Ctrl|Alt|Shift)\+/.test(combo)) try { globalShortcut.unregister(accel(combo)); } catch {} };
 };
 module.exports.radar = radar;  // pour les tests
+module.exports.mix = mix;
+module.exports.sameSong = sameSong;
 module.exports.artistTracks = artistTracks;

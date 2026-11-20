@@ -17,6 +17,7 @@ Adding and downloading music relies on **yt-dlp**, a free Python tool. If it is 
   - **Favourites**: tracks marked with a heart;
   - **Release radar**: up to 24 new releases from the artists you listen to, updated every week;
   - **Weekly discoveries**: 12 tracks close to your taste, updated every week.
+  - The radar only takes what is already out (no announced albums, reissues, compilations or live records), the most played track of each release, and checks that YouTube gives the right song. The **UPDATE** button runs the search right away; if nothing is found, the previous tracks stay.
 - Inside a playlist: search by title or artist, filter by duration (under 3 min, 3 to 5 min, over 5 min) and sort (recently added, recently played, alphabetical, artist, release date). The **cover wall** view replaces the list with a grid.
 - Select several tracks to add them to another playlist, favourite them or delete them at once. For an offline track, **Show file** opens its folder.
 
@@ -49,7 +50,7 @@ Total plays, time listened, distinct tracks and artists, average length, active 
 ## Levels and achievements
 
 - Every minute listened raises your **level**; each level takes longer than the last (about 115 hours of listening for level 100).
-- 18 colour **themes**, each with its own font (Classic, Terminal, Round, Arcade or Grimoire, to change in Options), 7 of which unlock with your level: Onyx (3), Grenat (6), Aube (10), Ambre (16), Abyme (24), Sakura (35) and Néon (50).
+- 18 colour **themes**, each with its own font (Classic, Terminal, Round or Grimoire; Arcade can be picked in Options), all at the same letter height to stay readable, 7 of which unlock with your level: Onyx (3), Grenat (6), Aube (10), Ambre (16), Abyme (24), Sakura (35) and Néon (50).
 - Level 100: the **super visualiser** (reflection, sparks, glow and bass pulse).
 - Level 150: the current cover becomes a full **vinyl turntable**, with wood, stone or metal bases and arms to combine, unlocked up to level 190.
 - Level 200: the **Deluxe interface**, which changes the app's whole style.
@@ -57,7 +58,14 @@ Total plays, time listened, distinct tracks and artists, average length, active 
 
 ## Options
 
-- **Display**: visualiser, round cover, waveform, added and release dates, compact style, mini player mode, cover wall, no-images mode for slow PCs, cover fade.
+The window has four tabs:
+
+- **Appearance**: the theme (even themes not unlocked yet show their colours, with their level), the font, the **animated ambience** of the theme (snow, stars, petals, code rain… moving with the bass), the display (visualiser, vinyl cover, waveform, pixel app, cover wall, mini player, the date shown in the list: none, added or release), the turntable, and your level with what it unlocks next.
+- **Sound**: same volume for every track, equaliser, limiter and balance.
+- **Shortcuts**: the global shortcuts.
+- **More**: the Discord status, the **no covers** mode for slow PCs, maintenance (check library, log, size on disk) and the QR code export.
+
+An empty playlist says what to do, with the SEARCH / IMPORT and FIND AN ARTIST buttons.
 - **Bin**: a deleted track can be restored for 7 days.
 - **Check library**: finds missing files (to remove or download again), duplicates and files that are in no playlist.
 - Error **log** (downloads, playback, imports) and NeoMusic's **size** on disk, broken down by category.
