@@ -46,7 +46,7 @@ const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strip
 .mu .muMain{margin:0;height:auto;overflow:hidden;z-index:auto}  /* NeoDex styles every <main> */
 .muCard{background:var(--mcard);border:1px solid var(--mborder);flex:none;animation:muReveal .25s ease-out}
 .mu{isolation:isolate} .muAmb{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;image-rendering:pixelated}
-.mu.amb{--mcA:color-mix(in srgb,var(--mcard) 76%,transparent);--mcB:color-mix(in srgb,var(--mcard) 44%,transparent)} .mu.amb.amb[data-ms] .muCard{background:var(--mcA)} .mu.amb.amb[data-ms] .muCard{backdrop-filter:none} .mu.amb.amb[data-ms] .muCard:is(.muNow,.muReco){background:var(--mcB)} .mu.amb.amb.amb[data-ms=rubis] .muCard{--mx:var(--mcA);background:linear-gradient(135deg,color-mix(in srgb,var(--macc) 14%,var(--mx)),var(--mx) 45%)} .mu.amb.amb[data-ms=rubis] .muCard:is(.muNow,.muReco){--mx:var(--mcB)} .mu.amb.amb.amb[data-ms=cuivre] .muCard{--mx:var(--mcA);background:radial-gradient(circle at 10px 10px,var(--macc) 0 2.5px,transparent 3.5px),radial-gradient(circle at calc(100% - 10px) 10px,var(--macc) 0 2.5px,transparent 3.5px),linear-gradient(180deg,color-mix(in srgb,var(--macc) 10%,var(--mx)),var(--mx))} .mu.amb.amb[data-ms=cuivre] .muCard:is(.muNow,.muReco){--mx:var(--mcB)}  /* l'ambiance se voit à travers le lecteur ; la liste reste bien lisible */ .mu.amb .muMain{background:none}
+.mu.amb{--mcA:color-mix(in srgb,var(--mcard) 64%,transparent);--mcB:color-mix(in srgb,var(--mcard) 44%,transparent)} .mu.amb.amb[data-ms] .muCard{background:var(--mcA)} .mu.amb.amb[data-ms] .muCard{backdrop-filter:none} .mu.amb.amb[data-ms] .muCard:is(.muNow,.muReco){background:var(--mcB)} .mu.amb.amb.amb[data-ms=rubis] .muCard{--mx:var(--mcA);background:linear-gradient(135deg,color-mix(in srgb,var(--macc) 14%,var(--mx)),var(--mx) 45%)} .mu.amb.amb[data-ms=rubis] .muCard:is(.muNow,.muReco){--mx:var(--mcB)} .mu.amb.amb.amb[data-ms=cuivre] .muCard{--mx:var(--mcA);background:radial-gradient(circle at 10px 10px,var(--macc) 0 2.5px,transparent 3.5px),radial-gradient(circle at calc(100% - 10px) 10px,var(--macc) 0 2.5px,transparent 3.5px),linear-gradient(180deg,color-mix(in srgb,var(--macc) 10%,var(--mx)),var(--mx))} .mu.amb.amb[data-ms=cuivre] .muCard:is(.muNow,.muReco){--mx:var(--mcB)}  /* l'ambiance se voit à travers le lecteur ; la liste reste bien lisible */ .mu.amb .muMain{background:none}
 @keyframes muReveal{from{transform:translateY(6px)}}  /* no fade: a hidden window would leave it half-faded */
 .muNow{display:flex;align-items:center;gap:18px;padding:18px 20px}
 .muCoverWrap{flex:none;width:270px;height:200px;display:grid;place-items:center}
@@ -1883,6 +1883,44 @@ export default async function (ctx) {
       },
     },
   };
+  // une couche de plus sur toute la hauteur (comme les colonnes de Cyber) : les particules du thème en trois profondeurs, qui accélèrent avec les basses
+  // k : dot (1 ou 2 pixels), streak (un trait dans le sens de la chute), glow (un halo), spr (des dessins de MU_SPR ; fr : une suite d'images animée)
+  const MU_DEEP = {
+    space: [{k: 'spr', s: ['cross', 'star5', 'cross'], c: ['t', 'a', 'b'], n: .5, vx: -.05, tw: 1}, {k: 'dot', c: ['t', 's'], n: 1.5, vx: -.12, tw: .7}],
+    night: [{k: 'streak', c: ['s', 't'], n: 1.6, vx: -.8, vy: 5, a: .5}, {k: 'glow', r: [1, 3], c: ['a', 'w'], n: .12, vx: .05, tw: .4, a: .6}],
+    bokeh: [{k: 'glow', r: [5, 13], c: ['a', 'b', 'w', 'h'], n: .4, vx: .1, vy: -.15, sw: .4, tw: .5, a: 1.6}, {k: 'dot', c: ['t', 'w'], n: 1.2, vy: -.15, sw: .3, tw: 1}],
+    dawn: [{k: 'spr', fr: 'bird', c: ['n'], n: .1, vx: .5, sw: .5}, {k: 'dot', c: ['w', 't'], n: .9, vx: .1, vy: -.05, sw: .4, tw: 1}],
+    shafts: [{k: 'dot', c: ['w', 'a', 't'], n: 1.8, vx: .08, vy: .06, sw: .6, tw: 1}, {k: 'glow', r: [2, 4], c: ['w'], n: .12, vy: .08, sw: .5, tw: .6, a: .7}],
+    abyss: [{k: 'spr', s: ['bub1', 'bub2', 'bub3', 'bub1'], c: ['b', 't'], n: .45, vy: -.7, sw: .6}, {k: 'dot', c: ['b', 's'], n: 1.2, vx: .15, vy: -.08, sw: .5, tw: .8}],
+    sakura: [{k: 'spr', fr: 'petal', c: ['h', 'a', 't'], n: .6, vx: .6, vy: .7, sw: 1.2}, {k: 'dot', c: ['h', 't'], n: .6, vx: .3, vy: .2, sw: .5, tw: 1}],
+    dusk: [{k: 'glow', r: [2, 3], c: ['w', 'a'], n: .35, vx: .05, vy: -.06, sw: .8, tw: 1.2}, {k: 'dot', c: ['t'], n: .8, tw: 1}],
+    fizz: [{k: 'spr', s: ['bub1', 'bub2', 'bub1'], c: ['a', 't', 'b'], n: .6, vy: -1.1, sw: .4}, {k: 'dot', c: ['a', 't'], n: 1.4, vy: -1.6, sw: .2}],
+    gems: [{k: 'spr', s: ['star5', 'star7', 'cross'], c: ['a', 't', 'b'], n: .35, tw: 1.6}, {k: 'spr', fr: 'shard', c: ['a', 'h'], n: .25, vy: .35, sw: .3}],
+    aurora: [{k: 'spr', s: ['flake', 'cross'], c: ['t', 'b'], n: .45, vx: -.2, vy: .55, sw: .7}, {k: 'dot', c: ['t', 's'], n: 1.4, vx: -.25, vy: .9, sw: .4}],
+    forge: [{k: 'dot', c: ['w', 'd', 'a'], n: 1.6, vy: -1.1, sw: .7, tw: .6}, {k: 'glow', r: [1, 3], c: ['w', 'd'], n: .2, vy: -.7, sw: .6, tw: .8}],
+    meadow: [{k: 'spr', fr: 'fly', c: ['b', 'a', 'w'], n: .12, vx: .35, vy: -.1, sw: 1.6}, {k: 'dot', c: ['w', 't', 'a'], n: 1, vx: .15, vy: -.12, sw: .5, tw: 1}],
+    forest: [{k: 'spr', fr: 'leaf', c: ['a', 'w', 'd'], n: .35, vx: .4, vy: .55, sw: 1}, {k: 'glow', r: [1, 2], c: ['w'], n: .25, sw: .8, tw: 1.2}],
+    sea: [{k: 'spr', fr: 'bird', c: ['t'], n: .06, vx: -.45, sw: .6}, {k: 'dot', c: ['t', 'b'], n: 1, vx: -.06, tw: 1.4}],
+    sun: [{k: 'glow', r: [2, 5], c: ['w', 'a'], n: .22, vy: -.35, sw: .5, tw: .8, a: .8}, {k: 'dot', c: ['w', 't'], n: 1.1, vy: -.4, sw: .5, tw: 1}],
+  };
+  function muDeepInit(W, H, L) {
+    const n = W * H / 120000;
+    return (L || []).map(sp => ({sp, P: Array.from({length: Math.round(sp.n * 60 * n)}, () => ({x: Math.random() * W, y: Math.random() * H, z: .35 + Math.random() * .65, ph: Math.random() * 6.28, i: Math.random() * 999 | 0, r: Math.random()}))}));
+  }
+  function muDeepDraw(x, W, H, C, f, t, e, k) {
+    for (const {sp, P} of muAmb.deep || []) for (const p of P) {
+      const v = (1 + 2 * e) * p.z * f; p.x += (sp.vx || 0) * v + Math.cos(t * 1.3 + p.ph) * (sp.sw || 0) * .3 * f; p.y += (sp.vy || 0) * v;
+      if (p.x < -14) p.x += W + 28; else if (p.x > W + 14) p.x -= W + 28;
+      if (p.y < -14 || p.y > H + 14) { p.y = p.y < 0 ? H + 12 : -12; p.x = Math.random() * W; }
+      const col = C[sp.c[p.i % sp.c.length]], tw = sp.tw ? .55 + .45 * Math.sin(t * (1.5 + p.r * 2) * sp.tw + p.ph) : 1;
+      x.globalAlpha = Math.min(1, (.45 + .75 * p.z) * tw * (sp.a || 1) * (1 + .6 * k)); const X = Math.round(p.x), Y = Math.round(p.y);
+      if (sp.k === 'dot') { x.fillStyle = col; const s = p.z > .6 ? 2 : 1; x.fillRect(X, Y, s, s); }
+      else if (sp.k === 'streak') { x.fillStyle = col; const L = Math.round(3 + 6 * p.z), dx = (sp.vx || 0) / (sp.vy || 1); for (let j = 0; j < L; j++) x.fillRect(X - Math.round(j * dx), Y - j, 1, 1); }
+      else if (sp.k === 'glow') { const r = Math.round(sp.r[0] + (sp.r[1] - sp.r[0]) * p.r); x.drawImage(muGlow(col, r), X - r, Y - r); x.fillStyle = col; x.fillRect(X, Y, 1, 1); }
+      else { const fr = sp.fr ? MU_SPR[sp.fr] : null, rows = fr ? fr[Math.floor(t * 6 + p.ph * 3) % fr.length] : MU_SPR[sp.s[p.i % sp.s.length]]; x.drawImage(muSpr(rows, col, C.t), X, Y); }
+    }
+    if (k > .3) { x.globalAlpha = .1 * k; x.drawImage(muVGrad(C.a), 0, -H * .6, W, H * 1.2); }  // un coup de basse : une vague de lumière douce
+  }
   function muAmbFrame(now) {
     const cv = $('muAmb'), on = mu.settings.ambiance !== false && !mu.settings.noImages, root = $('mu');
     root.classList.toggle('amb', on);
@@ -1892,14 +1930,14 @@ export default async function (ctx) {
     const W = Math.ceil(root.clientWidth / 3), H = Math.ceil(root.clientHeight / 3); if (!W || !H) return;
     if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; muAmb.ms = ''; }
     const ms = root.dataset.ms || 'nova', sc = MU_SCN[MU_AMB[ms]] || MU_SCN.space;
-    const C = {bg: T.BG, card: T.CARD, a: T.ACCENT, b: T.ACCENT_2, t: T.TEXT, s: T.SUBTEXT, w: T.WARN, d: T.DANGER, h: T.HEART || T.DANGER};
+    const C = {bg: T.BG, card: T.CARD, a: T.ACCENT, b: T.ACCENT_2, t: T.TEXT, s: T.SUBTEXT, w: T.WARN, d: T.DANGER, h: T.HEART || T.DANGER, n: muMix(T.BG, '#000000', .55)};
     if (now - (muAmb.gAt || 0) > 1000) {  // la ligne de sol : le bas des cartes du haut (elles laissent le plus voir la scène)
       muAmb.gAt = now; const top = root.getBoundingClientRect().top, b = Math.max(0, ...[...root.querySelectorAll('.muNow,.muReco')].filter(e => e.offsetHeight).map(e => e.getBoundingClientRect().bottom - top));
       const G = Math.round(b ? Math.max(H * .35, Math.min(H * .8, b / 3)) : H * .62); if (Math.abs(G - (muAmb.G || 0)) > 3) { muAmb.G = G; muAmb.ms = ''; }
     }
     const key = ms + Object.values(C).join('');
     if (muAmb.ms !== key) {  // un nouveau thème (ou une autre taille) : le décor est repeint, les particules recréées
-      muAmb.ms = key; muAmb.spr.clear(); muAmb.fx = []; muAmb.gust = 0; muAmb.parts = sc.init(W, H, C);
+      muAmb.ms = key; muAmb.spr.clear(); muAmb.fx = []; muAmb.gust = 0; muAmb.parts = sc.init(W, H, C); muAmb.deep = muDeepInit(W, H, MU_DEEP[MU_AMB[ms]]);
       const bd = muAmb.bd = document.createElement('canvas'); bd.width = W; bd.height = H; sc.back?.(bd.getContext('2d'), W, H, C);
     }
     const playing = muAudio && !muAudio.paused, bass = playing ? (muSpec.levels[0] + muSpec.levels[1] + muSpec.levels[2]) / 3 : 0;
@@ -1907,7 +1945,7 @@ export default async function (ctx) {
     muAmb.avg = muAmb.avg * .94 + bass * .06;
     if (bass > muAmb.avg * 1.3 + .06 && now - muAmb.kAt > 220) { muAmb.kick = 1; muAmb.kAt = now; } else muAmb.kick *= .6;  // un coup de basse net : les scènes y réagissent (rafale, éclair, étincelles…)
     const x = cv.getContext('2d'); x.globalAlpha = 1; x.clearRect(0, 0, W, H); x.drawImage(muAmb.bd, 0, 0);
-    sc.draw(x, W, H, C, dt * 30, muAmb.t, muAmb.e, muAmb.kick);
+    sc.draw(x, W, H, C, dt * 30, muAmb.t, muAmb.e, muAmb.kick); muDeepDraw(x, W, H, C, dt * 30, muAmb.t, muAmb.e, muAmb.kick);
     muAmb.fx = muAmb.fx.filter(s => s.life > 0 && s.y < H + 20 && s.y > -40);
     x.globalAlpha = 1;
   }
