@@ -409,58 +409,58 @@ div.muCheck pre,.muLogs{margin:6px 0 0;white-space:pre-wrap;word-break:break-wor
 .muTrashList button{border-radius:6px} .muMenu{border-radius:8px} .muMenu button{border-radius:5px}
 .muWinBar button,.muDlgBar button{transition:background .12s,color .12s}
 @media (max-width:900px){.muNowSide{display:none}.muSide{width:200px}}
-/* 3.3.3 : chaque thème a son décor (fond, cartes, bordures, boutons), comme les thèmes NeoDex ; Deluxe garde son style pixel */
+/* 3.3.3 : chaque thème a son décor (fond, cartes, bordures, boutons), comme les thèmes NeoDex ; en Deluxe, le fond et les titres du thème sur le style pixel (3.3.5) */
 .mu:not(.lux)[data-ms] .muCard{transition:box-shadow .2s}
-.mu:not(.lux)[data-ms=nova]{background:radial-gradient(1px 1px at 20% 30%,#fff9 50%,transparent),radial-gradient(1px 1px at 70% 80%,#fff7 50%,transparent),radial-gradient(1.5px 1.5px at 85% 20%,#fffa 50%,transparent),radial-gradient(1px 1px at 40% 65%,#fff6 50%,transparent),radial-gradient(120% 80% at 80% 0%,color-mix(in srgb,var(--macc) 16%,transparent),transparent 60%),var(--mbg);background-size:220px 220px,260px 260px,300px 300px,180px 180px,100% 100%}
+.mu[data-ms=nova]{background:radial-gradient(1px 1px at 20% 30%,#fff9 50%,transparent),radial-gradient(1px 1px at 70% 80%,#fff7 50%,transparent),radial-gradient(1.5px 1.5px at 85% 20%,#fffa 50%,transparent),radial-gradient(1px 1px at 40% 65%,#fff6 50%,transparent),radial-gradient(120% 80% at 80% 0%,color-mix(in srgb,var(--macc) 16%,transparent),transparent 60%),var(--mbg);background-size:220px 220px,260px 260px,300px 300px,180px 180px,100% 100%}
 .mu:not(.lux)[data-ms=nova] .muCard{border-radius:14px;border-color:color-mix(in srgb,var(--macc) 35%,var(--mborder));box-shadow:0 0 22px color-mix(in srgb,var(--macc) 14%,transparent)}
-.mu:not(.lux)[data-ms=nova] .muTitle{text-shadow:0 0 12px color-mix(in srgb,var(--macc) 60%,transparent)}
-.mu:not(.lux)[data-ms=onyx]{background:linear-gradient(90deg,#ffffff07 1px,transparent 1px) 0 0/40px 40px,linear-gradient(#ffffff07 1px,transparent 1px) 0 0/40px 40px,var(--mbg)}
+.mu[data-ms=nova] .muTitle{text-shadow:0 0 12px color-mix(in srgb,var(--macc) 60%,transparent)}
+.mu[data-ms=onyx]{background:linear-gradient(90deg,#ffffff07 1px,transparent 1px) 0 0/40px 40px,linear-gradient(#ffffff07 1px,transparent 1px) 0 0/40px 40px,var(--mbg)}
 .mu:not(.lux)[data-ms=onyx] .muCard{border:0;border-left:4px solid var(--macc);border-radius:0;box-shadow:6px 6px 0 #000}
-.mu:not(.lux)[data-ms=onyx] :is(.muHead,.muBtn){text-transform:uppercase;letter-spacing:2px} .mu:not(.lux)[data-ms=onyx] .muBtn{border-radius:0}
-.mu:not(.lux)[data-ms=grenat]{background:linear-gradient(160deg,color-mix(in srgb,var(--macc) 10%,var(--mbg)),var(--mbg) 55%)}
+.mu[data-ms=onyx] :is(.muHead,.muBtn){text-transform:uppercase;letter-spacing:2px} .mu:not(.lux)[data-ms=onyx] .muBtn{border-radius:0}
+.mu[data-ms=grenat]{background:linear-gradient(160deg,color-mix(in srgb,var(--macc) 10%,var(--mbg)),var(--mbg) 55%)}
 .mu:not(.lux)[data-ms=grenat] .muCard{border-radius:10px;background:color-mix(in srgb,var(--mcard) 78%,transparent);border-color:#ffffff1c;box-shadow:inset 0 1px 0 #ffffff14,0 10px 30px #0006}
 .mu:not(.lux)[data-ms=grenat] .muSide{background:color-mix(in srgb,var(--mside) 80%,transparent);border-right:1px solid #ffffff12}
-.mu:not(.lux)[data-ms=aube]{background:linear-gradient(180deg,var(--mbg) 30%,color-mix(in srgb,var(--macc) 22%,var(--mbg)) 100%)}
+.mu[data-ms=aube]{background:linear-gradient(180deg,var(--mbg) 30%,color-mix(in srgb,var(--macc) 22%,var(--mbg)) 100%)}
 .mu:not(.lux)[data-ms=aube] .muCard{border-radius:18px;border:0;box-shadow:0 8px 28px #0005,inset 0 1px 0 color-mix(in srgb,var(--macc) 30%,transparent)}
 .mu:not(.lux)[data-ms=aube] .muBtn{border-radius:999px}
-.mu:not(.lux)[data-ms=ambre]{background:repeating-linear-gradient(45deg,transparent 0 22px,color-mix(in srgb,var(--macc) 6%,transparent) 22px 24px),var(--mbg)}
+.mu[data-ms=ambre]{background:repeating-linear-gradient(45deg,transparent 0 22px,color-mix(in srgb,var(--macc) 6%,transparent) 22px 24px),var(--mbg)}
 .mu:not(.lux)[data-ms=ambre] .muCard{border-radius:0;border:1px solid var(--macc);outline:1px solid color-mix(in srgb,var(--macc) 45%,transparent);outline-offset:3px;margin:4px}
 .mu:not(.lux)[data-ms=ambre] .muTop{background:repeating-linear-gradient(90deg,var(--mside) 0 14px,color-mix(in srgb,var(--macc) 12%,var(--mside)) 14px 16px)}
-.mu:not(.lux)[data-ms=ambre] :is(.muTitle,.muHead){font-family:Georgia,'Times New Roman',serif;letter-spacing:1px}
-.mu:not(.lux)[data-ms=abyme]{background:radial-gradient(90% 70% at 50% 110%,color-mix(in srgb,var(--macc) 20%,transparent),transparent 70%),radial-gradient(70% 50% at 50% -10%,#0009,transparent),var(--mbg)}
+.mu[data-ms=ambre] :is(.muTitle,.muHead){font-family:Georgia,'Times New Roman',serif;letter-spacing:1px}
+.mu[data-ms=abyme]{background:radial-gradient(90% 70% at 50% 110%,color-mix(in srgb,var(--macc) 20%,transparent),transparent 70%),radial-gradient(70% 50% at 50% -10%,#0009,transparent),var(--mbg)}
 .mu:not(.lux)[data-ms=abyme] .muCard{border-radius:12px;border-color:color-mix(in srgb,var(--macc) 25%,transparent);box-shadow:inset 0 0 30px #0008,0 0 0 1px #0006}
-.mu:not(.lux)[data-ms=sakura]{background:radial-gradient(circle at 15% 25%,color-mix(in srgb,var(--macc) 14%,transparent) 0 3px,transparent 4px) 0 0/90px 90px,radial-gradient(circle at 60% 70%,color-mix(in srgb,var(--mheart) 12%,transparent) 0 2px,transparent 3px) 0 0/130px 130px,var(--mbg)}
+.mu[data-ms=sakura]{background:radial-gradient(circle at 15% 25%,color-mix(in srgb,var(--macc) 14%,transparent) 0 3px,transparent 4px) 0 0/90px 90px,radial-gradient(circle at 60% 70%,color-mix(in srgb,var(--mheart) 12%,transparent) 0 2px,transparent 3px) 0 0/130px 130px,var(--mbg)}
 .mu:not(.lux)[data-ms=sakura] .muCard{border-radius:20px;border:2px dashed color-mix(in srgb,var(--macc) 40%,transparent)}
 .mu:not(.lux)[data-ms=sakura] .muBtn{border-radius:14px}
-.mu:not(.lux)[data-ms=crepuscule]{background:linear-gradient(180deg,var(--mbg) 0 40%,color-mix(in srgb,var(--macc2) 12%,var(--mbg)) 40% 60%,color-mix(in srgb,var(--macc) 18%,var(--mbg)) 60% 80%,color-mix(in srgb,var(--mdanger) 18%,var(--mbg)) 80%)}
+.mu[data-ms=crepuscule]{background:linear-gradient(180deg,var(--mbg) 0 40%,color-mix(in srgb,var(--macc2) 12%,var(--mbg)) 40% 60%,color-mix(in srgb,var(--macc) 18%,var(--mbg)) 60% 80%,color-mix(in srgb,var(--mdanger) 18%,var(--mbg)) 80%)}
 .mu:not(.lux)[data-ms=crepuscule] .muCard{border-radius:12px;border:0;border-bottom:3px solid var(--macc2);box-shadow:0 6px 20px #0006}
-.mu:not(.lux)[data-ms=menthe]{background:repeating-linear-gradient(-45deg,transparent 0 10px,color-mix(in srgb,var(--macc) 5%,transparent) 10px 11px),var(--mbg)}
+.mu[data-ms=menthe]{background:repeating-linear-gradient(-45deg,transparent 0 10px,color-mix(in srgb,var(--macc) 5%,transparent) 10px 11px),var(--mbg)}
 .mu:not(.lux)[data-ms=menthe] .muCard{border-radius:16px;border-color:color-mix(in srgb,var(--macc) 30%,transparent)}
 .mu:not(.lux)[data-ms=menthe] .muBtn{border-radius:999px} .mu:not(.lux)[data-ms=menthe] .muRow{border-radius:10px}
-.mu:not(.lux)[data-ms=rubis]{background:conic-gradient(from 45deg at 50% 50%,color-mix(in srgb,var(--macc) 7%,transparent) 25%,transparent 0 50%,color-mix(in srgb,var(--macc) 7%,transparent) 0 75%,transparent 0) 0 0/60px 60px,var(--mbg)}
+.mu[data-ms=rubis]{background:conic-gradient(from 45deg at 50% 50%,color-mix(in srgb,var(--macc) 7%,transparent) 25%,transparent 0 50%,color-mix(in srgb,var(--macc) 7%,transparent) 0 75%,transparent 0) 0 0/60px 60px,var(--mbg)}
 .mu:not(.lux)[data-ms=rubis] .muCard{border:0;border-radius:0;clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 14px,100% calc(100% - 14px),calc(100% - 14px) 100%,14px 100%,0 calc(100% - 14px),0 14px);background:linear-gradient(135deg,color-mix(in srgb,var(--macc) 14%,var(--mcard)),var(--mcard) 45%)}
 .mu:not(.lux)[data-ms=rubis] .muBtn{clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);border-radius:0}
-.mu:not(.lux)[data-ms=glacier]{background:radial-gradient(circle,#fff6 0 1px,transparent 1.5px) 0 0/34px 34px,linear-gradient(180deg,color-mix(in srgb,var(--macc) 14%,var(--mbg)),var(--mbg))}
+.mu[data-ms=glacier]{background:radial-gradient(circle,#fff6 0 1px,transparent 1.5px) 0 0/34px 34px,linear-gradient(180deg,color-mix(in srgb,var(--macc) 14%,var(--mbg)),var(--mbg))}
 .mu:not(.lux)[data-ms=glacier] .muCard{border-radius:12px;background:color-mix(in srgb,var(--mcard) 70%,transparent);backdrop-filter:blur(8px);border:1px solid #ffffff30;box-shadow:inset 0 1px 0 #ffffff40}
-.mu:not(.lux)[data-ms=cuivre]{background:repeating-linear-gradient(90deg,#ffffff04 0 1px,transparent 1px 3px),var(--mbg)}
+.mu[data-ms=cuivre]{background:repeating-linear-gradient(90deg,#ffffff04 0 1px,transparent 1px 3px),var(--mbg)}
 .mu:not(.lux)[data-ms=cuivre] .muCard{border-radius:6px;border:2px solid color-mix(in srgb,var(--macc) 55%,#000);background:radial-gradient(circle at 10px 10px,var(--macc) 0 2.5px,transparent 3.5px),radial-gradient(circle at calc(100% - 10px) 10px,var(--macc) 0 2.5px,transparent 3.5px),linear-gradient(180deg,color-mix(in srgb,var(--macc) 10%,var(--mcard)),var(--mcard));box-shadow:inset 0 1px 0 #fff2,inset 0 -2px 0 #0006}
 .mu:not(.lux)[data-ms=cuivre] .muBtn{background:linear-gradient(180deg,color-mix(in srgb,var(--macc) 45%,var(--mcard2)),color-mix(in srgb,var(--macc) 15%,var(--mcard2)));border-radius:4px}
-.mu:not(.lux)[data-ms=lavande]{background:radial-gradient(60% 50% at 20% 20%,color-mix(in srgb,var(--macc) 14%,transparent),transparent),radial-gradient(60% 50% at 80% 90%,color-mix(in srgb,var(--macc2) 12%,transparent),transparent),var(--mbg)}
+.mu[data-ms=lavande]{background:radial-gradient(60% 50% at 20% 20%,color-mix(in srgb,var(--macc) 14%,transparent),transparent),radial-gradient(60% 50% at 80% 90%,color-mix(in srgb,var(--macc2) 12%,transparent),transparent),var(--mbg)}
 .mu:not(.lux)[data-ms=lavande] .muCard{border-radius:22px;border:2px dotted color-mix(in srgb,var(--macc) 45%,transparent);box-shadow:0 14px 40px #0005}
 .mu:not(.lux)[data-ms=lavande] .muBtn{border-radius:12px}
-.mu:not(.lux)[data-ms=foret]{background:radial-gradient(ellipse 18px 9px at 50% 50%,color-mix(in srgb,var(--macc) 9%,transparent) 60%,transparent 62%) 0 0/70px 50px,radial-gradient(ellipse 12px 6px at 50% 50%,color-mix(in srgb,var(--macc2) 8%,transparent) 60%,transparent 62%) 35px 25px/70px 50px,var(--mbg)}
+.mu[data-ms=foret]{background:radial-gradient(ellipse 18px 9px at 50% 50%,color-mix(in srgb,var(--macc) 9%,transparent) 60%,transparent 62%) 0 0/70px 50px,radial-gradient(ellipse 12px 6px at 50% 50%,color-mix(in srgb,var(--macc2) 8%,transparent) 60%,transparent 62%) 35px 25px/70px 50px,var(--mbg)}
 .mu:not(.lux)[data-ms=foret] .muCard{border-radius:4px 22px 4px 22px;border:0;border-left:5px solid var(--macc)}
-.mu:not(.lux)[data-ms=ocean]{background:repeating-radial-gradient(circle at 50% 120%,transparent 0 26px,color-mix(in srgb,var(--macc) 7%,transparent) 26px 28px),var(--mbg)}
+.mu[data-ms=ocean]{background:repeating-radial-gradient(circle at 50% 120%,transparent 0 26px,color-mix(in srgb,var(--macc) 7%,transparent) 26px 28px),var(--mbg)}
 .mu:not(.lux)[data-ms=ocean] .muCard{border-radius:16px;border:0;border-top:3px solid var(--macc);box-shadow:0 10px 26px #0007}
 .mu:not(.lux)[data-ms=ocean] .muBtn{border-radius:999px}
-.mu:not(.lux)[data-ms=soleil]{background:repeating-conic-gradient(from 0deg at 100% 0%,color-mix(in srgb,var(--macc) 8%,transparent) 0 4deg,transparent 4deg 12deg),radial-gradient(circle at 100% 0%,color-mix(in srgb,var(--macc) 30%,transparent),transparent 40%),var(--mbg)}
+.mu[data-ms=soleil]{background:repeating-conic-gradient(from 0deg at 100% 0%,color-mix(in srgb,var(--macc) 8%,transparent) 0 4deg,transparent 4deg 12deg),radial-gradient(circle at 100% 0%,color-mix(in srgb,var(--macc) 30%,transparent),transparent 40%),var(--mbg)}
 .mu:not(.lux)[data-ms=soleil] .muCard{border-radius:10px;border-color:color-mix(in srgb,var(--macc) 40%,transparent);box-shadow:0 6px 24px color-mix(in srgb,var(--macc) 16%,transparent)}
-.mu:not(.lux)[data-ms=cyber]{background:linear-gradient(color-mix(in srgb,var(--macc) 14%,transparent) 1px,transparent 1px) 0 0/100% 28px,linear-gradient(90deg,color-mix(in srgb,var(--macc2) 10%,transparent) 1px,transparent 1px) 0 0/28px 100%,var(--mbg)}
+.mu[data-ms=cyber]{background:linear-gradient(color-mix(in srgb,var(--macc) 14%,transparent) 1px,transparent 1px) 0 0/100% 28px,linear-gradient(90deg,color-mix(in srgb,var(--macc2) 10%,transparent) 1px,transparent 1px) 0 0/28px 100%,var(--mbg)}
 .mu:not(.lux)[data-ms=cyber] .muCard{border-radius:0;border:1px solid var(--macc);clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px));box-shadow:inset 0 0 18px color-mix(in srgb,var(--macc) 18%,transparent)}
-.mu:not(.lux)[data-ms=cyber] :is(.muHead,.muBtn,.muTitle){text-transform:uppercase;letter-spacing:2px} .mu:not(.lux)[data-ms=cyber] .muBtn{border-radius:0}
-.mu:not(.lux)[data-ms=neon]{background:radial-gradient(50% 40% at 10% 100%,color-mix(in srgb,var(--macc) 18%,transparent),transparent),radial-gradient(50% 40% at 90% 0%,color-mix(in srgb,var(--macc2) 16%,transparent),transparent),var(--mbg)}
+.mu[data-ms=cyber] :is(.muHead,.muBtn,.muTitle){text-transform:uppercase;letter-spacing:2px} .mu:not(.lux)[data-ms=cyber] .muBtn{border-radius:0}
+.mu[data-ms=neon]{background:radial-gradient(50% 40% at 10% 100%,color-mix(in srgb,var(--macc) 18%,transparent),transparent),radial-gradient(50% 40% at 90% 0%,color-mix(in srgb,var(--macc2) 16%,transparent),transparent),var(--mbg)}
 .mu:not(.lux)[data-ms=neon] .muCard{border-radius:14px;border:2px solid var(--macc);box-shadow:0 0 10px var(--macc),inset 0 0 10px color-mix(in srgb,var(--macc) 40%,transparent)}
-.mu:not(.lux)[data-ms=neon] .muTitle{color:#fff;text-shadow:0 0 4px #fff,0 0 12px var(--macc),0 0 24px var(--macc)}
+.mu[data-ms=neon] .muTitle{color:#fff;text-shadow:0 0 4px #fff,0 0 12px var(--macc),0 0 24px var(--macc)}
 .mu:not(.lux)[data-ms=neon] .muBtn{border-radius:999px;box-shadow:0 0 8px color-mix(in srgb,var(--macc) 50%,transparent)}
 `;
 export default async function (ctx) {
@@ -1910,7 +1910,7 @@ export default async function (ctx) {
         for (const r of rows) { const t = r?.track && typeof r.track === 'object' ? r.track : r || {}; const title = t.track || t.trackName || t.name || t.title; let artist = t.artist || t.artistName || '';
           if (!artist && Array.isArray(t.artists)) artist = t.artists.map(a => a?.name || '').join(', '); if (title) queries.push(`${title} ${artist}`.trim()); }
       } else if (/\.csv$/i.test(file.name)) for (const r of muCsv(text)) { const title = r['Track Name'] || r.track || r.title; if (title) queries.push(`${title} ${r['Artist Name(s)'] || r.artist || r.Artist || ''}`.trim()); }
-      else queries.push(...text.split(/\r?\n/).map(l => l.trim()).filter(l => l && !l.startsWith('#')));
+      else queries.push(...text.split(/\r?\n/).map(l => l.trim()).filter(l => l && !l.startsWith('#')).flatMap(l => /^@(?:[\w-]{11})+$/.test(l) ? l.slice(1).match(/.{11}/g).map(id => 'https://youtu.be/' + id) : [l]));  // QR serré : « @ » puis les identifiants YouTube collés
     } catch (e) { return muNotify('error', 'Import playlist', 'Impossible de lire le fichier :\n\n' + e.message); }
     if (!queries.length) return muNotify('warning', 'Import playlist', 'Aucun titre exploitable dans ce fichier.');
     if (muImporting) return muNotify('warning', 'NeoMusic', 'Un import de playlist est déjà en cours.');
@@ -2261,20 +2261,28 @@ export default async function (ctx) {
   }
     return encode;
   })();
-  const muQrLines = p => p.tracks.map(t => { const id = /(?:youtu\.be\/|[?&]v=)([\w-]{11})/.exec(t.url || '')?.[1]; return id ? 'https://youtu.be/' + id : t.url || t.display_title || ''; }).filter(Boolean);
+  // le moins de codes possible : les identifiants YouTube (11 signes) collés sur une ligne « @… », les autres musiques une par ligne ; un code tient ~2 800 octets (version 40)
+  function muQrPages(p, max = 2800) {
+    const pages = [], enc = new TextEncoder(); let ids = [], other = [], len = 0;
+    const flush = () => { pages.push({n: ids.length + other.length, text: [...(ids.length ? ['@' + ids.join('')] : []), ...other].join('\n')}); ids = []; other = []; len = 0; };
+    for (const t of p.tracks) {
+      const id = /(?:youtu\.be\/|[?&]v=)([\w-]{11})/.exec(t.url || '')?.[1], l = id ? '' : String(t.url || t.display_title || '').slice(0, 200); if (!id && !l) continue;
+      const add = id ? 11 : enc.encode(l).length + 1; if (len && len + add > max) flush(); if (id) ids.push(id); else other.push(l); len += add;
+    }
+    if (len) flush(); return pages;
+  }
   function muQrExport(name) {
     const p = muPl(name); if (!p?.tracks.length) return muNotify('warning', 'QR code', 'Cette playlist est vide.');
-    const pages = [[]]; let len = 0;  // about 700 characters per code: small enough for a phone to read it on a screen
-    for (const l of muQrLines(p)) { if (pages.at(-1).length && len + l.length > 700) { pages.push([]); len = 0; } pages.at(-1).push(l); len += l.length + 1; }
-    const w = muWindow('QR code', 520), can = mh('canvas', {style: {display: 'block', margin: '10px auto', imageRendering: 'pixelated', maxWidth: '100%'}}), info = mh('p.muWNote'); let i = 0;
+    const pages = muQrPages(p); let i = 0;
+    const w = muWindow('QR code', 640), can = mh('canvas', {style: {display: 'block', margin: '10px auto', imageRendering: 'pixelated', maxWidth: '100%'}}), info = mh('p.muWNote');
     const show = () => {
-      const q = muQr(`# NeoMusic · ${name} · ${i + 1}/${pages.length}\n` + pages[i].join('\n'), 'L'), n = q.size + 8, k = Math.max(2, Math.floor(400 / n)), g = can.getContext('2d');
+      const q = muQr(`# NeoMusic · ${name}` + (pages.length > 1 ? ` · ${i + 1}/${pages.length}` : '') + '\n' + pages[i].text, 'L'), n = q.size + 8, k = Math.max(3, Math.floor(560 / n)), g = can.getContext('2d');
       can.width = can.height = n * k; g.fillStyle = '#fff'; g.fillRect(0, 0, n * k, n * k); g.fillStyle = '#000';
       q.modules.forEach((r, y) => r.forEach((d, x) => d && g.fillRect((x + 4) * k, (y + 4) * k, k, k)));
-      info.textContent = `« ${name} » · code ${i + 1} sur ${pages.length} · ${pages[i].length} musique(s)`; prev.disabled = i === 0; next.disabled = i === pages.length - 1;
+      info.textContent = `« ${name} » · ` + (pages.length > 1 ? `code ${i + 1} sur ${pages.length} · ` : '') + `${pages[i].n} musique(s)`; prev.disabled = i === 0; next.disabled = i === pages.length - 1; prev.hidden = next.hidden = pages.length < 2;
     };
     const prev = muButton('◀ PRÉCÉDENT', () => { i--; show(); }), next = muButton('SUIVANT ▶', () => { i++; show(); });
-    w.body.append(muNote('Scanne les codes un par un : chaque code ajoute ses musiques à la playlist ouverte.'), can, info, mh('div.muWEnd', {}, prev, next, muButton('FERMER', w.close, 'accent')));
+    w.body.append(muNote(pages.length > 1 ? 'Scanne les codes un par un : chaque code ajoute ses musiques à la playlist ouverte.' : 'Scanne ce code : ses musiques s\'ajoutent à la playlist ouverte.'), can, info, mh('div.muWEnd', {}, prev, next, muButton('FERMER', w.close, 'accent')));
     show();
   }
 
@@ -2356,8 +2364,8 @@ export default async function (ctx) {
     b.append(muSec('JOURNAL'), muNote('Consulte le journal des erreurs de NeoMusic (téléchargements, lecture, imports) pour diagnostiquer un problème.'), mh('div.muWBtns', {}, muButton('VOIR LES LOGS', () => muLogs())));
     b.append(muSec('STOCKAGE'), muNote('Calcule le poids réel de NeoMusic sur le disque, détaillé par catégorie (musiques, pochettes, caches...).'), mh('div.muWBtns', {}, muButton('CALCULER LE POIDS DE L\'APPLI', () => muStorage())));
     const qrPl = mh('select.muSelect', {}, ...mu.playlists.filter(p => p.tracks.length).map(p => mh('option', {text: p.name, selected: p.name === mp.pl})));
-    b.append(muSec('EXPORTER EN QR CODE'), muNote('La liste des musiques d\'une playlist en QR codes, une musique par ligne (son lien YouTube, sinon son titre) comme un fichier .txt à importer : un autre téléphone la récupère avec IMPORTER UN QR CODE.'),
-      mh('div.muWBtns', {}, qrPl, muButton('AFFICHER LES QR CODES', () => muQrExport(qrPl.value), 'accent'), ));
+    b.append(muSec('EXPORTER EN QR CODE'), muNote('La liste des musiques d\'une playlist dans un seul QR code très serré (les vidéos YouTube en premier, puis les titres) ; au-delà d\'environ 250 musiques, il en faut plusieurs. Un autre téléphone la récupère avec IMPORTER UN QR CODE.'),
+      mh('div.muWBtns', {}, qrPl, muButton('AFFICHER LE QR CODE', () => muQrExport(qrPl.value), 'accent'), ));
     b.append(mh('div.muWEnd', {}, mh('span.muWNote', {text: 'Chaque réglage s\'enregistre tout seul.'}), muButton('FERMER', w.close, 'accent')));
   }
 

@@ -56,7 +56,11 @@ module.exports = async ({ pj, js, sleep, shot = async () => {} }) => {
     looks.add(await pf.executeJavaScript(`(() => { const mu = document.getElementById('mu'); mu.dataset.ms = '${m}'; const c = getComputedStyle(document.querySelector('.muCard')); return getComputedStyle(mu).backgroundImage + '|' + c.borderRadius + c.borderLeftWidth + c.clipPath + c.boxShadow; })()`));
     if (['nova', 'ambre', 'rubis', 'cuivre', 'cyber', 'neon'].includes(m)) { await sleep(200); await shot('theme-' + m); }
   }
-  await pf.executeJavaScript(`document.getElementById('mu').dataset.ms = 'nova'`);
   if (looks.size !== ms.length) throw new Error('thèmes : seulement ' + looks.size + ' décors différents sur ' + ms.length);
+  // en Deluxe aussi, le fond change avec le thème (3.3.5)
+  const lux = new Set(); await pf.executeJavaScript(`document.getElementById('mu').classList.add('lux', 'px')`);
+  for (const m of ms) { lux.add(await pf.executeJavaScript(`(() => { const mu = document.getElementById('mu'); mu.dataset.ms = '${m}'; return getComputedStyle(mu).backgroundImage; })()`)); if (['ambre', 'neon'].includes(m)) { await sleep(200); await shot('deluxe-' + m); } }
+  await pf.executeJavaScript(`document.getElementById('mu').classList.remove('lux', 'px'), document.getElementById('mu').dataset.ms = 'nova'`);
+  if (lux.size !== ms.length) throw new Error('Deluxe : seulement ' + lux.size + ' fonds différents sur ' + ms.length);
   return `options enregistrées toutes seules, police ${o2.font}, export QR · page affichée · widget dessiné par le plugin : ${out.join(', ')} · Disposer : ${p.rows} lignes · volume ${v0} → ${v1} · petit lecteur caché sur l'accueil`;
 };

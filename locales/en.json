@@ -570,9 +570,10 @@
  "POLICE": "FONT",
  "Celle du thème": "The theme's",
  "Ce raccourci sert déjà.": "This shortcut is already used.",
- "EXPORTER EN QR CODE": "EXPORT AS QR CODES",
- "La liste des musiques d'une playlist en QR codes, une musique par ligne (son lien YouTube, sinon son titre) comme un fichier .txt à importer : un autre téléphone la récupère avec IMPORTER UN QR CODE.": "The track list of a playlist as QR codes, one track per line (its YouTube link, otherwise its title) like a .txt file to import: another phone gets it with IMPORT A QR CODE.",
- "AFFICHER LES QR CODES": "SHOW THE QR CODES",
+ "EXPORTER EN QR CODE": "EXPORT AS A QR CODE",
  "IMPORTER UN QR CODE": "IMPORT A QR CODE",
- "Chaque réglage s'enregistre tout seul.": "Every setting is saved on its own."
+ "Chaque réglage s'enregistre tout seul.": "Every setting is saved on its own.",
+ "La liste des musiques d'une playlist dans un seul QR code très serré (les vidéos YouTube en premier, puis les titres) ; au-delà d'environ 250 musiques, il en faut plusieurs. Un autre téléphone la récupère avec IMPORTER UN QR CODE.": "The track list of a playlist in one very dense QR code (YouTube videos first, then titles); above about 250 tracks it takes several. Another phone gets it with IMPORT A QR CODE.",
+ "AFFICHER LE QR CODE": "SHOW THE QR CODE",
+ "Scanne ce code : ses musiques s'ajoutent à la playlist ouverte.": "Scan this code: its tracks are added to the open playlist."
 }
