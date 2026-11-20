@@ -48,5 +48,15 @@ module.exports = async ({ pj, js, sleep, shot = async () => {} }) => {
   const o2 = await pf.executeJavaScript(`({ now: document.querySelector('.muWin input[type=checkbox]').checked, font: getComputedStyle(document.getElementById('mu')).getPropertyValue('--mfont') })`);
   await pf.executeJavaScript(`document.querySelector('.muWin input[type=checkbox]').click(), [...document.querySelectorAll('.muWin .muBtn')].find(b => b.textContent === 'Celle du thème').click(), document.querySelector('.muWin .muWinBar button').click()`);
   if (o.save || o.mup || !o.qr || o2.now === o.was || !o2.font.includes('Pixelify')) throw new Error('Options : ' + JSON.stringify({ ...o, ...o2 }));
+  // chaque thème a son décor : fond et cartes différents d'un thème à l'autre (captures « theme-<nom> »)
+  await js(`newTab('plugin:neodex.music'), 0`); await sleep(800);
+  const looks = new Set(), ms = ['nova', 'onyx', 'grenat', 'aube', 'ambre', 'abyme', 'sakura', 'crepuscule', 'menthe', 'rubis', 'glacier', 'cuivre', 'lavande', 'foret', 'ocean', 'soleil', 'cyber', 'neon'];
+  if (await pf.executeJavaScript(`document.getElementById('mu').dataset.ms`) !== 'nova') throw new Error('thème : pas de décor data-ms');
+  for (const m of ms) {
+    looks.add(await pf.executeJavaScript(`(() => { const mu = document.getElementById('mu'); mu.dataset.ms = '${m}'; const c = getComputedStyle(document.querySelector('.muCard')); return getComputedStyle(mu).backgroundImage + '|' + c.borderRadius + c.borderLeftWidth + c.clipPath + c.boxShadow; })()`));
+    if (['nova', 'ambre', 'rubis', 'cuivre', 'cyber', 'neon'].includes(m)) { await sleep(200); await shot('theme-' + m); }
+  }
+  await pf.executeJavaScript(`document.getElementById('mu').dataset.ms = 'nova'`);
+  if (looks.size !== ms.length) throw new Error('thèmes : seulement ' + looks.size + ' décors différents sur ' + ms.length);
   return `options enregistrées toutes seules, police ${o2.font}, export QR · page affichée · widget dessiné par le plugin : ${out.join(', ')} · Disposer : ${p.rows} lignes · volume ${v0} → ${v1} · petit lecteur caché sur l'accueil`;
 };

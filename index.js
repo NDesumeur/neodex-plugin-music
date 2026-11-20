@@ -408,7 +408,61 @@ div.muCheck pre,.muLogs{margin:6px 0 0;white-space:pre-wrap;word-break:break-wor
 .muMode{border-radius:9px;border:1px solid transparent;transition:border-color .12s,background .12s} .muMode:hover{border-color:var(--macc)} .muMode.alt:hover{border-color:var(--macc2)}
 .muTrashList button{border-radius:6px} .muMenu{border-radius:8px} .muMenu button{border-radius:5px}
 .muWinBar button,.muDlgBar button{transition:background .12s,color .12s}
-@media (max-width:900px){.muNowSide{display:none}.muSide{width:200px}}`;
+@media (max-width:900px){.muNowSide{display:none}.muSide{width:200px}}
+/* 3.3.3 : chaque thème a son décor (fond, cartes, bordures, boutons), comme les thèmes NeoDex ; Deluxe garde son style pixel */
+.mu:not(.lux)[data-ms] .muCard{transition:box-shadow .2s}
+.mu:not(.lux)[data-ms=nova]{background:radial-gradient(1px 1px at 20% 30%,#fff9 50%,transparent),radial-gradient(1px 1px at 70% 80%,#fff7 50%,transparent),radial-gradient(1.5px 1.5px at 85% 20%,#fffa 50%,transparent),radial-gradient(1px 1px at 40% 65%,#fff6 50%,transparent),radial-gradient(120% 80% at 80% 0%,color-mix(in srgb,var(--macc) 16%,transparent),transparent 60%),var(--mbg);background-size:220px 220px,260px 260px,300px 300px,180px 180px,100% 100%}
+.mu:not(.lux)[data-ms=nova] .muCard{border-radius:14px;border-color:color-mix(in srgb,var(--macc) 35%,var(--mborder));box-shadow:0 0 22px color-mix(in srgb,var(--macc) 14%,transparent)}
+.mu:not(.lux)[data-ms=nova] .muTitle{text-shadow:0 0 12px color-mix(in srgb,var(--macc) 60%,transparent)}
+.mu:not(.lux)[data-ms=onyx]{background:linear-gradient(90deg,#ffffff07 1px,transparent 1px) 0 0/40px 40px,linear-gradient(#ffffff07 1px,transparent 1px) 0 0/40px 40px,var(--mbg)}
+.mu:not(.lux)[data-ms=onyx] .muCard{border:0;border-left:4px solid var(--macc);border-radius:0;box-shadow:6px 6px 0 #000}
+.mu:not(.lux)[data-ms=onyx] :is(.muHead,.muBtn){text-transform:uppercase;letter-spacing:2px} .mu:not(.lux)[data-ms=onyx] .muBtn{border-radius:0}
+.mu:not(.lux)[data-ms=grenat]{background:linear-gradient(160deg,color-mix(in srgb,var(--macc) 10%,var(--mbg)),var(--mbg) 55%)}
+.mu:not(.lux)[data-ms=grenat] .muCard{border-radius:10px;background:color-mix(in srgb,var(--mcard) 78%,transparent);border-color:#ffffff1c;box-shadow:inset 0 1px 0 #ffffff14,0 10px 30px #0006}
+.mu:not(.lux)[data-ms=grenat] .muSide{background:color-mix(in srgb,var(--mside) 80%,transparent);border-right:1px solid #ffffff12}
+.mu:not(.lux)[data-ms=aube]{background:linear-gradient(180deg,var(--mbg) 30%,color-mix(in srgb,var(--macc) 22%,var(--mbg)) 100%)}
+.mu:not(.lux)[data-ms=aube] .muCard{border-radius:18px;border:0;box-shadow:0 8px 28px #0005,inset 0 1px 0 color-mix(in srgb,var(--macc) 30%,transparent)}
+.mu:not(.lux)[data-ms=aube] .muBtn{border-radius:999px}
+.mu:not(.lux)[data-ms=ambre]{background:repeating-linear-gradient(45deg,transparent 0 22px,color-mix(in srgb,var(--macc) 6%,transparent) 22px 24px),var(--mbg)}
+.mu:not(.lux)[data-ms=ambre] .muCard{border-radius:0;border:1px solid var(--macc);outline:1px solid color-mix(in srgb,var(--macc) 45%,transparent);outline-offset:3px;margin:4px}
+.mu:not(.lux)[data-ms=ambre] .muTop{background:repeating-linear-gradient(90deg,var(--mside) 0 14px,color-mix(in srgb,var(--macc) 12%,var(--mside)) 14px 16px)}
+.mu:not(.lux)[data-ms=ambre] :is(.muTitle,.muHead){font-family:Georgia,'Times New Roman',serif;letter-spacing:1px}
+.mu:not(.lux)[data-ms=abyme]{background:radial-gradient(90% 70% at 50% 110%,color-mix(in srgb,var(--macc) 20%,transparent),transparent 70%),radial-gradient(70% 50% at 50% -10%,#0009,transparent),var(--mbg)}
+.mu:not(.lux)[data-ms=abyme] .muCard{border-radius:12px;border-color:color-mix(in srgb,var(--macc) 25%,transparent);box-shadow:inset 0 0 30px #0008,0 0 0 1px #0006}
+.mu:not(.lux)[data-ms=sakura]{background:radial-gradient(circle at 15% 25%,color-mix(in srgb,var(--macc) 14%,transparent) 0 3px,transparent 4px) 0 0/90px 90px,radial-gradient(circle at 60% 70%,color-mix(in srgb,var(--mheart) 12%,transparent) 0 2px,transparent 3px) 0 0/130px 130px,var(--mbg)}
+.mu:not(.lux)[data-ms=sakura] .muCard{border-radius:20px;border:2px dashed color-mix(in srgb,var(--macc) 40%,transparent)}
+.mu:not(.lux)[data-ms=sakura] .muBtn{border-radius:14px}
+.mu:not(.lux)[data-ms=crepuscule]{background:linear-gradient(180deg,var(--mbg) 0 40%,color-mix(in srgb,var(--macc2) 12%,var(--mbg)) 40% 60%,color-mix(in srgb,var(--macc) 18%,var(--mbg)) 60% 80%,color-mix(in srgb,var(--mdanger) 18%,var(--mbg)) 80%)}
+.mu:not(.lux)[data-ms=crepuscule] .muCard{border-radius:12px;border:0;border-bottom:3px solid var(--macc2);box-shadow:0 6px 20px #0006}
+.mu:not(.lux)[data-ms=menthe]{background:repeating-linear-gradient(-45deg,transparent 0 10px,color-mix(in srgb,var(--macc) 5%,transparent) 10px 11px),var(--mbg)}
+.mu:not(.lux)[data-ms=menthe] .muCard{border-radius:16px;border-color:color-mix(in srgb,var(--macc) 30%,transparent)}
+.mu:not(.lux)[data-ms=menthe] .muBtn{border-radius:999px} .mu:not(.lux)[data-ms=menthe] .muRow{border-radius:10px}
+.mu:not(.lux)[data-ms=rubis]{background:conic-gradient(from 45deg at 50% 50%,color-mix(in srgb,var(--macc) 7%,transparent) 25%,transparent 0 50%,color-mix(in srgb,var(--macc) 7%,transparent) 0 75%,transparent 0) 0 0/60px 60px,var(--mbg)}
+.mu:not(.lux)[data-ms=rubis] .muCard{border:0;border-radius:0;clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 14px,100% calc(100% - 14px),calc(100% - 14px) 100%,14px 100%,0 calc(100% - 14px),0 14px);background:linear-gradient(135deg,color-mix(in srgb,var(--macc) 14%,var(--mcard)),var(--mcard) 45%)}
+.mu:not(.lux)[data-ms=rubis] .muBtn{clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);border-radius:0}
+.mu:not(.lux)[data-ms=glacier]{background:radial-gradient(circle,#fff6 0 1px,transparent 1.5px) 0 0/34px 34px,linear-gradient(180deg,color-mix(in srgb,var(--macc) 14%,var(--mbg)),var(--mbg))}
+.mu:not(.lux)[data-ms=glacier] .muCard{border-radius:12px;background:color-mix(in srgb,var(--mcard) 70%,transparent);backdrop-filter:blur(8px);border:1px solid #ffffff30;box-shadow:inset 0 1px 0 #ffffff40}
+.mu:not(.lux)[data-ms=cuivre]{background:repeating-linear-gradient(90deg,#ffffff04 0 1px,transparent 1px 3px),var(--mbg)}
+.mu:not(.lux)[data-ms=cuivre] .muCard{border-radius:6px;border:2px solid color-mix(in srgb,var(--macc) 55%,#000);background:radial-gradient(circle at 10px 10px,var(--macc) 0 2.5px,transparent 3.5px),radial-gradient(circle at calc(100% - 10px) 10px,var(--macc) 0 2.5px,transparent 3.5px),linear-gradient(180deg,color-mix(in srgb,var(--macc) 10%,var(--mcard)),var(--mcard));box-shadow:inset 0 1px 0 #fff2,inset 0 -2px 0 #0006}
+.mu:not(.lux)[data-ms=cuivre] .muBtn{background:linear-gradient(180deg,color-mix(in srgb,var(--macc) 45%,var(--mcard2)),color-mix(in srgb,var(--macc) 15%,var(--mcard2)));border-radius:4px}
+.mu:not(.lux)[data-ms=lavande]{background:radial-gradient(60% 50% at 20% 20%,color-mix(in srgb,var(--macc) 14%,transparent),transparent),radial-gradient(60% 50% at 80% 90%,color-mix(in srgb,var(--macc2) 12%,transparent),transparent),var(--mbg)}
+.mu:not(.lux)[data-ms=lavande] .muCard{border-radius:22px;border:2px dotted color-mix(in srgb,var(--macc) 45%,transparent);box-shadow:0 14px 40px #0005}
+.mu:not(.lux)[data-ms=lavande] .muBtn{border-radius:12px}
+.mu:not(.lux)[data-ms=foret]{background:radial-gradient(ellipse 18px 9px at 50% 50%,color-mix(in srgb,var(--macc) 9%,transparent) 60%,transparent 62%) 0 0/70px 50px,radial-gradient(ellipse 12px 6px at 50% 50%,color-mix(in srgb,var(--macc2) 8%,transparent) 60%,transparent 62%) 35px 25px/70px 50px,var(--mbg)}
+.mu:not(.lux)[data-ms=foret] .muCard{border-radius:4px 22px 4px 22px;border:0;border-left:5px solid var(--macc)}
+.mu:not(.lux)[data-ms=ocean]{background:repeating-radial-gradient(circle at 50% 120%,transparent 0 26px,color-mix(in srgb,var(--macc) 7%,transparent) 26px 28px),var(--mbg)}
+.mu:not(.lux)[data-ms=ocean] .muCard{border-radius:16px;border:0;border-top:3px solid var(--macc);box-shadow:0 10px 26px #0007}
+.mu:not(.lux)[data-ms=ocean] .muBtn{border-radius:999px}
+.mu:not(.lux)[data-ms=soleil]{background:repeating-conic-gradient(from 0deg at 100% 0%,color-mix(in srgb,var(--macc) 8%,transparent) 0 4deg,transparent 4deg 12deg),radial-gradient(circle at 100% 0%,color-mix(in srgb,var(--macc) 30%,transparent),transparent 40%),var(--mbg)}
+.mu:not(.lux)[data-ms=soleil] .muCard{border-radius:10px;border-color:color-mix(in srgb,var(--macc) 40%,transparent);box-shadow:0 6px 24px color-mix(in srgb,var(--macc) 16%,transparent)}
+.mu:not(.lux)[data-ms=cyber]{background:linear-gradient(color-mix(in srgb,var(--macc) 14%,transparent) 1px,transparent 1px) 0 0/100% 28px,linear-gradient(90deg,color-mix(in srgb,var(--macc2) 10%,transparent) 1px,transparent 1px) 0 0/28px 100%,var(--mbg)}
+.mu:not(.lux)[data-ms=cyber] .muCard{border-radius:0;border:1px solid var(--macc);clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px));box-shadow:inset 0 0 18px color-mix(in srgb,var(--macc) 18%,transparent)}
+.mu:not(.lux)[data-ms=cyber] :is(.muHead,.muBtn,.muTitle){text-transform:uppercase;letter-spacing:2px} .mu:not(.lux)[data-ms=cyber] .muBtn{border-radius:0}
+.mu:not(.lux)[data-ms=neon]{background:radial-gradient(50% 40% at 10% 100%,color-mix(in srgb,var(--macc) 18%,transparent),transparent),radial-gradient(50% 40% at 90% 0%,color-mix(in srgb,var(--macc2) 16%,transparent),transparent),var(--mbg)}
+.mu:not(.lux)[data-ms=neon] .muCard{border-radius:14px;border:2px solid var(--macc);box-shadow:0 0 10px var(--macc),inset 0 0 10px color-mix(in srgb,var(--macc) 40%,transparent)}
+.mu:not(.lux)[data-ms=neon] .muTitle{color:#fff;text-shadow:0 0 4px #fff,0 0 12px var(--macc),0 0 24px var(--macc)}
+.mu:not(.lux)[data-ms=neon] .muBtn{border-radius:999px;box-shadow:0 0 8px color-mix(in srgb,var(--macc) 50%,transparent)}
+`;
 export default async function (ctx) {
   const view = ctx.view;
   // le côté système de NeoMusic (yt-dlp, fichiers, raccourcis globaux) vit dans le main.js du plugin : « neo.musicXxx » y est redirigé
@@ -668,6 +722,7 @@ export default async function (ctx) {
       for (const [k, c] of Object.entries(v)) s.setProperty('--m' + k, T[c]);
       s.setProperty('--mpress', muShade(T.CARD, -.18)); s.setProperty('--mfont', muFont());
     }
+    $('mu').dataset.ms = (MU_THEMES[mu.settings.theme] ? mu.settings.theme : 'Nova').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();  // le décor du thème (CSS data-ms)
     mp.disc = null; mp.discKey = ''; mp.specKey = '';
     muPlayIcon();
   }
