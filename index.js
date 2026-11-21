@@ -65,6 +65,7 @@ const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strip
   box-shadow:0 -3px 0 0 var(--macc),0 3px 0 0 var(--mborder),-3px 0 0 0 var(--mborder),3px 0 0 0 var(--mborder),0 -6px 0 -3px var(--macc),9px 9px 0 0 rgba(0,0,0,.45)}
 .muMini.on{display:grid;animation:mmIn .2s steps(4)}
 @keyframes mmIn{from{transform:translateY(12px);opacity:.3}}
+#mmAmb{position:absolute;inset:0;width:100%;height:100%;z-index:0;image-rendering:pixelated;pointer-events:none;display:none} .muMini.amb #mmAmb{display:block} .muMini.amb>:not(#mmAmb){position:relative;z-index:1}
 .muMini.drag{cursor:var(--cgg,grabbing)}
 .muMini::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:repeating-linear-gradient(90deg,var(--macc) 0 6px,var(--macc2) 6px 9px);opacity:.55}
 #mmDisc{width:92px;height:92px;align-self:center} .muMini.deck{width:460px;grid-template-columns:130px 1fr} .muMini.deck #mmDisc{width:130px;height:96px}  /* 460 : la largeur maxi d’une frame flottante de NeoDex */
@@ -1020,7 +1021,7 @@ export default async function (ctx) {
     mp.wAt = performance.now();
     const t = mp.cur; if (!ctx.widget?.set || !T) return;
     const playing = !!muAudio && !muAudio.paused, q = mp.queue.length ? mp.queue : mp.view, i = t ? q.findIndex(x => muId(x) === muId(t)) : -1;
-    const s = mu.settings, look = { T, deck: { vinyl: s.vinyl, deckBase: s.deckBase, deckArm: s.deckArm, deckStyle: s.deckStyle, deckLuxe: s.deckLuxe }, level: muLevel().level, vol: s.volume };  // le visuel choisi du petit lecteur
+    const s = mu.settings, look = { T, deck: { vinyl: s.vinyl, deckBase: s.deckBase, deckArm: s.deckArm, deckStyle: s.deckStyle, deckLuxe: s.deckLuxe }, level: muLevel().level, vol: s.volume, ms: $('mu').dataset.ms || 'nova', amb: muAmbSmallOn() };  // le visuel choisi du petit lecteur
     const w = t ? { title: t.display_title || t.file || '', artist: t.author || muPlaylistOf(t)?.name || '', cover: s.noImages ? '' : t.cover || '', playing, fav: mp.favs.has(muId(t)), dur: muAudio?.duration || muDur(t) || 0, ...look } : look;
     muPresence();
     const k = JSON.stringify(w); if (k === muWLast && Date.now() - muWAt < 15e3) return; muWLast = k; muWAt = Date.now(); mp.wData = w;
@@ -1425,7 +1426,7 @@ export default async function (ctx) {
   function muMiniBuild() {
     const btn = (id, icon, title, fn) => mh('button.mmBtn#' + id, {title, html: muPixIcon(icon), onclick: e => { e.stopPropagation(); fn(); setTimeout(muMiniPaint, 80); }});
     const box = mh('div.muMini#muMini', {title: 'Glisser : déplacer · Clic : pause / lecture · Double-clic : revenir à NeoMusic · Molette : volume'},
-      mh('canvas#mmDisc', {width: 184, height: 184}),
+      mh('canvas#mmAmb'), mh('canvas#mmDisc', {width: 184, height: 184}),
       mh('div.mmBody', {},
         mh('div.mmTop', {}, mh('span.mmKick', {text: 'NEOMUSIC'}), mh('span#mmState'),
           btn('mmBack', 'ext', 'Revenir à NeoMusic', () => muShowTab()), btn('mmClose', 'close', 'Fermer (met la musique en pause)', () => { muPause(); mp.miniOff = true; muMiniSync(); })),
@@ -1486,6 +1487,7 @@ export default async function (ctx) {
     $('mmVol').textContent = 'VOL ' + Math.round(mu.settings.volume * 100) + ' %';
   }
   function muMiniFrame(now) {
+    const on = muAmbSmallOn(); $('muMini').classList.toggle('amb', on); if (on) muAmbSmall(muAmbMini, $('muMini'), $('mmAmb'), $('mu').dataset.ms || 'nova', T, muBass(), now);
     const cv = $('mmDisc'), deck = $('muMini').classList.contains('deck');
     if (deck) {  // la même platine que dans NeoMusic, dessinée à la taille réelle du canevas
       const r = cv.getBoundingClientRect(), k = devicePixelRatio || 1, w = Math.round(r.width * k), h = Math.round(r.height * k);
@@ -1506,6 +1508,7 @@ export default async function (ctx) {
     $('mmSeek').firstChild.style.width = (dur ? Math.min(100, pos / dur * 100) : 0) + '%';
     $('mmTime').textContent = muClock(pos) + ' / ' + muClock(dur);
   }
+  // platine:début (recopié tel quel dans widget.js par tools/widget-sync.js : le widget dessine aussi l'ambiance)
   /* ---------- l'ambiance du thème : une petite scène en pixels derrière l'appli (ciel, décor, particules en profondeur), qui réagit aux basses ---------- */
   // une toile au tiers de la taille de la page, 30 images par seconde au plus ; le décor fixe (ciel, silhouettes) est peint une fois, puis recopié à chaque image
   const MU_AMB = {nova: 'space', onyx: 'night', grenat: 'bokeh', aube: 'dawn', ambre: 'shafts', abyme: 'abyss', sakura: 'sakura', crepuscule: 'dusk', menthe: 'fizz',
@@ -1870,28 +1873,16 @@ export default async function (ctx) {
     }
     if (k > .3) { x.globalAlpha = .1 * k; x.drawImage(muVGrad(C.a), 0, -H * .6, W, H * 1.2); }  // un coup de basse : une vague de lumière douce
   }
-  function muAmbFrame(now) {
-    const cv = $('muAmb'), on = mu.settings.ambiance !== false && !mu.settings.noImages, root = $('mu');
-    root.classList.toggle('amb', on);
-    if (!on) { if (muAmb.ms) { muAmb.ms = ''; cv.getContext('2d').clearRect(0, 0, cv.width, cv.height); } return; }
-    if (now - muAmb.at < 33) return;
+  const muAmbC = T => ({bg: T.BG || T.CARD, card: T.CARD, a: T.ACCENT, b: T.ACCENT_2, t: T.TEXT, s: T.SUBTEXT, w: T.WARN, d: T.DANGER, h: T.HEART || T.DANGER, n: muMix(T.BG || T.CARD, '#000000', .55)});
+  // une image de l'ambiance dans la toile cv (W x H), pour l'état muAmb en cours ; bass : le niveau des basses (0 à 1)
+  function muAmbDraw(cv, W, H, ms, C, bass, now) {
     const dt = Math.min(.1, (now - (muAmb.at || now)) / 1000); muAmb.at = now; muAmb.t += dt;
-    const W = Math.ceil(root.clientWidth / 3), H = Math.ceil(root.clientHeight / 3); if (!W || !H) return;
     if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; muAmb.ms = ''; }
-    const ms = root.dataset.ms || 'nova', sc = MU_SCN[MU_AMB[ms]] || MU_SCN.space;
-    const C = {bg: T.BG, card: T.CARD, a: T.ACCENT, b: T.ACCENT_2, t: T.TEXT, s: T.SUBTEXT, w: T.WARN, d: T.DANGER, h: T.HEART || T.DANGER, n: muMix(T.BG, '#000000', .55)};
-    if (now - (muAmb.gAt || 0) > 1000) {  // la ligne de sol : le bas des cartes du haut (elles laissent le plus voir la scène)
-      muAmb.gAt = now; const top = root.getBoundingClientRect().top, b = Math.max(0, ...[...root.querySelectorAll('.muNow,.muReco')].filter(e => e.offsetHeight).map(e => e.getBoundingClientRect().bottom - top));
-      const G = Math.round(b ? Math.max(H * .35, Math.min(H * .8, b / 3)) : H * .62); if (Math.abs(G - (muAmb.G || 0)) > 3) { muAmb.G = G; muAmb.ms = ''; }
-      const nw = root.querySelector('.muNow'), rr = root.getBoundingClientRect(), q = nw?.offsetHeight && nw.getBoundingClientRect();  // la carte du lecteur, en pixels de la toile (Cyber s'y fait discret)
-      muAmb.now = q ? [(q.left - rr.left) / 3, (q.top - top) / 3, (q.right - rr.left) / 3, (q.bottom - top) / 3] : null;
-    }
-    const key = ms + Object.values(C).join('');
+    const sc = MU_SCN[MU_AMB[ms]] || MU_SCN.space, key = ms + W + 'x' + H + Object.values(C).join('');
     if (muAmb.ms !== key) {  // un nouveau thème (ou une autre taille) : le décor est repeint, les particules recréées
       muAmb.ms = key; muAmb.spr.clear(); muAmb.fx = []; muAmb.gust = 0; muAmb.parts = sc.init(W, H, C); muAmb.deep = muDeepInit(W, H, MU_DEEP[MU_AMB[ms]]);
       const bd = muAmb.bd = document.createElement('canvas'); bd.width = W; bd.height = H; sc.back?.(bd.getContext('2d'), W, H, C);
     }
-    const playing = muAudio && !muAudio.paused, bass = playing ? (muSpec.levels[0] + muSpec.levels[1] + muSpec.levels[2]) / 3 : 0;
     muAmb.e = Math.max(bass, muAmb.e * .9);  // monte d'un coup sur un coup de basse, retombe doucement
     muAmb.avg = muAmb.avg * .94 + bass * .06;
     if (bass > muAmb.avg * 1.3 + .06 && now - muAmb.kAt > 220) { muAmb.kick = 1; muAmb.kAt = now; } else muAmb.kick *= .6;  // un coup de basse net : les scènes y réagissent (rafale, éclair, étincelles…)
@@ -1900,6 +1891,34 @@ export default async function (ctx) {
     muAmb.fx = muAmb.fx.filter(s => s.life > 0 && s.y < H + 20 && s.y > -40);
     x.globalAlpha = 1;
   }
+  // l'ambiance dans un petit lecteur (box : son cadre, cv : sa toile au tiers), avec son propre état (st) : les scènes lisent muAmb, on l'échange le temps d'une image
+  function muAmbSmall(st, box, cv, ms, T, bass, now) {
+    if (now - (st.at || 0) < 33) return;
+    const W = Math.ceil(box.offsetWidth / 3), H = Math.ceil(box.offsetHeight / 3); if (!W || !H) return;
+    const keep = {...muAmb}; for (const k in muAmb) delete muAmb[k];
+    Object.assign(muAmb, {at: 0, ms: '', parts: [], fx: [], e: 0, t: 0, kick: 0, avg: 0, kAt: 0, gust: 0, spr: new Map(), ...st, G: Math.round(H * .7), now: null});
+    try { muAmbDraw(cv, W, H, ms, muAmbC(T), bass, now); }
+    finally { for (const k in st) delete st[k]; Object.assign(st, muAmb); for (const k in muAmb) delete muAmb[k]; Object.assign(muAmb, keep); }
+  }
+  // platine:fin
+  function muAmbFrame(now) {
+    const cv = $('muAmb'), on = mu.settings.ambiance !== false && !mu.settings.noImages, root = $('mu');
+    root.classList.toggle('amb', on);
+    if (!on) { if (muAmb.ms) { muAmb.ms = ''; cv.getContext('2d').clearRect(0, 0, cv.width, cv.height); } return; }
+    if (now - muAmb.at < 33) return;
+    const W = Math.ceil(root.clientWidth / 3), H = Math.ceil(root.clientHeight / 3); if (!W || !H) return;
+    const ms = root.dataset.ms || 'nova', C = muAmbC(T);
+    if (now - (muAmb.gAt || 0) > 1000) {  // la ligne de sol : le bas des cartes du haut (elles laissent le plus voir la scène)
+      muAmb.gAt = now; const top = root.getBoundingClientRect().top, b = Math.max(0, ...[...root.querySelectorAll('.muNow,.muReco')].filter(e => e.offsetHeight).map(e => e.getBoundingClientRect().bottom - top));
+      const G = Math.round(b ? Math.max(H * .35, Math.min(H * .8, b / 3)) : H * .62); if (Math.abs(G - (muAmb.G || 0)) > 3) { muAmb.G = G; muAmb.ms = ''; }
+      const nw = root.querySelector('.muNow'), rr = root.getBoundingClientRect(), q = nw?.offsetHeight && nw.getBoundingClientRect();  // la carte du lecteur, en pixels de la toile (Cyber s'y fait discret)
+      muAmb.now = q ? [(q.left - rr.left) / 3, (q.top - top) / 3, (q.right - rr.left) / 3, (q.bottom - top) / 3] : null;
+    }
+    muAmbDraw(cv, W, H, ms, C, muBass(), now);
+  }
+  const muBass = () => muAudio && !muAudio.paused ? (muSpec.levels[0] + muSpec.levels[1] + muSpec.levels[2]) / 3 || 0 : 0;
+  const muAmbMini = {};  // l'état de l'ambiance du petit lecteur (Options : « Ambiance sur le petit lecteur et le widget »)
+  const muAmbSmallOn = () => !!mu.settings.ambMini && mu.settings.ambiance !== false && !mu.settings.noImages;
   function muFrame(now) {
     requestAnimationFrame(muFrame);
     mp.frameAt = now;
@@ -2753,7 +2772,7 @@ export default async function (ctx) {
     const dateNow = st.dateAdded ? 'add' : st.releaseDate ? 'rel' : '';
     const dateSel = mh('select.muSelect', {onchange: () => { st.dateAdded = dateSel.value === 'add'; st.releaseDate = dateSel.value === 'rel'; apply(); }}, ...[['', 'Aucune'], ['add', 'Date d\'ajout'], ['rel', 'Date de sortie']].map(([v, t]) => mh('option', {value: v, text: t, selected: v === dateNow})));
     st.ambiance ??= true;  // les réglages d'avant la 2.4.2 n'ont pas cette clé : l'ambiance est là par défaut
-    pane.look.append(muSec('AFFICHAGE'), check('Ambiance animée du thème', 'ambiance', 'Étoiles, pétales, neige, bulles… qui bougent avec les basses'), check('Visualiseur audio', 'visualizer'), ...(lv.level >= 100 ? [check('Super visualiseur', 'superVis', 'Reflet, étincelles et lueur des basses')] : []),
+    pane.look.append(muSec('AFFICHAGE'), check('Ambiance animée du thème', 'ambiance', 'Étoiles, pétales, neige, bulles… qui bougent avec les basses'), check('Ambiance sur le petit lecteur et le widget', 'ambMini', 'La scène du thème aussi derrière le petit lecteur et le widget de l’accueil'), check('Visualiseur audio', 'visualizer'), ...(lv.level >= 100 ? [check('Super visualiseur', 'superVis', 'Reflet, étincelles et lueur des basses')] : []),
       check('Pochette en disque vinyle', 'vinyl'), check('Forme d\'onde dans la barre de progression', 'waveform'), check('Appli pixel', 'pixelUi', 'Cadres, boutons et police de petit lecteur'),
       ...(lv.level >= 200 ? [check('Interface Deluxe', 'deluxe', 'L\'appli pixel en grand, la platine en vedette')] : []),
       check('Mur de pochettes', 'gallery', 'Une grille de pochettes au lieu de la liste'), check('Petit lecteur', 'mini', 'Seulement les playlists et les musiques'),

@@ -23,6 +23,11 @@ module.exports = async ({ pj, js, sleep, shot = async () => {} }) => {
   // sans la platine : le disque seul, comme le petit lecteur
   await js(`pluginApi(pluginInfo.get('neodex.music'), 'widget', { data: { ...pluginWidgets['neodex.music'].data, deck: { vinyl: true }, level: 40, at: Date.now() } }).then(() => 0)`); await sleep(900);
   if (await wj(`document.querySelector('.muMini').classList.contains('deck')`)) throw new Error('widget : la platine reste sans le niveau 150'); await shot('widget-disque');
+  // l'option « Ambiance sur le petit lecteur et le widget » : la scène du thème (ici Rubis) dessinée derrière le widget
+  await js(`pluginApi(pluginInfo.get('neodex.music'), 'widget', { data: { ...pluginWidgets['neodex.music'].data, amb: true, ms: 'rubis', at: Date.now() } }).then(() => 0)`); await sleep(900);
+  const apx = await wj(`(() => { const c = document.getElementById('mmAmb'); if (!c || !c.width || getComputedStyle(c).display === 'none') return -1; const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; let n = 0; for (let i = 3; i < d.length; i += 4) if (d[i]) n++; return n; })()`);
+  if (!(apx > 50)) throw new Error('widget : ambiance du thème : ' + apx + ' pixels'); await shot('widget-ambiance');
+  await js(`pluginApi(pluginInfo.get('neodex.music'), 'widget', { data: { ...pluginWidgets['neodex.music'].data, amb: false, at: Date.now() } }).then(() => 0)`); await sleep(300);
   // un bouton du widget lance la commande du plugin (ici « fav », sans morceau : rien ne casse)
   await wj(`document.querySelector('#mmFav').click(), 0`); await sleep(500);
   await js(`$('layoutBtn').click(), 0`); await sleep(500); await shot('disposer');
