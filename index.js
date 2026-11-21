@@ -427,9 +427,8 @@ div.muCheck pre,.muLogs{margin:6px 0 0;white-space:pre-wrap;word-break:break-wor
 @media (max-width:900px){.muNowSide{display:none}.muSide{width:200px}}
 /* 3.3.3 : chaque thème a son décor (fond, cartes, bordures, boutons), comme les thèmes NeoDex ; en Deluxe, le fond et les titres du thème sur le style pixel (3.3.5) */
 .mu:not(.lux)[data-ms] .muCard{transition:box-shadow .2s}
-.mu[data-ms=nova]{background:radial-gradient(1px 1px at 20% 30%,#fff9 50%,transparent),radial-gradient(1px 1px at 70% 80%,#fff7 50%,transparent),radial-gradient(1.5px 1.5px at 85% 20%,#fffa 50%,transparent),radial-gradient(1px 1px at 40% 65%,#fff6 50%,transparent),radial-gradient(120% 80% at 80% 0%,color-mix(in srgb,var(--macc) 16%,transparent),transparent 60%),var(--mbg);background-size:220px 220px,260px 260px,300px 300px,180px 180px,100% 100%}
-.mu:not(.lux)[data-ms=nova] .muCard{border-radius:14px;border-color:color-mix(in srgb,var(--macc) 35%,var(--mborder));box-shadow:0 0 22px color-mix(in srgb,var(--macc) 14%,transparent)}
-.mu[data-ms=nova] .muTitle{text-shadow:0 0 12px color-mix(in srgb,var(--macc) 60%,transparent)}
+.mu[data-ms=nova]{background:radial-gradient(circle,#ffffff12 0 1px,transparent 1.5px) 0 0/48px 48px,var(--mbg)}
+.mu:not(.lux)[data-ms=nova] .muCard{border-radius:4px;border-color:color-mix(in srgb,var(--macc) 35%,var(--mborder))}
 .mu[data-ms=onyx]{background:linear-gradient(90deg,#ffffff07 1px,transparent 1px) 0 0/40px 40px,linear-gradient(#ffffff07 1px,transparent 1px) 0 0/40px 40px,var(--mbg)}
 .mu:not(.lux)[data-ms=onyx] .muCard{border:0;border-left:4px solid var(--macc);border-radius:0;box-shadow:6px 6px 0 #000}
 .mu[data-ms=onyx] :is(.muHead,.muBtn){text-transform:uppercase;letter-spacing:2px} .mu:not(.lux)[data-ms=onyx] .muBtn{border-radius:0}
@@ -443,8 +442,8 @@ div.muCheck pre,.muLogs{margin:6px 0 0;white-space:pre-wrap;word-break:break-wor
 .mu:not(.lux)[data-ms=ambre] .muCard{border-radius:0;border:1px solid var(--macc);outline:1px solid color-mix(in srgb,var(--macc) 45%,transparent);outline-offset:3px;margin:4px}
 .mu:not(.lux)[data-ms=ambre] .muTop{background:repeating-linear-gradient(90deg,var(--mside) 0 14px,color-mix(in srgb,var(--macc) 12%,var(--mside)) 14px 16px)}
 .mu[data-ms=ambre] :is(.muTitle,.muHead){font-family:Georgia,'Times New Roman',serif;letter-spacing:1px}
-.mu[data-ms=abyme]{background:radial-gradient(90% 70% at 50% 110%,color-mix(in srgb,var(--macc) 20%,transparent),transparent 70%),radial-gradient(70% 50% at 50% -10%,#0009,transparent),var(--mbg)}
-.mu:not(.lux)[data-ms=abyme] .muCard{border-radius:12px;border-color:color-mix(in srgb,var(--macc) 25%,transparent);box-shadow:inset 0 0 30px #0008,0 0 0 1px #0006}
+.mu[data-ms=abyme]{background:linear-gradient(180deg,var(--mbg),color-mix(in srgb,var(--mbg) 70%,#000)),var(--mbg)}
+.mu:not(.lux)[data-ms=abyme] .muCard{border-radius:12px;border-color:color-mix(in srgb,var(--macc) 25%,transparent);box-shadow:0 0 0 1px #0006}
 .mu[data-ms=sakura]{background:radial-gradient(circle at 15% 25%,color-mix(in srgb,var(--macc) 14%,transparent) 0 3px,transparent 4px) 0 0/90px 90px,radial-gradient(circle at 60% 70%,color-mix(in srgb,var(--mheart) 12%,transparent) 0 2px,transparent 3px) 0 0/130px 130px,var(--mbg)}
 .mu:not(.lux)[data-ms=sakura] .muCard{border-radius:20px;border:2px dashed color-mix(in srgb,var(--macc) 40%,transparent)}
 .mu:not(.lux)[data-ms=sakura] .muBtn{border-radius:14px}
@@ -456,8 +455,8 @@ div.muCheck pre,.muLogs{margin:6px 0 0;white-space:pre-wrap;word-break:break-wor
 .mu[data-ms=rubis]{background:conic-gradient(from 45deg at 50% 50%,color-mix(in srgb,var(--macc) 7%,transparent) 25%,transparent 0 50%,color-mix(in srgb,var(--macc) 7%,transparent) 0 75%,transparent 0) 0 0/60px 60px,var(--mbg)}
 .mu:not(.lux)[data-ms=rubis] .muCard{border:0;border-radius:0;clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 14px,100% calc(100% - 14px),calc(100% - 14px) 100%,14px 100%,0 calc(100% - 14px),0 14px);background:linear-gradient(135deg,color-mix(in srgb,var(--macc) 14%,var(--mcard)),var(--mcard) 45%)}
 .mu:not(.lux)[data-ms=rubis] .muBtn{clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);border-radius:0}
-.mu[data-ms=glacier]{background:radial-gradient(circle,#fff6 0 1px,transparent 1.5px) 0 0/34px 34px,linear-gradient(180deg,color-mix(in srgb,var(--macc) 14%,var(--mbg)),var(--mbg))}
-.mu:not(.lux)[data-ms=glacier] .muCard{border-radius:12px;background:color-mix(in srgb,var(--mcard) 70%,transparent);backdrop-filter:blur(8px);border:1px solid #ffffff30;box-shadow:inset 0 1px 0 #ffffff40}
+.mu[data-ms=glacier]{background:radial-gradient(circle,#fff6 0 1px,transparent 1.5px) 0 0/34px 34px,var(--mbg)}
+.mu:not(.lux)[data-ms=glacier] .muCard{border-radius:12px;background:color-mix(in srgb,var(--mcard) 70%,transparent);border:1px solid #ffffff30}
 .mu[data-ms=cuivre]{background:repeating-linear-gradient(90deg,#ffffff04 0 1px,transparent 1px 3px),var(--mbg)}
 .mu:not(.lux)[data-ms=cuivre] .muCard{border-radius:6px;border:2px solid color-mix(in srgb,var(--macc) 55%,#000);background:radial-gradient(circle at 10px 10px,var(--macc) 0 2.5px,transparent 3.5px),radial-gradient(circle at calc(100% - 10px) 10px,var(--macc) 0 2.5px,transparent 3.5px),linear-gradient(180deg,color-mix(in srgb,var(--macc) 10%,var(--mcard)),var(--mcard));box-shadow:inset 0 1px 0 #fff2,inset 0 -2px 0 #0006}
 .mu:not(.lux)[data-ms=cuivre] .muBtn{background:linear-gradient(180deg,color-mix(in srgb,var(--macc) 45%,var(--mcard2)),color-mix(in srgb,var(--macc) 15%,var(--mcard2)));border-radius:4px}
@@ -469,15 +468,15 @@ div.muCheck pre,.muLogs{margin:6px 0 0;white-space:pre-wrap;word-break:break-wor
 .mu[data-ms=ocean]{background:repeating-radial-gradient(circle at 50% 120%,transparent 0 26px,color-mix(in srgb,var(--macc) 7%,transparent) 26px 28px),var(--mbg)}
 .mu:not(.lux)[data-ms=ocean] .muCard{border-radius:16px;border:0;border-top:3px solid var(--macc);box-shadow:0 10px 26px #0007}
 .mu:not(.lux)[data-ms=ocean] .muBtn{border-radius:999px}
-.mu[data-ms=soleil]{background:repeating-conic-gradient(from 0deg at 100% 0%,color-mix(in srgb,var(--macc) 8%,transparent) 0 4deg,transparent 4deg 12deg),radial-gradient(circle at 100% 0%,color-mix(in srgb,var(--macc) 30%,transparent),transparent 40%),var(--mbg)}
-.mu:not(.lux)[data-ms=soleil] .muCard{border-radius:10px;border-color:color-mix(in srgb,var(--macc) 40%,transparent);box-shadow:0 6px 24px color-mix(in srgb,var(--macc) 16%,transparent)}
+.mu[data-ms=soleil]{background:repeating-conic-gradient(from 0deg at 100% 0%,color-mix(in srgb,var(--macc) 6%,transparent) 0 4deg,transparent 4deg 12deg),var(--mbg)}
+.mu:not(.lux)[data-ms=soleil] .muCard{border-radius:10px;border-color:color-mix(in srgb,var(--macc) 40%,transparent)}
 .mu[data-ms=cyber]{background:linear-gradient(color-mix(in srgb,var(--macc) 14%,transparent) 1px,transparent 1px) 0 0/100% 28px,linear-gradient(90deg,color-mix(in srgb,var(--macc2) 10%,transparent) 1px,transparent 1px) 0 0/28px 100%,var(--mbg)}
-.mu:not(.lux)[data-ms=cyber] .muCard{border-radius:0;border:1px solid var(--macc);clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px));box-shadow:inset 0 0 18px color-mix(in srgb,var(--macc) 18%,transparent)}
+.mu:not(.lux)[data-ms=cyber] .muCard{border-radius:0;border:1px solid var(--macc);clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px))}
 .mu[data-ms=cyber] :is(.muHead,.muBtn,.muTitle){text-transform:uppercase;letter-spacing:2px} .mu:not(.lux)[data-ms=cyber] .muBtn{border-radius:0}
-.mu[data-ms=neon]{background:radial-gradient(50% 40% at 10% 100%,color-mix(in srgb,var(--macc) 18%,transparent),transparent),radial-gradient(50% 40% at 90% 0%,color-mix(in srgb,var(--macc2) 16%,transparent),transparent),var(--mbg)}
-.mu:not(.lux)[data-ms=neon] .muCard{border-radius:14px;border:2px solid var(--macc);box-shadow:0 0 10px var(--macc),inset 0 0 10px color-mix(in srgb,var(--macc) 40%,transparent)}
-.mu[data-ms=neon] .muTitle{color:#fff;text-shadow:0 0 4px #fff,0 0 12px var(--macc),0 0 24px var(--macc)}
-.mu:not(.lux)[data-ms=neon] .muBtn{border-radius:999px;box-shadow:0 0 8px color-mix(in srgb,var(--macc) 50%,transparent)}
+.mu[data-ms=neon]{background:var(--mbg)}
+.mu:not(.lux)[data-ms=neon] .muCard{border-radius:0;border:2px solid var(--macc);box-shadow:3px 3px 0 color-mix(in srgb,var(--macc2) 55%,transparent)}
+.mu[data-ms=neon] .muTitle{color:var(--macc)}
+.mu:not(.lux)[data-ms=neon] .muBtn{border-radius:0}
 `;
 export default async function (ctx) {
   const view = ctx.view;
@@ -1565,26 +1564,19 @@ export default async function (ctx) {
   };
   // chaque scène : init (les particules), back (le décor fixe, peint une fois), draw (chaque image : x le contexte, f le pas en images à 30/s, e les basses, k le coup de basse)
   const MU_SCN = {
-    space: {  // Nova : nébuleuse, planète à anneau, trois profondeurs d'étoiles, étoiles filantes
-      init: (W, H) => Array.from({length: Math.round(W * H / 900)}, () => muP(W, H)),
-      back(g, W, H, C) {
-        for (const [cx, cy, r, c] of [[.25, .3, .45, C.a], [.7, .65, .4, C.b], [.55, .2, .3, C.h]]) g.drawImage(muGlow(muRgba(c, .5), Math.round(H * r / 2)), W * cx - H * r / 2, H * cy - H * r / 2);
-        const px = Math.round(W * .88), py = Math.round(muAmb.G * .62), pr = Math.round(H * .08);
-        for (let y = -pr; y <= pr; y++) for (let x = -pr; x <= pr; x++) if (x * x + y * y <= pr * pr) { const l = (-x - y) / (pr * 1.5); g.fillStyle = muMix(C.card, C.a, muClamp01(.25 + l * .6)); g.fillRect(px + x, py + y, 1, 1); }
-        g.fillStyle = muMix(C.b, C.t, .3); for (let a = 0; a < 6.28; a += .02) { const x = Math.round(px + Math.cos(a) * pr * 1.9), y = Math.round(py + Math.sin(a) * pr * .45); if (Math.sin(a) > 0 || Math.hypot(x - px, y - py) > pr) g.fillRect(x, y, 1, 1); }
-      },
-      draw(x, W, H, C, f, t, e, k) {
+    space: {  // Nova : un voyage dans les étoiles, comme Cyber un seul motif net : les étoiles viennent du fond et filent vers les bords, plus vite sur les basses
+      init: (W, H) => Array.from({length: Math.round(W * H / 170)}, () => ({x: Math.random() * 2 - 1, y: Math.random() * 2 - 1, z: Math.random(), c: Math.random() < .15})),
+      back(g, W, H, C) { g.fillStyle = muMix(C.bg, '#000000', .35); g.fillRect(0, 0, W, H); },
+      draw(x, W, H, C, f, t, e) {
+        const cx = W / 2, cy = H * .42, S = Math.max(W, H) * .3, sp = (.0035 + .016 * e) * f;
         for (const p of muAmb.parts) {
-          p.x -= p.z * p.z * .12 * f * (1 + 3 * e); if (p.x < -3) { p.x = W + 2; p.y = Math.random() * H; }
-          const a = (.25 + .75 * Math.abs(Math.sin(t * (.4 + p.v) + p.ph))) * (.5 + .5 * p.z) * (1 + .6 * e);
-          x.globalAlpha = Math.min(1, a); const c = p.v < .15 ? C.a : p.v > .9 ? C.b : C.t;
-          if (p.z > .9 && a > .75) x.drawImage(muSpr(MU_SPR.star5, c, C.t), Math.round(p.x) - 2, Math.round(p.y) - 2);
-          else if (p.z > .7) x.drawImage(muSpr(MU_SPR.cross, c), Math.round(p.x) - 1, Math.round(p.y) - 1);
-          else { x.fillStyle = c; x.fillRect(Math.round(p.x), Math.round(p.y), 1, 1); }
+          const z0 = p.z; p.z -= sp;
+          const X = cx + p.x / p.z * S, Y = cy + p.y / p.z * S;
+          if (p.z <= .03 || X < 0 || X >= W || Y < 0 || Y >= H) { p.x = Math.random() * 2 - 1; p.y = Math.random() * 2 - 1; p.z = 1; continue; }
+          const X0 = cx + p.x / z0 * S, Y0 = cy + p.y / z0 * S, b = 1 - p.z, n = Math.min(8, Math.round(Math.hypot(X - X0, Y - Y0)));
+          x.globalAlpha = Math.min(1, .4 + b); x.fillStyle = p.c ? C.a : b > .5 ? C.t : C.s;
+          for (let i = 0; i <= n; i++) x.fillRect(Math.round(X - (X - X0) * i / Math.max(1, n)), Math.round(Y - (Y - Y0) * i / Math.max(1, n)), 1, 1);
         }
-        if (Math.random() < .006 * f + k * .25) muAmb.fx.push({x: Math.random() * W * .8 + W * .2, y: Math.random() * H * .4, vx: -3 - Math.random() * 2, vy: 1.2 + Math.random(), life: 1});
-        for (const s of muAmb.fx) { s.x += s.vx * f; s.y += s.vy * f; s.life -= .04 * f;
-          for (let i = 0; i < 12; i++) { x.globalAlpha = Math.max(0, s.life) * (1 - i / 12); x.fillStyle = i < 2 ? C.t : C.b; x.fillRect(Math.round(s.x - s.vx * i * .5), Math.round(s.y - s.vy * i * .5), 1, 1); } }
       },
     },
     night: {  // Onyx : pluie oblique sur une ville, fenêtres allumées, éclaboussures, éclair sur les gros coups de basse
@@ -1610,65 +1602,52 @@ export default async function (ctx) {
         for (const s of muAmb.fx) { s.life -= .12 * f; x.globalAlpha = Math.max(0, s.life) * .6; const d = Math.round((1 - s.life) * 3); x.fillRect(Math.round(s.x) - d, Math.round(s.y) - 1, 1, 1); x.fillRect(Math.round(s.x) + d, Math.round(s.y) - 1, 1, 1); }
       },
     },
-    bokeh: {  // Grenat : grandes taches de lumière floues qui flottent, poussière fine
-      init: (W, H) => [...Array.from({length: 16}, () => muP(W, H, {big: 1})), ...Array.from({length: 40}, () => muP(W, H))],
-      back(g, W, H, C) { g.drawImage(muGlow(muRgba(C.a, .35), Math.round(H * .4)), W * .5 - H * .4, -H * .25); },
+    bokeh: {  // Grenat : un quadrillage de petits losanges ; une vague de lumière les traverse en diagonale, plus vive sur les basses
+      init: () => [],
+      back(g, W, H, C) { g.fillStyle = muMix(C.bg, '#000000', .25); g.fillRect(0, 0, W, H); },
       draw(x, W, H, C, f, t, e) {
-        for (const p of muAmb.parts) {
-          p.y -= (p.big ? .08 : .15) * p.z * f; p.x += Math.sin(t * .3 + p.ph) * .08 * f; if (p.y < -20) { p.y = H + 20; p.x = Math.random() * W; }
-          if (p.big) { const r = Math.round(4 + p.z * 9 + e * 3); x.globalAlpha = (.35 + .35 * Math.sin(t * .5 + p.ph) ** 2) * (.7 + .6 * e); x.drawImage(muGlow(p.v < .5 ? C.a : C.b, r), Math.round(p.x) - r, Math.round(p.y) - r); }
-          else { x.globalAlpha = .2 + .5 * Math.abs(Math.sin(t + p.ph)); x.fillStyle = C.b; x.fillRect(Math.round(p.x), Math.round(p.y), 1, 1); }
+        const sp = muSpr('...#...|..#.#..|.#...#.|#.....#|.#...#.|..#.#..|...#...', C.a), sp2 = muSpr('...#...|..###..|.#####.|#######|.#####.|..###..|...#...', C.a);
+        for (let j = 0, y = -3; y < H + 4; j++, y += 6) for (let X = (j % 2) * 6 - 3; X < W + 4; X += 12) {
+          const v = Math.max(0, Math.cos((X + y * 1.4) / 70 - t * .7)) ** 8;
+          x.globalAlpha = .12 + v * (.3 + .45 * e); x.drawImage(v > .85 && e > .35 ? sp2 : sp, X - 3, y - 3);
         }
       },
     },
-    dawn: {  // Aube : ciel qui se réchauffe, soleil rayé qui se lève derrière les collines, nuages, oiseaux
-      init: (W, H) => Array.from({length: 7}, (_, i) => muP(W, H, {y: H * (.12 + i * .06), w: 14 + Math.random() * 26})),
+    dawn: {  // Aube : un ciel en bandes nettes, un soleil plein, des nuages en pixels qui passent, deux lignes de collines (ni halo ni particules)
+      init: (W, H) => Array.from({length: 7}, () => ({x: Math.random() * W, y: muAmb.G * (.08 + Math.random() * .45), w: 16 + Math.random() * 30 | 0, v: .05 + Math.random() * .1})),
       back(g, W, H, C) {
-        muSky(g, W, 0, H, C.bg, muMix(C.bg, C.a, .55));
-        muRidge(g, W, H, muAmb.G - H * .02, H * .07, muMix(C.bg, C.a, .25), 2, .8); muRidge(g, W, H, muAmb.G + H * .05, H * .05, muMix(C.bg, '#000000', .2), 5, 1.4);
+        const G = Math.round(muAmb.G); muSky(g, W, 0, G, muMix(C.bg, '#000000', .25), muMix(C.bg, C.w, .4), 4); g.fillStyle = muMix(C.bg, '#000000', .3); g.fillRect(0, G, W, H - G);
+        const hl = muAmb.hl = document.createElement('canvas'); hl.width = W; hl.height = H; const q = hl.getContext('2d');
+        muRidge(q, W, H, G - H * .03, H * .07, muMix(C.bg, C.a, .25), 3, .8); muRidge(q, W, H, G + 2, H * .05, muMix(C.bg, '#000000', .2), 9, 1.3);
       },
-      draw(x, W, H, C, f, t, e, k) {
-        const cx = W * .64, cy = muAmb.G - H * .02, r = H * (.14 + .015 * e);
-        x.globalAlpha = .5 + .3 * e; x.drawImage(muGlow(C.b, Math.round(r * 1.8)), Math.round(cx - r * 1.8), Math.round(cy - r * 1.8));
-        for (let y = -Math.round(r); y < 0; y++) { const band = (y + Math.floor(t * 4)) & 7; if (y > -r * .5 && band < 2) continue; const w = Math.round(Math.sqrt(r * r - y * y)); x.globalAlpha = .85; x.fillStyle = muMix(C.b, C.a, (y + r) / r); x.fillRect(Math.round(cx - w), Math.round(cy + y), w * 2, 1); }
-        for (const p of muAmb.parts) {  // les nuages : des bandes arrondies, éclairées par dessous
-          p.x += (.05 + .1 * p.z) * f; if (p.x > W + 30) p.x = -p.w - 10;
-          const X = Math.round(p.x), Y = Math.round(p.y), w = Math.round(p.w);
-          x.globalAlpha = .35 + .2 * p.z; x.fillStyle = muMix(C.bg, C.t, .35); x.fillRect(X + 4, Y - 2, w - 10, 2); x.fillRect(X, Y, w, 3);
-          x.fillStyle = muMix(C.a, C.b, .4); x.fillRect(X + 1, Y + 3, w - 2, 1);
-        }
-        if (Math.random() < .004 * f) { const y = H * (.15 + Math.random() * .35); for (let i = 0; i < 3 + Math.random() * 3; i++) muAmb.fx.push({x: -8 - i * 7, y: y + (i % 2) * 4 + i, ph: i, life: 1}); }
-        for (const b of muAmb.fx) { b.x += .7 * f; if (b.x > W + 10) b.life = 0; x.globalAlpha = .6; x.drawImage(muSpr(MU_SPR.bird[Math.floor(t * 5 + b.ph) & 1], muMix(C.bg, '#000000', .3)), Math.round(b.x), Math.round(b.y + Math.sin(t * 2 + b.ph))); }
-      },
-    },
-    shafts: {  // Ambre : rayons de lumière qui tombent en biais, poussière dorée qui brille dans les rayons
-      init: (W, H) => Array.from({length: Math.round(W * H / 600)}, () => muP(W, H)),
-      back(g, W, H, C) { muSky(g, W, 0, H, muMix(C.bg, C.a, .22), C.bg); },
       draw(x, W, H, C, f, t, e) {
-        const sh = [.15, .38, .62, .8].map((u, i) => ({u: u * W + Math.sin(t * .1 + i) * 6, w: W * (.06 + .04 * (i % 2)), a: .2 + .07 * Math.sin(t * .4 + i * 2) + .12 * e}));
-        for (const s of sh) { x.globalAlpha = Math.max(0, s.a); x.fillStyle = muMix(C.a, C.t, .35); x.beginPath(); x.moveTo(s.u, 0); x.lineTo(s.u + s.w, 0); x.lineTo(s.u + s.w - H * .45, H); x.lineTo(s.u - H * .45, H); x.fill(); }
-        for (const p of muAmb.parts) {
-          p.x += Math.sin(t * .3 + p.ph) * .1 * f + .03 * f; p.y += Math.cos(t * .25 + p.ph) * .08 * f; if (p.x > W + 2) p.x = -2; if (p.y > H + 2) p.y = -2; if (p.y < -2) p.y = H + 2;
-          const lit = sh.some(s => { const u = p.x + p.y * .45; return u > s.u && u < s.u + s.w; });
-          x.globalAlpha = Math.min(1, (lit ? .7 + .3 * Math.abs(Math.sin(t * 2 + p.ph)) : .2 + .15 * p.z) * (1 + .4 * e)); x.fillStyle = lit ? muMix(C.w, C.t, .5) : C.a;
-          x.fillRect(Math.round(p.x), Math.round(p.y), p.z > .7 && lit ? 2 : 1, p.z > .7 && lit ? 2 : 1);
+        const G = muAmb.G, sx = Math.round(W * .68), sy = Math.round(G - H * .1), r = Math.round(H * .09);
+        x.globalAlpha = 1; x.fillStyle = muMix(C.w, '#ffffff', .25);
+        for (let yy = -r; yy <= r; yy++) { const w = Math.round(Math.sqrt(r * r - yy * yy)); if (yy > r * .3 && (yy & 3) === 0) continue; x.fillRect(sx - w, sy + yy, 2 * w + 1, 1); }  // le bas du soleil rayé
+        for (const c of muAmb.parts) {
+          c.x += c.v * (1 + e) * f; if (c.x - c.w > W) c.x = -c.w * 1.2;
+          x.globalAlpha = .85; x.fillStyle = muMix(C.bg, C.t, .3); const X = Math.round(c.x), Y = Math.round(c.y);
+          [[.35, .2], [.7, .05], [1, 0], [.85, .1]].forEach(([k, o], i) => x.fillRect(X + Math.round(c.w * o), Y + i * 2, Math.round(c.w * k), 2));
         }
+        x.globalAlpha = 1; x.drawImage(muAmb.hl, 0, 0);
       },
     },
-    abyss: {  // Abyme : lumière qui danse depuis la surface, algues qui ondulent, bulles avec reflet, fond rocheux
-      init(W, H) { muAmb.weeds = Array.from({length: Math.max(5, W / 40 | 0)}, (_, i) => ({x: (i + .3 + Math.random() * .4) * W / Math.max(5, W / 40 | 0), h: H * (.1 + Math.random() * .16), ph: Math.random() * 6})); return Array.from({length: 34}, () => muP(W, H)); },
-      back(g, W, H, C) { muSky(g, W, 0, H, muMix(C.bg, C.a, .16), muMix(C.bg, '#000000', .3)); muRidge(g, W, H, muAmb.G + H * .03, H * .04, muMix(C.bg, C.card, .7), 9, 2.2); },
-      draw(x, W, H, C, f, t, e, k) {
-        for (let i = 0; i < 6; i++) { const u = (i + .5) * W / 6 + Math.sin(t * .35 + i * 1.7) * W * .05; x.globalAlpha = .05 + .035 * Math.sin(t * .8 + i) + .04 * e; x.fillStyle = C.a; x.beginPath(); x.moveTo(u - 4, 0); x.lineTo(u + 4, 0); x.lineTo(u + 14 + Math.sin(t * .5 + i) * 6, H * .8); x.lineTo(u - 10, H * .8); x.fill(); }
-        for (const w of muAmb.weeds) for (let s = 0; s < w.h; s += 2) {
-          const sw = Math.sin(t * 1.1 + s * .09 + w.ph) * s * .12, X = Math.round(w.x + sw), Y = Math.round(muAmb.G + H * .03 - s); x.globalAlpha = .55; x.fillStyle = muMix(C.bg, C.a, .3 + .25 * (s / w.h)); x.fillRect(X, Y, 2, 2);
-          if (s % 8 === 4) x.fillRect(X + (Math.sin(w.ph + s) > 0 ? 2 : -2), Y, 2, 1);
-        }
-        if (k > .9) { const w = muAmb.weeds[Math.random() * muAmb.weeds.length | 0]; for (let i = 0; i < 5; i++) muAmb.parts.push(muP(W, H, {x: w.x + Math.random() * 6 - 3, y: muAmb.G - w.h * Math.random(), z: .3, tmp: 1})); }
-        muAmb.parts = muAmb.parts.filter(p => !(p.tmp && p.y < -4));
+    shafts: {  // Ambre : des alvéoles de miel ; quelques cellules se remplissent doucement puis se vident, plus nombreuses sur les basses
+      init: (W, H) => { const L = []; for (let j = 0, y = 0; y < H + 10; j++, y += 8) for (let X = (j % 2) * 5; X < W + 10; X += 10) L.push({x: X, y, ph: Math.random() * 6.28, v: .2 + Math.random() * .5}); return L; },
+      back(g, W, H, C) { g.fillStyle = muMix(C.bg, '#000000', .25); g.fillRect(0, 0, W, H); const s = muSpr('..###..|.#...#.|#.....#|#.....#|#.....#|.#...#.|..###..', muMix(C.bg, C.a, .16)); for (const p of muAmb.parts || []) g.drawImage(s, p.x - 3, p.y - 3); },
+      draw(x, W, H, C, f, t, e) {
+        const s = muSpr('..###..|.#####.|#######|#######|#######|.#####.|..###..', C.a);
+        for (const p of muAmb.parts) { const v = Math.sin(t * p.v + p.ph); if (v < .75 - .25 * e) continue; x.globalAlpha = Math.min(.55, (v - .7 + .25 * e) * 1.6); x.drawImage(s, p.x - 3, p.y - 3); }
+      },
+    },
+    abyss: {  // Abyme : des bulles nettes qui montent du fond en oscillant, sur un fond qui s'assombrit en bandes, des rochers en bas
+      init: (W, H) => Array.from({length: Math.round(W * H / 1400)}, () => ({x: Math.random() * W, y: Math.random() * H, s: Math.random() * 3 | 0, v: .3 + Math.random() * .6, ph: Math.random() * 6.28})),
+      back(g, W, H, C) { muSky(g, W, 0, H, muMix(C.bg, C.b, .12), muMix(C.bg, '#000000', .5), 6); muRidge(g, W, H, H - H * .05, H * .05, muMix(C.bg, '#000000', .6), 5, 1.4); },
+      draw(x, W, H, C, f, t, e) {
+        const B = ['bub1', 'bub2', 'bub3'];
         for (const p of muAmb.parts) {
-          p.y -= (.2 + .5 * p.z) * f * (1 + e); p.x += Math.sin(t * 1.6 + p.ph) * .15 * f; if (p.y < -6 && !p.tmp) { p.y = H + 4; p.x = Math.random() * W; }
-          x.globalAlpha = .35 + .35 * p.z; const s = p.z > .8 ? MU_SPR.bub3 : p.z > .55 ? MU_SPR.bub2 : MU_SPR.bub1; x.drawImage(muSpr(s, C.a, C.t), Math.round(p.x), Math.round(p.y));
+          p.y -= p.v * (1 + 1.5 * e) * (1 + p.s * .3) * f; if (p.y < -6) { p.y = H + 4; p.x = Math.random() * W; }
+          x.globalAlpha = .35 + p.s * .2; x.drawImage(muSpr(MU_SPR[B[p.s]], p.s ? C.b : C.s, C.t), Math.round(p.x + Math.sin(t * 1.5 + p.ph) * 2), Math.round(p.y));
         }
       },
     },
@@ -1708,77 +1687,70 @@ export default async function (ctx) {
         }
       },
     },
-    fizz: {  // Menthe : des bulles qui montent en filets depuis le fond, de plus en plus vite, et éclatent en petit anneau
-      init(W, H) { muAmb.src = Array.from({length: Math.max(4, W / 70 | 0)}, () => Math.random() * W); return Array.from({length: 46}, () => muP(W, H, {top: H * Math.random() * .5})); },
-      back(g, W, H, C) { muSky(g, W, 0, H, C.bg, muMix(C.bg, C.a, .18)); g.drawImage(muGlow(muRgba(C.b, .35), Math.round(H * .35)), W * .7, H * .1); },
+    fizz: {  // Menthe : des gouttes tombent sur l'eau, vue d'en haut : des ronds nets qui s'élargissent et s'effacent, plus nombreux sur les basses
+      init: () => [],
+      back(g, W, H, C) { g.fillStyle = muMix(C.bg, '#000000', .25); g.fillRect(0, 0, W, H); },
+      draw(x, W, H, C, f, t, e, k) {
+        const P = muAmb.parts; if (Math.random() < (.2 + .4 * e) * f || k > .8) P.push({x: Math.random() * W | 0, y: Math.random() * H | 0, r: 0, m: 8 + Math.random() * 14});
+        for (const p of P) {
+          p.r += .35 * f; const R = Math.round(p.r); if (R < 1) continue;
+          const key = 'ring' + R + C.a; let s = muAmb.spr.get(key);
+          if (!s) { s = document.createElement('canvas'); s.width = s.height = R * 2 + 1; const q = s.getContext('2d'); q.fillStyle = C.a; for (let a = 0; a < 6.283; a += .5 / R) q.fillRect(Math.round(R + Math.cos(a) * R), Math.round(R + Math.sin(a) * R), 1, 1); muAmb.spr.set(key, s); }
+          x.globalAlpha = .95 * (1 - p.r / p.m); x.drawImage(s, p.x - R, p.y - R);
+          if (p.r > 4) { x.globalAlpha *= .5; const r2 = R - 3, s2 = muAmb.spr.get('ring' + r2 + C.a); if (s2) x.drawImage(s2, p.x - r2, p.y - r2); }
+        }
+        muAmb.parts = P.filter(p => p.r < p.m);
+      },
+    },
+    gems: {  // Rubis : une surface taillée en facettes (des triangles à peine plus clairs ou plus sombres) ; un reflet passe en biais, plus vif sur les basses
+      init: () => [],
+      back(g, W, H, C) {
+        const im = g.createImageData(W, H), w = 22, h = 18, A = muHex(muMix(C.bg, '#000000', .2)), B = muHex(C.a);
+        for (let y = 0; y < H; y++) for (let x0 = 0; x0 < W; x0++) {
+          const j = Math.floor(y / h), fy = (y % h) / h, xx = x0 + (j % 2) * w / 2, i = Math.floor(xx / w), fx = (xx % w) / w, tri = (i + j) % 2 ? fx + fy < 1 : fx > fy;
+          const r = muSeed(i * 7919 + j * 104729 + (tri ? 1 : 0))(), k = .03 + r * .11, o = (y * W + x0) * 4;
+          for (let c = 0; c < 3; c++) im.data[o + c] = Math.round(A[c] + (B[c] - A[c]) * k); im.data[o + 3] = 255;
+        }
+        g.putImageData(im, 0, 0);
+      },
       draw(x, W, H, C, f, t, e) {
-        for (const p of muAmb.parts) {
-          p.sp = (p.sp || .2) + .02 * f; p.y -= p.sp * (.6 + .6 * p.z) * f * (1 + e); p.x += Math.sin(t * 3 + p.ph) * .12 * f;
-          if (p.y < p.top) { muAmb.fx.push({x: p.x, y: p.y, life: 1}); Object.assign(p, {y: H + Math.random() * 20, x: muAmb.src[Math.random() * muAmb.src.length | 0] + Math.random() * 8 - 4, sp: .2, top: H * Math.random() * .5}); }
-          x.globalAlpha = .4 + .4 * p.z; x.drawImage(muSpr(p.z > .75 ? MU_SPR.bub2 : MU_SPR.bub1, C.a, C.t), Math.round(p.x), Math.round(p.y));
-        }
-        for (const s of muAmb.fx) { s.life -= .15 * f; x.globalAlpha = Math.max(0, s.life) * .7; x.drawImage(muSpr('+.+|...|+.+', C.t), Math.round(s.x), Math.round(s.y)); }
+        const per = W + H + 80, p = (t * 22) % (per + 200) - 40; x.fillStyle = C.t;
+        for (let y = 0; y < H; y++) { const X = Math.round(p - y * .6); x.globalAlpha = .05 + .1 * e; x.fillRect(X, y, 6, 1); x.globalAlpha = .1 + .15 * e; x.fillRect(X + 2, y, 2, 1); }
       },
     },
-    gems: {  // Rubis : des éclats de cristal sur les côtés, des étincelles en étoile qui s'ouvrent et se ferment, des éclats qui tombent
-      init: (W, H) => [...Array.from({length: 34}, () => muP(W, H, {g: 1, life: -Math.random() * 3, y: Math.random() * muAmb.G})), ...Array.from({length: 18}, () => muP(W, H))],
+    aurora: {  // Glacier : la neige qui tombe en trois profondeurs, qui part de côté sur les basses ; des montagnes enneigées au loin (plus d'aurores)
+      init: (W, H) => Array.from({length: Math.round(W * H / 320)}, () => ({x: Math.random() * W, y: Math.random() * H, z: Math.random() * 3 | 0, ph: Math.random() * 6.28})),
       back(g, W, H, C) {
-        const R = muSeed(5);
-        for (const side of [0, 1]) for (let i = 0; i < 6; i++) {
-          const bx = side ? W - R() * W * .12 : W * (.26 + R() * .12), h = H * (.12 + R() * .2), w = 5 + R() * 9, lean = (R() - .5) * 8;
-          g.fillStyle = muMix(C.bg, C.a, .18 + R() * .12); g.beginPath(); g.moveTo(bx - w, muAmb.G + H * .05); g.lineTo(bx + lean, muAmb.G - h); g.lineTo(bx + w, muAmb.G + H * .05); g.fill();
-          g.fillStyle = muMix(C.bg, C.a, .38); g.beginPath(); g.moveTo(bx + lean, muAmb.G - h); g.lineTo(bx + w, muAmb.G + H * .05); g.lineTo(bx + w * .3, muAmb.G + H * .05); g.fill();
-        }
+        const G = Math.round(muAmb.G); muSky(g, W, 0, G, muMix(C.bg, '#000000', .3), muMix(C.bg, C.b, .15), 4); g.fillStyle = muMix(C.bg, '#000000', .2); g.fillRect(0, G, W, H - G);
+        muRidge(g, W, H, G, H * .12, muMix(C.bg, C.s, .18), 4, .9, muMix(C.t, C.bg, .25)); muRidge(g, W, H, G + 3, H * .05, muMix(C.bg, '#000000', .15), 11, 1.6);
       },
-      draw(x, W, H, C, f, t, e, k) {
-        const SEQ = ['#', MU_SPR.cross, MU_SPR.star5, MU_SPR.star7, MU_SPR.star5, MU_SPR.cross, '#'];
-        if (k > .9) for (const p of muAmb.parts.filter(p => p.g && p.life < 0).slice(0, 3)) p.life = 0;
+      draw(x, W, H, C, f, t, e) {
+        const fl = muSpr(MU_SPR.flake, C.t, C.b), wind = .2 + 1.2 * e;
         for (const p of muAmb.parts) {
-          if (p.g) { p.life += .16 * f; if (p.life >= SEQ.length) { p.life = -1 - Math.random() * 2; p.x = W * (.25 + Math.random() * .75); p.y = Math.random() * muAmb.G; } if (p.life < 0) continue;
-            const s = muSpr(SEQ[p.life | 0], p.v < .5 ? C.a : p.v < .8 ? C.w : C.t, C.t); x.globalAlpha = .9; x.drawImage(s, Math.round(p.x - s.width / 2), Math.round(p.y - s.height / 2)); continue; }
-          p.y += (.12 + .2 * p.z) * f; if (p.y > H + 4) { p.y = -4; p.x = Math.random() * W; }
-          x.globalAlpha = .3 + .4 * p.z; x.drawImage(muSpr(MU_SPR.shard[Math.floor(t * 1.5 + p.ph) & 1], C.a, C.t), Math.round(p.x), Math.round(p.y));
+          const z = p.z + 1; p.y += .25 * z * f; p.x += (wind * z * .4 + Math.sin(t + p.ph) * .15) * f;
+          if (p.y > H + 3) { p.y = -4; p.x = Math.random() * W; } if (p.x > W + 3) p.x = -3;
+          const X = Math.round(p.x), Y = Math.round(p.y); x.globalAlpha = .35 + p.z * .3;
+          if (p.z === 2 && (p.ph * 10 | 0) % 4 === 0) x.drawImage(fl, X - 2, Y - 2); else { x.fillStyle = p.z ? C.t : C.s; x.fillRect(X, Y, p.z === 2 ? 2 : 1, p.z === 2 ? 2 : 1); }
         }
       },
     },
-    aurora: {  // Glacier : aurores boréales qui ondulent, montagnes enneigées, neige en trois profondeurs, rafales de vent
-      init: (W, H) => Array.from({length: Math.round(W * H / 800)}, () => muP(W, H)),
-      back(g, W, H, C) {
-        muSky(g, W, 0, H, muMix(C.bg, '#000000', .25), muMix(C.bg, C.b, .12));
-        muRidge(g, W, H, muAmb.G - H * .02, H * .13, muMix(C.bg, C.card, .9), 1, .9, muMix(C.card, C.t, .55)); muRidge(g, W, H, muAmb.G + H * .07, H * .08, muMix(C.bg, '#000000', .15), 6, 1.6, muMix(C.bg, C.t, .3));
+    forge: {  // Cuivre : des engrenages qui tournent lentement, emboîtés sur les bords ; ils accélèrent sur les basses
+      init(W, H) {
+        const L = [], R = muSeed(17), add = (x, y, r, d) => L.push({x, y, r, n: Math.max(8, Math.round(r / 2.2)), d, a: R() * 6});
+        add(W * .06, H * .15, H * .2, 1); add(W * .06 + H * .37, H * .15 + H * .07, H * .13, -1); add(W * .94, H * .7, H * .26, -1); add(W * .94 - H * .45, H * .7 + H * .12, H * .15, 1); add(W * .55, H * 1.02, H * .18, 1); add(W * .55 + H * .33, H * .96, H * .11, -1);
+        return L;
       },
-      draw(x, W, H, C, f, t, e, k) {
-        for (const [c, off, sp] of [[C.a, 0, .4], [C.b, 2.1, -.3]]) {
-          const s = muVGrad(c);
-          for (let i = 0; i < W; i += 2) {
-            const y = H * (.12 + .06 * Math.sin(i * .013 + t * sp + off) + .04 * Math.sin(i * .031 - t * .2 + off)), h = H * (.14 + .08 * Math.sin(i * .05 + t * .7 + off));
-            x.globalAlpha = Math.min(1, (.6 + .3 * e) * (.3 + .7 * Math.sin(i * .021 + t * .5 + off) ** 2)); x.drawImage(s, i, Math.round(y), 2, Math.round(h));
-          }
+      back(g, W, H, C) { g.fillStyle = muMix(C.bg, '#000000', .25); g.fillRect(0, 0, W, H); },
+      draw(x, W, H, C, f, t, e) {
+        muAmb.spin = (muAmb.spin || 0) + (.006 + .03 * e) * f;
+        for (const q of muAmb.parts) {
+          const a0 = q.a + muAmb.spin * q.d * 30 / q.r, n = q.n, R1 = q.r, R0 = q.r - 3; x.beginPath();
+          for (let i = 0; i < n * 4; i++) { const a = a0 + i / (n * 4) * 6.2832, rr = i % 4 < 2 ? R1 : R0; x.lineTo(q.x + Math.cos(a) * rr, q.y + Math.sin(a) * rr); }
+          x.closePath(); x.globalAlpha = 1; x.fillStyle = muMix(C.bg, C.a, .22); x.fill();
+          x.fillStyle = muMix(C.bg, '#000000', .25); x.beginPath(); x.arc(q.x, q.y, q.r * .62, 0, 6.2832); x.fill();
+          x.fillStyle = muMix(C.bg, C.a, .22); for (let s = 0; s < 4; s++) { const a = a0 + s * 1.5708; x.beginPath(); x.moveTo(q.x + Math.cos(a - .12) * 2, q.y + Math.sin(a - .12) * 2); x.lineTo(q.x + Math.cos(a - .05) * q.r * .64, q.y + Math.sin(a - .05) * q.r * .64); x.lineTo(q.x + Math.cos(a + .05) * q.r * .64, q.y + Math.sin(a + .05) * q.r * .64); x.lineTo(q.x + Math.cos(a + .12) * 2, q.y + Math.sin(a + .12) * 2); x.fill(); }
+          x.beginPath(); x.arc(q.x, q.y, Math.max(2, q.r * .16), 0, 6.2832); x.fill();
         }
-        muAmb.gust = Math.max(muAmb.gust * .95, k > .9 ? 1.6 : 0); const wind = Math.sin(t * .25) * .25 + muAmb.gust;
-        for (const p of muAmb.parts) {
-          p.y += (.15 + .55 * p.z) * f; p.x += (wind * p.z + Math.sin(t + p.ph) * .15) * f; if (p.y > H + 3) { p.y = -3; p.x = Math.random() * W; } if (p.x > W + 3) p.x = -3; if (p.x < -3) p.x = W + 3;
-          x.globalAlpha = .35 + .55 * p.z;
-          if (p.z > .93) x.drawImage(muSpr(MU_SPR.flake, muMix(C.t, C.a, .3), C.t), Math.round(p.x) - 2, Math.round(p.y) - 2);
-          else if (p.z > .75) x.drawImage(muSpr(MU_SPR.cross, C.t), Math.round(p.x) - 1, Math.round(p.y) - 1);
-          else { x.fillStyle = C.t; x.fillRect(Math.round(p.x), Math.round(p.y), 1, 1); }
-        }
-      },
-    },
-    forge: {  // Cuivre : la chaleur du foyer en bas, des braises qui montent en tourbillonnant et changent de couleur, des gerbes d'étincelles
-      init: (W, H) => Array.from({length: 110}, () => muP(W, H)),
-      back(g, W, H, C) { muSky(g, W, Math.round(muAmb.G - H * .25), H, C.bg, muMix(C.bg, C.a, .4)); },
-      draw(x, W, H, C, f, t, e, k) {
-        x.globalAlpha = .55 + .45 * e; x.drawImage(muGlow(C.a, Math.round(H * .3)), Math.round(W * .62 - H * .3), Math.round(muAmb.G - H * .3));
-        if (k > .9) { const sx = Math.random() * W; for (let i = 0; i < 12; i++) muAmb.fx.push({x: sx, y: H, vx: (Math.random() - .5) * 3, vy: -2 - Math.random() * 3, life: 1}); }
-        for (const p of muAmb.parts) {
-          const life = 1 - p.y / H; p.px = p.x; p.py = p.y;
-          p.y -= (.4 + .8 * p.z) * f * (1 + .8 * e); p.x += (Math.sin(t * 1.3 + p.ph + p.y * .05) * .35) * f; if (p.y < -3) { p.y = H + Math.random() * 10; p.x = Math.random() * W; }
-          const c = life < .35 ? C.w : life < .7 ? C.a : muMix(C.a, C.bg, .4), a = (1 - life * .6) * (.6 + .4 * Math.abs(Math.sin(t * 6 + p.ph)));
-          if (p.z > .6) { x.globalAlpha = a * .8; x.drawImage(muGlow(c, 4), Math.round(p.x) - 4, Math.round(p.y) - 4); }
-          x.globalAlpha = a; x.fillStyle = c; x.fillRect(Math.round(p.x), Math.round(p.y), p.z > .7 ? 2 : 1, p.z > .7 ? 2 : 1); x.globalAlpha = a * .4; x.fillRect(Math.round(p.px), Math.round(p.py) + 2, 1, 1);
-        }
-        for (const s of muAmb.fx) { s.vy += .12 * f; s.x += s.vx * f; s.y += s.vy * f; s.life -= .03 * f; x.globalAlpha = Math.max(0, s.life); x.fillStyle = C.w; x.fillRect(Math.round(s.x), Math.round(s.y), 1, 1); }
       },
     },
     meadow: {  // Lavande : un champ de lavande qui ondule, des papillons qui volettent, du pollen
@@ -1815,93 +1787,70 @@ export default async function (ctx) {
         }
       },
     },
-    sea: {  // Océan : horizon, reflets qui scintillent, cinq rangées de vagues avec écume (plus hautes sur les basses), mouettes
-      init: (W, H) => Array.from({length: 50}, () => muP(W, H, {y: muAmb.G * (.4 + Math.random() * .6)})),
-      back(g, W, H, C) { const hz = Math.round(muAmb.G * .4); muSky(g, W, 0, hz, muMix(C.bg, '#000000', .2), muMix(C.bg, C.b, .3)); g.drawImage(muGlow(muRgba(C.t, .6), Math.round(H * .1)), W * .82 - H * .1, hz - H * .16); },
+    sea: {  // Océan : des lignes de vagues sur toute la hauteur, qui roulent de gauche à droite et se creusent sur les basses
+      init: () => [],
+      back(g, W, H, C) { g.fillStyle = muMix(C.bg, '#000000', .3); g.fillRect(0, 0, W, H); },
       draw(x, W, H, C, f, t, e) {
-        const hz = muAmb.G * .4, bot = muAmb.G + H * .06;
-        for (let k = 0; k < 5; k++) {
-          const base = hz + (bot - hz) * ((k + .15) / 5) ** 1.15, amp = (1 + k * 1.2) * (1 + 1.2 * e), wl = 18 + k * 10, sp = .4 + k * .25;
-          x.globalAlpha = 1; x.fillStyle = muMix(C.bg, k & 1 ? C.a : C.b, .16 + k * .09);
-          for (let i = 0; i < W; i += 2) { const y = Math.round(base + Math.sin(i / wl + t * sp + k) * amp + Math.sin(i / (wl * .37) - t * sp * 1.4) * amp * .3); x.fillRect(i, y, 2, H - y);
-            if (Math.sin(i / wl + t * sp + k) < -.65) { x.fillStyle = muRgba(C.t, .5 + .1 * k); x.fillRect(i, y, 2, 1); x.fillStyle = muMix(C.bg, k & 1 ? C.a : C.b, .16 + k * .09); } }
+        const A = 1.5 + 3 * e;
+        for (let j = 0, y0 = 4; y0 < H + 6; j++, y0 += 7) {
+          x.fillStyle = j % 3 ? C.b : C.a; x.globalAlpha = j % 3 ? .22 : .38;
+          for (let X = 0; X < W; X += 2) { const v = Math.sin(X * .045 + t * (1 + j % 2 * .4) + j * .9); x.fillRect(X, Math.round(y0 + v * A), 2, 1); }
         }
-        for (const p of muAmb.parts) { const a = Math.max(0, Math.sin(t * 2 * (.5 + p.v) + p.ph)) ** 3; if (a < .1) continue; x.globalAlpha = a * .8; x.fillStyle = C.t; x.fillRect(Math.round(p.x + Math.sin(t + p.ph) * 3), Math.round(p.y), 2, 1); }
-        if (Math.random() < .003 * f) muAmb.fx.push({x: -6, y: H * (.1 + Math.random() * .25), ph: Math.random() * 6, life: 1});
-        for (const b of muAmb.fx) { b.x += .8 * f; if (b.x > W + 6) b.life = 0; x.globalAlpha = .7; x.drawImage(muSpr(MU_SPR.bird[Math.floor(t * 4 + b.ph) & 1], C.t), Math.round(b.x), Math.round(b.y + Math.sin(t + b.ph) * 2)); }
       },
     },
-    sun: {  // Soleil : un grand soleil qui pulse avec les basses, ses rayons qui tournent, des dunes, de la chaleur qui monte
-      init: (W, H) => Array.from({length: 44}, () => muP(W, H)),
-      back(g, W, H, C) { muSky(g, W, 0, H, muMix(C.bg, C.a, .14), C.bg); muRidge(g, W, H, muAmb.G - H * .01, H * .06, muMix(C.bg, C.a, .2), 4, .5); muRidge(g, W, H, muAmb.G + H * .07, H * .05, muMix(C.bg, C.b, .18), 8, .7); },
+    sun: {  // Soleil : de grands rayons qui partent du coin en haut à droite et tournent lentement, à peine plus clairs que le fond, plus vifs sur les basses
+      init: () => [],
+      back(g, W, H, C) { g.fillStyle = muMix(C.bg, '#000000', .2); g.fillRect(0, 0, W, H); },
       draw(x, W, H, C, f, t, e) {
-        const cx = Math.round(W * .8), cy = Math.round(H * .22), r = H * .11 * (1 + .08 * e);
-        x.globalAlpha = .5 + .3 * e; x.drawImage(muGlow(C.a, Math.round(r * 2.4)), Math.round(cx - r * 2.4), Math.round(cy - r * 2.4));
-        for (let i = 0; i < 18; i++) { const a = i / 18 * 6.283 + t * .08, l = r * (1.9 + .35 * Math.sin(t * 1.5 + i * 1.3) + .4 * e); x.globalAlpha = .3 + .2 * e; x.fillStyle = i & 1 ? C.a : C.b;
-          for (let d = r * 1.25; d < l; d += 1.5) x.fillRect(Math.round(cx + Math.cos(a) * d), Math.round(cy + Math.sin(a) * d), 1, 1); }
-        for (let y = -Math.round(r); y <= r; y++) { const w = Math.round(Math.sqrt(r * r - y * y)); x.globalAlpha = 1; x.fillStyle = muMix(C.w, C.b, (y + r) / (2 * r) * .6); x.fillRect(cx - w, cy + y, w * 2 + 1, 1); }
-        for (const p of muAmb.parts) { p.y -= (.15 + .3 * p.z) * f; p.x += Math.sin(t * 2 + p.ph + p.y * .1) * .2 * f; if (p.y < H * .3) { p.y = H; p.x = Math.random() * W; }
-          x.globalAlpha = (.15 + .3 * p.z) * Math.min(1, (H - p.y) / (H * .2)) * (1 - (H - p.y) / (H * .7)); x.fillStyle = C.w; x.fillRect(Math.round(p.x), Math.round(p.y), 1, 2); }
+        const cx = W * 1.02, cy = -H * .08, R = Math.hypot(W, H) * 1.2, n = 18, rot = t * .025;
+        x.fillStyle = C.a; x.globalAlpha = .06 + .06 * e;
+        for (let i = 0; i < n; i++) { const a = rot + i / n * 6.2832; x.beginPath(); x.moveTo(cx, cy); x.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R); x.lineTo(cx + Math.cos(a + .14) * R, cy + Math.sin(a + .14) * R); x.fill(); }
       },
     },
-    code: {  // Cyber : de vrais caractères (3 × 5 pixels) qui tombent en colonnes, tête blanche, traînée qui s'éteint, et des bandes de bug sur les basses
+    code: {  // Cyber : de vrais caractères (3 × 5 pixels) qui tombent en colonnes, tête blanche, traînée qui s'éteint, et une bande pâle sur les basses
       init(W, H) {
         const R = muSeed(13); muAmb.gl = Array.from({length: 24}, () => Array.from({length: 5}, (_, y) => Array.from({length: 3}, (_, x) => (x === 1 && y % 2 === 0) || R() < .45 ? '#' : '.').join('')).join('|'));
-        return Array.from({length: Math.round(W / 4)}, (_, i) => ({x: i * 4, y: (Math.random() * 1.6 - .4) * H, v: .5 + Math.random(), L: 6 + Math.random() * 14 | 0, g: Array.from({length: 22}, () => Math.random() * 24 | 0), c: Math.random() < .25}));
+        return Array.from({length: Math.round(W / 6)}, (_, i) => ({x: i * 6, y: (Math.random() * 1.6 - .4) * H, v: .5 + Math.random(), L: 6 + Math.random() * 12 | 0, g: Array.from({length: 22}, () => Math.random() * 24 | 0), c: Math.random() < .25}));
       },
       back(g, W, H, C) { g.fillStyle = muRgba(C.b, .04); for (let y = 0; y < H; y += 3) g.fillRect(0, y, W, 1); },
       draw(x, W, H, C, f, t, e, k) {
-        if (k > .9) muAmb.fx.push({y: Math.random() * H, h: 2 + Math.random() * 5 | 0, dx: (Math.random() - .5) * 10, life: 1});
+        const R = muAmb.now; if (k > .9) muAmb.fx.push({y: Math.random() * H, h: 2 + Math.random() * 4 | 0, life: 1});
         for (const p of muAmb.parts) {
-          p.y += p.v * (1.2 + 2.5 * e) * f; if (p.y - p.L * 6 > H) { p.y = -Math.random() * H * .3; p.L = 6 + Math.random() * 14 | 0; }
+          p.y += p.v * (1.2 + 2 * e) * f; if (p.y - p.L * 6 > H) { p.y = -Math.random() * H * .3; p.L = 6 + Math.random() * 12 | 0; }
           if (Math.random() < .05 * f) p.g[Math.random() * p.g.length | 0] = Math.random() * 24 | 0;
           const head = Math.floor(p.y / 6);
           for (let i = 0; i < p.L; i++) { const Y = (head - i) * 6; if (Y < -6 || Y > H) continue;
-            x.globalAlpha = i ? .8 * (1 - i / p.L) + .1 : 1; x.drawImage(muSpr(muAmb.gl[p.g[(head - i + 220) % p.g.length]], i ? (p.c ? C.b : C.a) : C.t), p.x, Y); }
+            x.globalAlpha = (i ? .55 * (1 - i / p.L) + .08 : .8) * (R && p.x >= R[0] && p.x < R[2] && Y >= R[1] && Y < R[3] ? .3 : 1); x.drawImage(muSpr(muAmb.gl[p.g[(head - i + 220) % p.g.length]], i ? (p.c ? C.b : C.a) : C.t), p.x, Y); }
         }
-        for (const s of muAmb.fx) { s.life -= .2 * f; if (s.life <= 0) continue; x.globalAlpha = .25 * s.life; x.fillStyle = C.b; x.fillRect(0, Math.round(s.y), W, s.h); x.globalAlpha = .6 * s.life; x.drawImage(x.canvas, 0, Math.round(s.y), W, s.h, Math.round(s.dx), Math.round(s.y), W, s.h); }
+        for (const s of muAmb.fx) { s.life -= .2 * f; if (s.life <= 0) continue; x.globalAlpha = .12 * s.life; x.fillStyle = C.b; x.fillRect(0, Math.round(s.y), W, s.h); }
       },
     },
-    synth: {  // Néon : ciel de nuit, montagnes en fil de fer, soleil rayé qui défile, grille qui avance et s'allume sur les basses, lignes de balayage
-      init: (W, H) => Array.from({length: 70}, () => muP(W, H, {y: Math.random() * muAmb.G * .9})),
-      back(g, W, H, C) {
-        const hy = Math.round(muAmb.G); muSky(g, W, 0, hy, muMix(C.bg, '#000000', .3), muMix(C.bg, C.d, .3));
-        muRidge(g, W, H, hy, H * .08, muMix(C.bg, '#000000', .2), 12, 1.6);
-        g.fillStyle = muRgba(C.a, .45); for (let x0 = 0; x0 < W; x0++) { const y = Math.round(hy - H * .08 * (.55 * Math.sin(x0 * .0176 + 20.4) + .3 * Math.sin(x0 * .0464 + 37.2) + .15 * Math.sin(x0 * .1136 + 63.6))); g.fillRect(x0, y, 1, 1); }
-        g.fillStyle = muMix(C.bg, '#000000', .4); g.fillRect(0, hy, W, H - hy);
-      },
-      draw(x, W, H, C, f, t, e, k) {
-        const hy = Math.round(muAmb.G), sx = Math.round(W * .6), sr = Math.round(H * .17);
-        for (const p of muAmb.parts) { x.globalAlpha = .2 + .5 * Math.abs(Math.sin(t * (.5 + p.v) + p.ph)); x.fillStyle = C.t; x.fillRect(Math.round(p.x), Math.round(p.y), 1, 1); }
-        x.globalAlpha = .4 + .3 * e; x.drawImage(muGlow(C.d, Math.round(sr * 1.6)), sx - Math.round(sr * 1.6), hy - sr - Math.round(sr * .6));
-        for (let yy = -sr; yy < 0; yy++) { const band = (yy + sr + Math.floor(t * 6)) % 7, cut = yy > -sr * .55 && band < 2 + (yy + sr * .55) / (sr * .2); if (cut) continue;
-          const w = Math.round(Math.sqrt(sr * sr - yy * yy)); x.globalAlpha = .9; x.fillStyle = muMix(C.w, C.d, (yy + sr) / sr); x.fillRect(sx - w, hy - sr * .15 + yy | 0, 2 * w, 1); }
-        const gl = .35 + .5 * e + .3 * k; x.fillStyle = C.a; x.globalAlpha = Math.min(1, gl + .2); x.fillRect(0, hy, W, 1);
-        for (let i = 1; i < 12; i++) { const fr = ((i + (t * (.7 + 1.5 * e)) % 1) / 12) ** 2, y = Math.round(hy + fr * (H - hy)); x.globalAlpha = Math.min(1, (.15 + .5 * fr) * gl * 1.4); x.fillRect(0, y, W, 1); }
-        for (let i = -14; i <= 14; i++) { x.globalAlpha = Math.min(1, .3 * gl); x.beginPath(); x.moveTo(sx + i * 4, hy); x.lineTo(sx + i * W / 7, H); x.lineTo(sx + i * W / 7 + 1, H); x.lineTo(sx + i * 4 + 1, hy); x.fill(); }
-        x.globalAlpha = .1; x.fillStyle = '#000'; for (let y = 0; y < H; y += 2) x.fillRect(0, y, W, 1);
+    synth: {  // Néon : des traits de lumière qui filent sur un quadrillage, tournent à angle droit et laissent une traînée qui s'éteint ; plus rapides sur les basses
+      init: (W, H) => Array.from({length: Math.max(6, Math.round(W * H / 8000))}, (_, i) => ({x: Math.round(Math.random() * W / 8) * 8, y: Math.round(Math.random() * H / 8) * 8, d: i % 4, c: i % 2, tr: [], m: 0})),
+      back(g, W, H, C) { g.fillStyle = muMix(C.bg, '#000000', .35); g.fillRect(0, 0, W, H); g.fillStyle = muRgba(C.a, .06); for (let X = 0; X < W; X += 8) g.fillRect(X, 0, 1, H); for (let y = 0; y < H; y += 8) g.fillRect(0, y, W, 1); },
+      draw(x, W, H, C, f, t, e) {
+        const D = [[1, 0], [0, 1], [-1, 0], [0, -1]];
+        for (const p of muAmb.parts) {
+          p.m += (1 + 2 * e) * f;
+          while (p.m >= 1) {
+            p.m--; p.x += D[p.d][0]; p.y += D[p.d][1]; p.tr.push([p.x, p.y]); if (p.tr.length > 70) p.tr.shift();
+            if (p.x % 8 === 0 && p.y % 8 === 0 && Math.random() < .18) p.d = (p.d + (Math.random() < .5 ? 1 : 3)) % 4;
+            if (p.x < -2 || p.x > W + 2 || p.y < -2 || p.y > H + 2) { p.x = (p.x + W) % W; p.y = (p.y + H) % H; p.x -= p.x % 8; p.y -= p.y % 8; p.tr = []; }
+          }
+          x.fillStyle = p.c ? C.b : C.a; p.tr.forEach(([X, Y], i) => { x.globalAlpha = (i + 1) / p.tr.length * .95; x.fillRect(X, Y, 1, 1); });
+          x.globalAlpha = 1; x.fillStyle = C.t; x.fillRect(p.x, p.y, 1, 1);
+        }
       },
     },
   };
   // une couche de plus sur toute la hauteur (comme les colonnes de Cyber) : les particules du thème en trois profondeurs, qui accélèrent avec les basses
   // k : dot (1 ou 2 pixels), streak (un trait dans le sens de la chute), glow (un halo), spr (des dessins de MU_SPR ; fr : une suite d'images animée)
   const MU_DEEP = {
-    space: [{k: 'spr', s: ['cross', 'star5', 'cross'], c: ['t', 'a', 'b'], n: .5, vx: -.05, tw: 1}, {k: 'dot', c: ['t', 's'], n: 1.5, vx: -.12, tw: .7}],
     night: [{k: 'streak', c: ['s', 't'], n: 1.6, vx: -.8, vy: 5, a: .5}, {k: 'glow', r: [1, 3], c: ['a', 'w'], n: .12, vx: .05, tw: .4, a: .6}],
-    bokeh: [{k: 'glow', r: [5, 13], c: ['a', 'b', 'w', 'h'], n: .4, vx: .1, vy: -.15, sw: .4, tw: .5, a: 1.6}, {k: 'dot', c: ['t', 'w'], n: 1.2, vy: -.15, sw: .3, tw: 1}],
-    dawn: [{k: 'spr', fr: 'bird', c: ['n'], n: .1, vx: .5, sw: .5}, {k: 'dot', c: ['w', 't'], n: .9, vx: .1, vy: -.05, sw: .4, tw: 1}],
-    shafts: [{k: 'dot', c: ['w', 'a', 't'], n: 1.8, vx: .08, vy: .06, sw: .6, tw: 1}, {k: 'glow', r: [2, 4], c: ['w'], n: .12, vy: .08, sw: .5, tw: .6, a: .7}],
-    abyss: [{k: 'spr', s: ['bub1', 'bub2', 'bub3', 'bub1'], c: ['b', 't'], n: .45, vy: -.7, sw: .6}, {k: 'dot', c: ['b', 's'], n: 1.2, vx: .15, vy: -.08, sw: .5, tw: .8}],
     sakura: [{k: 'spr', fr: 'petal', c: ['h', 'a', 't'], n: .6, vx: .6, vy: .7, sw: 1.2}, {k: 'dot', c: ['h', 't'], n: .6, vx: .3, vy: .2, sw: .5, tw: 1}],
     dusk: [{k: 'glow', r: [2, 3], c: ['w', 'a'], n: .35, vx: .05, vy: -.06, sw: .8, tw: 1.2}, {k: 'dot', c: ['t'], n: .8, tw: 1}],
-    fizz: [{k: 'spr', s: ['bub1', 'bub2', 'bub1'], c: ['a', 't', 'b'], n: .6, vy: -1.1, sw: .4}, {k: 'dot', c: ['a', 't'], n: 1.4, vy: -1.6, sw: .2}],
-    gems: [{k: 'spr', s: ['star5', 'star7', 'cross'], c: ['a', 't', 'b'], n: .35, tw: 1.6}, {k: 'spr', fr: 'shard', c: ['a', 'h'], n: .25, vy: .35, sw: .3}],
-    aurora: [{k: 'spr', s: ['flake', 'cross'], c: ['t', 'b'], n: .45, vx: -.2, vy: .55, sw: .7}, {k: 'dot', c: ['t', 's'], n: 1.4, vx: -.25, vy: .9, sw: .4}],
-    forge: [{k: 'dot', c: ['w', 'd', 'a'], n: 1.6, vy: -1.1, sw: .7, tw: .6}, {k: 'glow', r: [1, 3], c: ['w', 'd'], n: .2, vy: -.7, sw: .6, tw: .8}],
     meadow: [{k: 'spr', fr: 'fly', c: ['b', 'a', 'w'], n: .12, vx: .35, vy: -.1, sw: 1.6}, {k: 'dot', c: ['w', 't', 'a'], n: 1, vx: .15, vy: -.12, sw: .5, tw: 1}],
     forest: [{k: 'spr', fr: 'leaf', c: ['a', 'w', 'd'], n: .35, vx: .4, vy: .55, sw: 1}, {k: 'glow', r: [1, 2], c: ['w'], n: .25, sw: .8, tw: 1.2}],
-    sea: [{k: 'spr', fr: 'bird', c: ['t'], n: .06, vx: -.45, sw: .6}, {k: 'dot', c: ['t', 'b'], n: 1, vx: -.06, tw: 1.4}],
-    sun: [{k: 'glow', r: [2, 5], c: ['w', 'a'], n: .22, vy: -.35, sw: .5, tw: .8, a: .8}, {k: 'dot', c: ['w', 't'], n: 1.1, vy: -.4, sw: .5, tw: 1}],
   };
   function muDeepInit(W, H, L) {
     const n = W * H / 120000;
@@ -1934,6 +1883,8 @@ export default async function (ctx) {
     if (now - (muAmb.gAt || 0) > 1000) {  // la ligne de sol : le bas des cartes du haut (elles laissent le plus voir la scène)
       muAmb.gAt = now; const top = root.getBoundingClientRect().top, b = Math.max(0, ...[...root.querySelectorAll('.muNow,.muReco')].filter(e => e.offsetHeight).map(e => e.getBoundingClientRect().bottom - top));
       const G = Math.round(b ? Math.max(H * .35, Math.min(H * .8, b / 3)) : H * .62); if (Math.abs(G - (muAmb.G || 0)) > 3) { muAmb.G = G; muAmb.ms = ''; }
+      const nw = root.querySelector('.muNow'), rr = root.getBoundingClientRect(), q = nw?.offsetHeight && nw.getBoundingClientRect();  // la carte du lecteur, en pixels de la toile (Cyber s'y fait discret)
+      muAmb.now = q ? [(q.left - rr.left) / 3, (q.top - top) / 3, (q.right - rr.left) / 3, (q.bottom - top) / 3] : null;
     }
     const key = ms + Object.values(C).join('');
     if (muAmb.ms !== key) {  // un nouveau thème (ou une autre taille) : le décor est repeint, les particules recréées
