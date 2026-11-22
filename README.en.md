@@ -74,7 +74,7 @@ An empty playlist says what to do, with the SEARCH / IMPORT and FIND AN ARTIST b
 
 ## Discord status
 
-Your friends see on Discord the song you are listening to ("Listening to NeoMusic"), with the title, the artist, the cover when the song comes from the Internet and the time left; nothing while music is paused. Discord must be open on the same PC. To turn it on: on [discord.com/developers](https://discord.com/developers/applications), **New Application**, name it *NeoMusic*, copy its **Application ID**, then in NeoMusic **Options → Discord** paste it and tick *Show the current song in my Discord status*. An image named "neomusic" in the application's **Rich Presence → Art Assets** is used as the default cover. Everything goes through the Discord app on the PC: no account or password is asked.
+Your friends see on Discord the song you are listening to ("Listening to NeoMusic"), with the title (which links to the song), the artist, the cover when the song comes from the Internet, the playlist and the song's place in it ("3 of 12"), your listening level and the time left. When paused, the status says "Paused" for 10 minutes, then disappears. A "Listen" button leads to the song and another one to NeoDex. Discord must be open on the same PC. To turn it on: in NeoMusic **Options → Discord**, tick *Show the current song in my Discord status*. Nothing to create or set up: everything goes through the Discord app on the PC, no account or password is asked.
 
 ## Data and sync
 

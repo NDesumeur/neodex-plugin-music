@@ -17,9 +17,12 @@ if (JSON.stringify(got) !== '[[1,1],[3,2]]') fail('lecture des trames : ' + JSON
   }))).listen(pipe(0));
   const t0 = Date.now();
   if (!await D.set('1234567890', { title: 'Un morceau', artist: 'Quelqu\'un', image: 'https://exemple.fr/p.jpg', url: 'https://www.youtube.com/watch?v=abc', start: t0, end: t0 + 180000 })) fail('pas connecté');
+  await D.set('1234567890', { title: 'Un morceau', artist: 'Quelqu\'un', image: 'https://exemple.fr/p.jpg', url: 'https://www.youtube.com/watch?v=abc', start: t0, paused: true, list: 'Chill', pos: 3, total: 12, level: 7 });
   await D.set('1234567890', null);
   await new Promise(r => setTimeout(r, 300));
-  const a = acts[0];
+  const a = acts[0], p = acts[1];
+  if (!p || p.timestamps || !/^⏸ En pause/.test(p.state) || p.assets.large_text !== 'Playlist « Chill » · 3 sur 12' || p.details_url !== 'https://www.youtube.com/watch?v=abc' || !/search_query=Quelqu/.test(p.state_url) || p.buttons.length !== 2) fail('pause : ' + JSON.stringify(p));
+  acts.splice(1, 1);
   if (hello?.client_id !== '1234567890' || hello.v !== 1) fail('poignée de main : ' + JSON.stringify(hello));
   if (!a || a.type !== 2 || a.details !== 'Un morceau' || a.state !== 'par Quelqu\'un' || a.timestamps.end - a.timestamps.start !== 180000 || a.assets.large_image !== 'https://exemple.fr/p.jpg' || a.assets.small_image !== 'neomusic' || a.buttons?.[0]?.url !== 'https://www.youtube.com/watch?v=abc' || a.status_display_type !== 2) fail('statut : ' + JSON.stringify(a));
   if (acts[1] !== null) fail('effacement : ' + JSON.stringify(acts[1]));

@@ -74,7 +74,7 @@ Une playlist vide dit quoi faire, avec les boutons RECHERCHER / IMPORTER et CHER
 
 ## Statut Discord
 
-Tes amis voient sur Discord le morceau que tu écoutes (« Écoute NeoMusic »), avec le titre, l'artiste, la pochette quand le morceau vient d'Internet et le temps restant ; rien quand la musique est en pause. Discord doit être ouvert sur le même PC. Pour l'activer : dans NeoMusic **Options → Discord**, coche *Montrer le morceau en cours dans mon statut Discord*. Rien à créer ni à configurer : tout passe par l'appli Discord du PC, aucun compte ni mot de passe n'est demandé.
+Tes amis voient sur Discord le morceau que tu écoutes (« Écoute NeoMusic »), avec le titre (qui mène au morceau), l'artiste, la pochette quand le morceau vient d'Internet, la playlist et la place du morceau (« 3 sur 12 »), ton niveau d'écoute et le temps restant. En pause, le statut dit « En pause » pendant 10 minutes, puis s'efface. Un bouton « Écouter » mène au morceau et un autre à NeoDex. Discord doit être ouvert sur le même PC. Pour l'activer : dans NeoMusic **Options → Discord**, coche *Montrer le morceau en cours dans mon statut Discord*. Rien à créer ni à configurer : tout passe par l'appli Discord du PC, aucun compte ni mot de passe n'est demandé.
 
 ## Données et synchronisation
 

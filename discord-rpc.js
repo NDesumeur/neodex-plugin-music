@@ -33,7 +33,9 @@ function connect(id) {
     next();
   });
 }
-// act : { title, artist, image, url, start, end } ou null pour effacer le statut ; rend false si Discord n'est pas joignable (réessayé 30 s plus tard)
+const SITE = 'https://ndesumeur.github.io/neodex-site/';
+// act : { title, artist, image, url, start, end, paused, list, pos, total, level } ou null pour effacer le statut ;
+// rend false si Discord n'est pas joignable (réessayé 30 s plus tard)
 async function set(id, act) {
   id = String(id || '').replace(/\D/g, '');
   if (!id || id !== appId) { if (sock) close(); appId = id; }
@@ -43,10 +45,16 @@ async function set(id, act) {
   // la pochette en grand avec le petit logo NeoMusic dans son coin ; le titre du morceau à côté du pseudo (status_display_type 2) ;
   // un bouton « Écouter » vers le morceau quand il est en ligne (les boutons ne se voient que chez les autres, pas sur son propre profil)
   const cover = /^https:\/\//.test(act?.image || ''), link = /^https:\/\/(www\.|music\.)?(youtube\.com|youtu\.be)\//.test(act?.url || '') ? act.url.slice(0, 512) : '';
-  const activity = act && { type: 2, status_display_type: 2, details: pad(act.title), state: pad(act.artist ? 'par ' + act.artist : 'NeoMusic'), instance: false,
-    assets: cover ? { large_image: act.image, large_text: pad(act.title), small_image: 'neomusic', small_text: 'NeoMusic' } : { large_image: 'neomusic', large_text: 'NeoMusic' },
-    ...(link ? { buttons: [{ label: 'Écouter', url: link }] } : {}),
-    ...(act.start ? { timestamps: { start: Math.round(act.start), ...(act.end ? { end: Math.round(act.end) } : {}) } } : {}) };
+  // 3.3.9 : en pause « ⏸ En pause » sans barre de temps ; la pochette dit d'où vient le morceau (« Playlist Chill · 3 sur 12 »), le petit logo
+  // le niveau d'écoute ; le titre mène au morceau et l'artiste à sa recherche (details_url / state_url) ; un 2e bouton vers NeoDex
+  const where = act && [act.list && 'Playlist « ' + act.list + ' »', act.total > 1 && act.pos > 0 && act.pos + ' sur ' + act.total].filter(Boolean).join(' · ');
+  const small = act && { small_image: 'neomusic', small_text: act.paused ? 'En pause · NeoMusic' : 'NeoMusic' + (act.level ? ' · niveau ' + act.level : '') };
+  const activity = act && { type: 2, status_display_type: 2, details: pad(act.title), instance: false,
+    state: pad((act.paused ? '⏸ En pause · ' : '') + (act.artist ? 'par ' + act.artist : 'NeoMusic')),
+    ...(link ? { details_url: link } : {}), ...(link && act.artist ? { state_url: 'https://www.youtube.com/results?search_query=' + encodeURIComponent(act.artist).slice(0, 400) } : {}),
+    assets: cover ? { large_image: act.image, large_text: pad(where || act.title), ...small } : { large_image: 'neomusic', large_text: pad(where || 'NeoMusic'), ...(act.paused ? { small_image: 'neomusic', small_text: 'En pause' } : {}) },
+    buttons: [...(link ? [{ label: 'Écouter', url: link }] : []), { label: 'NeoMusic sur NeoDex', url: SITE }],
+    ...(act.start && !act.paused ? { timestamps: { start: Math.round(act.start), ...(act.end ? { end: Math.round(act.end) } : {}) } } : {}) };
   sock.write(frame(1, { cmd: 'SET_ACTIVITY', args: { pid: process.pid, activity: activity || undefined }, nonce: Date.now() + '-' + Math.random() }));
   return true;
 }
