@@ -1031,13 +1031,11 @@ export default async function (ctx) {
   // Envoyé seulement quand quelque chose change (morceau, pause, saut dans le morceau de plus de 3 s)
   // l'application Discord « NeoMusic » de NeoDex : la même pour tout le monde (un identifiant public, pas un secret)
   const MU_DISCORD_APP = '1572986824257839216';
-  // 1.x (NeoDex 3.3.9) : en pause, le statut reste 10 min avec « En pause » (puis s'efface) ; la playlist et la place du morceau (3 sur 12),
-  // le niveau d'écoute dans le petit logo
-  let muPrLast = '', muPrPauseAt = 0, muPrTimer = 0;
+  // la playlist et la place du morceau (3 sur 12), le niveau d'écoute dans le petit logo ; 2.4.8 : en pause, le statut s'efface tout de suite (Nolan)
+  let muPrLast = '';
   function muPresence(force) {
     const s = mu.settings, t = mp.cur, id = MU_DISCORD_APP, on = !!(s.discord && id), playing = on && !!t && !!muAudio && !muAudio.paused;
-    if (playing) muPrPauseAt = 0; else if (on && t && muAudio && !muPrPauseAt) { muPrPauseAt = Date.now(); clearTimeout(muPrTimer); muPrTimer = setTimeout(() => muPresence(), 600e3 + 500); }
-    const paused = on && !playing && !!t && !!muAudio && !!muPrPauseAt && Date.now() - muPrPauseAt < 600e3;
+    const paused = false;
     const dur = muAudio?.duration || (t ? muDur(t) : 0) || 0, start = playing ? Date.now() - (muAudio.currentTime || 0) * 1000 : 0;
     const q = mp.queue.length ? mp.queue : mp.view, pos = t ? q.findIndex(x => muId(x) === muId(t)) + 1 : 0;
     const act = playing || paused ? { title: t.display_title || t.file || 'Musique', artist: t.author || '', image: s.noImages ? '' : t.thumbnail_url || '', url: t.url || '', start, end: playing && dur > 0 && isFinite(dur) ? start + dur * 1000 : 0,
