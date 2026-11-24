@@ -30,6 +30,12 @@ module.exports = async ({ pj, js, sleep, shot = async () => {} }) => {
     // en L, le lecteur prend toute la largeur de la case (2.5.1)
     const pw = await wj(`(() => { const b = document.querySelector('.muMini').getBoundingClientRect(); return Math.round(b.width); })()`);
     if (size === 'l' && pw < box.w - 40) throw new Error('widget L : le lecteur fait ' + pw + ' px dans une case de ' + box.w);
+    // en S et M, il garde sa largeur même seul sur sa ligne ; le spectre ne dépasse jamais 430 px (2.5.2)
+    if (size !== 'l' && pw > 700) throw new Error('widget ' + size + ' : le lecteur s’étire (' + pw + ' px)');
+    const sw = await wj(`document.querySelector('.mmSpecBox').offsetWidth`); if (sw > 430) throw new Error('widget ' + size + ' : spectre de ' + sw + ' px');
+    // les boutons de lecture centrés dans leur place
+    const cc = await wj(`(() => { const t = document.querySelector('.mmTr').getBoundingClientRect(), a = document.getElementById('mmPrev').getBoundingClientRect(), b = document.getElementById('mmFav').getBoundingClientRect(); return Math.abs((a.left + b.right) / 2 - (t.left + t.right) / 2); })()`); if (cc > 2) throw new Error('widget ' + size + ' : boutons décentrés de ' + cc + ' px');
+    await js(`document.querySelector('#wGrid .nbWidget[data-id="neodex.music"]').scrollIntoView({ block: 'center' }), 0`); await sleep(300);
     await shot('widget-' + size); out.push(size.toUpperCase() + ' ' + box.w + 'x' + box.h);
   }
   await js(`saveLayout({homeWidgetSizes: {}}).then(() => 0)`);

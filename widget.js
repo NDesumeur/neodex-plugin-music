@@ -16,12 +16,12 @@ body{display:grid;place-items:center}
 .mmKick{color:var(--macc);font-weight:bold;font-size:12px;letter-spacing:2px} #mmState{flex:1;font-size:12px;font-weight:bold;letter-spacing:1px}
 #mmTitle{font-size:15px;line-height:1.3;min-height:1.3em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #mmArtist{color:var(--msub);font-size:13px;line-height:1.3;min-height:1.3em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mmSpecBox{grid-column:1/-1;height:46px;margin-top:-4px}  .mmVolBox{margin-left:auto;display:flex;align-items:center;gap:4px} .mmVolBox .mmBtn{width:22px;height:22px;font:bold 14px Consolas,monospace} #mmSpec{display:block;image-rendering:pixelated}
+.mmSpecBox{grid-column:1/-1;justify-self:center;width:100%;max-width:430px;height:46px;margin-top:-4px}  .mmVolBox{margin-left:auto;display:flex;align-items:center;gap:4px} .mmVolBox .mmBtn{width:22px;height:22px;font:bold 14px Consolas,monospace} #mmSpec{display:block;image-rendering:pixelated}
 .mmBar{display:flex;align-items:center;gap:8px}
 #mmSeek{flex:1;height:6px;background:var(--mcard2);box-shadow:0 2px 0 rgba(0,0,0,.35)}
 #mmSeek i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,var(--macc) 0 4px,color-mix(in srgb,var(--macc) 75%,#fff) 4px 6px)}
 #mmTime{color:var(--msub);font-size:12px;white-space:nowrap}
-.mmCtl{display:flex;align-items:center;gap:4px;margin-top:3px}
+.mmCtl{display:flex;align-items:center;gap:4px;margin-top:3px} .mmTr{flex:1;display:flex;justify-content:center;gap:4px}
 .mmBtn{all:unset;box-sizing:border-box;cursor:pointer;width:30px;height:26px;display:grid;place-items:center;color:var(--mtext);background:var(--mcard2);
   box-shadow:inset 0 2px 0 rgba(255,255,255,.08),0 2px 0 rgba(0,0,0,.4);transition:background .1s,color .1s}
 .mmBtn:hover{background:color-mix(in srgb,var(--macc) 24%,var(--mcard2));color:var(--macc)} .mmBtn:active{transform:translateY(2px);box-shadow:none}
@@ -641,7 +641,8 @@ export default function (ctx) {
   const play = btn('mmPlay', 'play', 'Lecture / pause', () => ctx.widget.command('toggle')), fav = btn('mmFav', 'heart', 'Favori', () => ctx.widget.command('fav'));
   const vbtn = (txt, tip, cmd) => { const b = el('button', 'mmBtn', txt); b.title = tip; b.onclick = e => { e.stopPropagation(); ctx.widget.command(cmd); }; return b; };
   volBox.append(vbtn('−', 'Baisser le volume', 'voldown'), vol, vbtn('+', 'Monter le volume', 'volup'));
-  ctl.append(btn('mmPrev', 'prevt', 'Morceau précédent', () => ctx.widget.command('prev')), play, btn('mmNext', 'next', 'Morceau suivant', () => ctx.widget.command('next')), fav, volBox);
+  const tr = el('div', 'mmTr'); tr.append(btn('mmPrev', 'prevt', 'Morceau précédent', () => ctx.widget.command('prev')), play, btn('mmNext', 'next', 'Morceau suivant', () => ctx.widget.command('next')), fav);
+  ctl.append(tr, volBox);  // les boutons centrés dans la place laissée par le volume
   body.append(top, titleEl, artistEl, bar, ctl);  // le spectre : sous tout le lecteur, en grand (le petit lecteur l'a sous le titre)
   box.title = 'Clic : pause / lecture · Double-clic : ouvrir NeoMusic · Molette : volume';
   box.onclick = () => d?.title ? ctx.widget.command('toggle') : ctx.widget.open();
@@ -650,11 +651,11 @@ export default function (ctx) {
   document.body.append(box);
 
   // le petit lecteur garde ses proportions et grandit (ou rétrécit) pour remplir la case du widget
-  // la hauteur décide de la taille ; s'il reste de la largeur (taille L, toute la ligne), le lecteur s'étire jusqu'aux bords
+  // la hauteur décide de la taille ; en L seulement (toute la ligne), le lecteur s'étire jusqu'aux bords : en S et M il garde sa largeur, centré
   const fit = () => {
     box.style.zoom = 1; box.style.width = '';
     const k = Math.max(.5, Math.min(3, (innerWidth - 16) / box.offsetWidth, (innerHeight - 16) / box.offsetHeight));
-    if ((innerWidth - 16) / k > box.offsetWidth + 40) box.style.width = (innerWidth - 16) / k + 'px';
+    if (ctx.widget.size() === 'l' && (innerWidth - 16) / k > box.offsetWidth + 40) box.style.width = (innerWidth - 16) / k + 'px';
     box.style.zoom = k;
   };
   addEventListener('resize', fit);
