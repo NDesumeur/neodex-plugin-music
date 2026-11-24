@@ -3,6 +3,16 @@
 module.exports = async ({ pj, js, sleep, shot = async () => {} }) => {
   await sleep(1500);
   if (!await pj(`!!document.querySelector('.muLogo')`)) throw new Error('la page de NeoMusic ne s\'affiche pas');
+  // le bilan : une année fictive (NeoWrapped) puis un mois, dessinés en image ; les chiffres viennent des mois posés ici
+  const wrap = await pj(`(() => { let v = document.querySelector('#mu'); while (v && !v.__wrapped) v = v.parentElement;
+    const M = (p, s, a) => ({plays: p, secs: s, songs: a ? {'Nightcall - Kavinsky': 41, 'Midnight City - M83': 23} : {'Genesis - Justice': 12}, artists: a ? {Kavinsky: 52, M83: 30, Justice: 18, 'Daft Punk': 11, Air: 6, Phoenix: 2} : {Justice: 12}});
+    const months = {'2026-03': M(40, 9000), '2026-07': M(120, 30000, 1), '2026-11': M(95, 26000, 1)};
+    const out = {}; for (const p of ['2026', '2026-11']) { const c = v.__wrapped(p, months); out[p] = c.toDataURL(); }
+    const txt = [...document.querySelectorAll('.muWin')].map(w => w.textContent).join(' | ');
+    document.querySelectorAll('.muWinBar button').forEach(b => b.click());
+    return {out, txt}; })()`);
+  if (!/NeoWrapped 2026/.test(wrap.txt) || !/COPIER L'IMAGE/.test(wrap.txt)) throw new Error('bilan : ' + wrap.txt.slice(0, 300));
+  if (process.env.NEO_SHOTS) for (const [p, d] of Object.entries(wrap.out)) require('fs').writeFileSync(require('path').join(process.env.NEO_SHOTS, 'bilan-' + p + '.png'), Buffer.from(d.split(',')[1], 'base64'));
   // l'iframe du widget, cherchée par son nom (« <id>:widget »)
   const wj = code => { const f = require('electron').BrowserWindow.getAllWindows().flatMap(w => w.webContents.mainFrame.framesInSubtree).find(f => f.name === 'neodex.music:widget'); if (!f) throw new Error('pas d\'iframe de widget'); return f.executeJavaScript(code); };
   // le profil de test n'a pas de morceau : les données sont posées comme muWidget() les envoie
@@ -20,10 +30,17 @@ module.exports = async ({ pj, js, sleep, shot = async () => {} }) => {
     await shot('widget-' + size); out.push(size.toUpperCase() + ' ' + box.w + 'x' + box.h);
   }
   await js(`saveLayout({homeWidgetSizes: {}}).then(() => 0)`);
+  // le visualiseur coupé dans NeoMusic : pas de spectre sur le widget non plus (2.4.9)
+  await js(`pluginApi(pluginInfo.get('neodex.music'), 'widget', { data: { ...pluginWidgets['neodex.music'].data, deck: { ...pluginWidgets['neodex.music'].data.deck, visualizer: false }, at: Date.now() } }).then(() => 0)`); await sleep(700);
+  if (!await wj(`document.querySelector('.mmSpecBox').hidden`)) throw new Error('widget : le spectre reste avec le visualiseur coupé');
+  await js(`pluginApi(pluginInfo.get('neodex.music'), 'widget', { data: { ...pluginWidgets['neodex.music'].data, deck: { ...pluginWidgets['neodex.music'].data.deck, visualizer: true }, at: Date.now() } }).then(() => 0)`); await sleep(500);
+  if (await wj(`document.querySelector('.mmSpecBox').hidden`)) throw new Error('widget : le spectre ne revient pas');
   // sans la platine : le disque seul, comme le petit lecteur
   await js(`pluginApi(pluginInfo.get('neodex.music'), 'widget', { data: { ...pluginWidgets['neodex.music'].data, deck: { vinyl: true }, level: 40, at: Date.now() } }).then(() => 0)`); await sleep(900);
   if (await wj(`document.querySelector('.muMini').classList.contains('deck')`)) throw new Error('widget : la platine reste sans le niveau 150'); await shot('widget-disque');
   // l'option « Ambiance sur le petit lecteur et le widget » : la scène du thème (ici Rubis) dessinée derrière le widget
+  // (le widget amené à l'écran : une iframe hors de la vue n'est pas dessinée, ce qui arrive sur une fenêtre étroite)
+  await js(`document.querySelector('#wGrid .nbWidget[data-id="neodex.music"]').scrollIntoView({block: 'center'}), 0`);
   await js(`pluginApi(pluginInfo.get('neodex.music'), 'widget', { data: { ...pluginWidgets['neodex.music'].data, amb: true, ms: 'rubis', at: Date.now() } }).then(() => 0)`); await sleep(900);
   const apx = await wj(`(() => { const c = document.getElementById('mmAmb'); if (!c || !c.width || getComputedStyle(c).display === 'none') return -1; const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; let n = 0; for (let i = 3; i < d.length; i += 4) if (d[i]) n++; return n; })()`);
   if (!(apx > 50)) throw new Error('widget : ambiance du thème : ' + apx + ' pixels'); await shot('widget-ambiance');

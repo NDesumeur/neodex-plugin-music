@@ -4,6 +4,10 @@ Le lecteur de musique de NeoDex : des playlists en ligne (en streaming) ou hors 
 
 *English version: [README.en.md](README.en.md)*
 
+## Le bilan en image (NeoWrapped) (nouveau en 2.5.0)
+
+Les écoutes comptées mois par mois, et un bilan en pixel art du mois ou de l'année (NeoWrapped en décembre) : heures, lectures, morceau, top artistes, à copier en image.
+
 ## Avant de commencer
 
 L'ajout et le téléchargement de musiques passent par **yt-dlp**, un outil gratuit en Python. S'il manque, NeoMusic le dit et donne la commande : `python -m pip install -U yt-dlp`.
@@ -46,6 +50,8 @@ Dans **Options**, clique dans un champ puis appuie sur la combinaison voulue : e
 ## Statistiques
 
 Lectures totales, temps écouté, titres et artistes différents, durée moyenne, jours d'activité, série actuelle et meilleure série, jour le plus actif, écoutes du jour, de la semaine et du mois, activité des 14 derniers jours, répartition par jour de la semaine, top 10 des titres (en lectures et en temps), top 10 des artistes et activité récente.
+
+**Bilan en image** (depuis la version 2.5) : les écoutes sont aussi comptées mois par mois (les 13 derniers). Le bouton **BILAN EN IMAGE** des statistiques dessine en pixel art le bilan d'un mois, ou de l'année entière (**NeoWrapped**, proposé de lui-même en décembre et jusqu'au 15 janvier) : heures d'écoute, lectures, morceau de la période, top 5 des artistes, et les mois de l'année. **COPIER L'IMAGE** la met dans le presse-papiers pour la coller où tu veux.
 
 ## Niveaux et succès
 

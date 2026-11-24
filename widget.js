@@ -658,7 +658,7 @@ export default function (ctx) {
     if (T) for (const [k, v] of Object.entries({ card: T.CARD, card2: T.CARD_ALT, border: T.BORDER, text: T.TEXT, sub: T.SUBTEXT, acc: T.ACCENT, acc2: T.ACCENT_2, heart: T.HEART })) if (v) box.style.setProperty('--m' + k, v);
     if (!d || !d.title || !T) { mp.cur = null; box.classList.remove('deck'); box.replaceChildren(Object.assign(el('div', 'empty'), { innerHTML: '<b>NEOMUSIC</b>Rien en cours. Clique pour choisir une musique.' })); fit(); return; }
     if (!box.contains(body)) box.replaceChildren(amb, cv, body, specBox);
-    box.classList.toggle('amb', !!d.amb);
+    box.classList.toggle('amb', !!d.amb); specBox.hidden = d.deck?.visualizer === false;  // le visualiseur coupé dans NeoMusic : pas de spectre ici non plus
     mp.cur = d; mu.settings = d.deck || {}; muSpec.levels = d.spec || muSpec.levels;
     if (d.cover !== coverKey) {  // la pochette, comme muSetCover
       coverKey = d.cover; mp.coverImg = null;
@@ -690,7 +690,7 @@ export default function (ctx) {
       } else if (mp.coverImg) { const im = mp.coverImg, s = Math.min(im.width, im.height); g.drawImage(im, (im.width - s) / 2, (im.height - s) / 2, s, s, 0, 0, W, W); }
       else { g.fillStyle = T.CARD_ALT; g.fillRect(0, 0, W, W); g.fillStyle = T.ACCENT; g.font = 'bold 80px Consolas'; g.textAlign = 'center'; g.fillText('?', W / 2, W / 2 + 28); }
     }
-    muPixSpectrum(spec, 46, now);
+    if (!specBox.hidden) muPixSpectrum(spec, 46, now);
     const dur = d.dur || 0, p = pos();
     seek.firstChild.style.width = (dur ? Math.min(100, p / dur * 100) : 0) + '%';
     time.textContent = muClock(p) + ' / ' + muClock(dur);

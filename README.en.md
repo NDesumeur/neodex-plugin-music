@@ -4,6 +4,10 @@ NeoDex's music player: online (streamed) or offline (downloaded) playlists, addi
 
 *Version française : [README.md](README.md)*
 
+## Recap image (NeoWrapped) (new in 2.5.0)
+
+Plays counted month by month, and a pixel-art recap of the month or the year (NeoWrapped in December): hours, plays, song, top artists, to copy as an image.
+
 ## Before you start
 
 Adding and downloading music relies on **yt-dlp**, a free Python tool. If it is missing, NeoMusic says so and gives the command: `python -m pip install -U yt-dlp`.
@@ -46,6 +50,8 @@ In **Options**, click a field then press the combination you want: it must inclu
 ## Statistics
 
 Total plays, time listened, distinct tracks and artists, average length, active days, current and best streak, most active day, plays today, this week and this month, activity over the last 14 days, spread by day of the week, top 10 tracks (by plays and by time), top 10 artists and recent activity.
+
+**Recap image** (since version 2.5): plays are also counted month by month (the last 13). The **RECAP IMAGE** button in the stats draws a pixel-art recap of a month, or the whole year (**NeoWrapped**, offered on its own in December and until January 15): hours listened, plays, song of the period, top 5 artists and the months of the year. **COPY IMAGE** puts it in the clipboard to paste anywhere.
 
 ## Levels and achievements
 

@@ -3,6 +3,7 @@
 // Elle tourne dans le bac à sable de NeoDex, avec ses outils d'interface (ctx.host) et seulement les autorisations de son plugin.json.
 const HTML = "";
 const MU_CSS = `/* NeoMusic: MuPlayer's look (Consolas, flat cards, accent strips); colours are the theme's, set on #mu by muApplyTheme */
+.muWrapBox{display:flex;justify-content:center;margin:8px 0}.muWrap{width:100%;max-width:480px;image-rendering:pixelated;box-shadow:0 0 0 3px var(--mborder,#59658F)}.muWrapSel{font:inherit;color:inherit;background:var(--mcard2,#2B3154);border:2px solid var(--mborder,#59658F);padding:6px;margin-left:auto}
 #plug_neodex_music{overflow:hidden;background:#101425}
 .mu{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--mbg);color:var(--mtext);font:15px var(--mfont,Consolas),'Cascadia Mono',monospace;user-select:none;overflow:hidden}
 :where(.mu) button{all:unset;box-sizing:border-box;cursor:var(--cp,pointer)}
@@ -1021,7 +1022,7 @@ export default async function (ctx) {
     mp.wAt = performance.now();
     const t = mp.cur; if (!ctx.widget?.set || !T) return;
     const playing = !!muAudio && !muAudio.paused, q = mp.queue.length ? mp.queue : mp.view, i = t ? q.findIndex(x => muId(x) === muId(t)) : -1;
-    const s = mu.settings, look = { T, deck: { vinyl: s.vinyl, deckBase: s.deckBase, deckArm: s.deckArm, deckStyle: s.deckStyle, deckLuxe: s.deckLuxe }, level: muLevel().level, vol: s.volume, ms: $('mu').dataset.ms || 'nova', amb: muAmbSmallOn() };  // le visuel choisi du petit lecteur
+    const s = mu.settings, look = { T, deck: { vinyl: s.vinyl, deckBase: s.deckBase, deckArm: s.deckArm, deckStyle: s.deckStyle, deckLuxe: s.deckLuxe, visualizer: s.visualizer !== false }, level: muLevel().level, vol: s.volume, ms: $('mu').dataset.ms || 'nova', amb: muAmbSmallOn() };  // le visuel choisi du petit lecteur
     const w = t ? { title: t.display_title || t.file || '', artist: t.author || muPlaylistOf(t)?.name || '', cover: s.noImages ? '' : t.cover || '', playing, fav: mp.favs.has(muId(t)), dur: muAudio?.duration || muDur(t) || 0, ...look } : look;
     muPresence();
     const k = JSON.stringify(w); if (k === muWLast && Date.now() - muWAt < 15e3) return; muWLast = k; muWAt = Date.now(); mp.wData = w;
@@ -1046,7 +1047,7 @@ export default async function (ctx) {
     neo.musicPresence?.(on ? id : '', act)?.catch?.(() => {});
   }
   function muWidgetSpec(now) {  // le spectre du widget, comme celui du petit lecteur (le widget le lisse lui-même entre deux envois)
-    if (!mp.wData?.title || !ctx.widget?.set || now - (mp.wsAt || 0) < 120) return; mp.wsAt = now;
+    if (!mp.wData?.title || !ctx.widget?.set || mu.settings.visualizer === false || now - (mp.wsAt || 0) < 120) return; mp.wsAt = now;
     ctx.widget.set({ data: { ...mp.wData, spec: muSpec.levels.map(v => Math.round(v * 100) / 100), pos: muAudio?.currentTime || 0, at: Date.now() } }).catch(() => {});
   }
   function muPlayIcon() {
@@ -1506,8 +1507,8 @@ export default async function (ctx) {
       } else if (mp.coverImg) { const im = mp.coverImg, s = Math.min(im.width, im.height); g.drawImage(im, (im.width - s) / 2, (im.height - s) / 2, s, s, 0, 0, W, W); }
       else { g.fillStyle = T.CARD_ALT; g.fillRect(0, 0, W, W); g.fillStyle = T.ACCENT; g.font = 'bold 80px Consolas'; g.textAlign = 'center'; g.fillText('?', W / 2, W / 2 + 28); }
     }
-    const sup = muSuperOn(now); $('mmSpec').parentElement.classList.toggle('sup', sup);  // the super visualiser follows into the portable player
-    if (sup) muSuperSpectrum($('mmSpec'), 39, now); else muPixSpectrum($('mmSpec'), 21, now);
+    const sup = muSuperOn(now), vis = mu.settings.visualizer !== false; $('mmSpec').parentElement.classList.toggle('sup', sup); $('mmSpec').parentElement.hidden = !vis;  // the super visualiser follows into the portable player; none when the visualiser is off
+    if (!vis); else if (sup) muSuperSpectrum($('mmSpec'), 39, now); else muPixSpectrum($('mmSpec'), 21, now);
     const dur = muAudio?.duration || mp.length || 0, pos = muAudio?.currentTime || mp.resume || 0;
     $('mmSeek').firstChild.style.width = (dur ? Math.min(100, pos / dur * 100) : 0) + '%';
     $('mmTime').textContent = muClock(pos) + ' / ' + muClock(dur);
@@ -1955,6 +1956,7 @@ export default async function (ctx) {
       const s = Math.min(.5, Math.max(0, (now - mp.lastTick) / 1000)), st = mu.stats, title = mp.cur.display_title || '', artist = mp.cur.author || 'Inconnu';
       st.seconds = (+st.seconds || 0) + s;
       st.songs_time[title] = (+st.songs_time[title] || 0) + s; st.artists_time[artist] = (+st.artists_time[artist] || 0) + s;
+      const M = muMonth(st, muToday(new Date())); M.secs = Math.round((M.secs + s) * 10) / 10;
       muLevelCheck();
       if (now - mp.saveAt > 15000) { mp.saveAt = now; muSaveSession(false); muSave(500); }
     }
@@ -2510,10 +2512,17 @@ export default async function (ctx) {
     for (let d = 1; d <= days; d++) if (weekdays.includes((new Date(year, month - 1, d).getDay() + 6) % 7)) match.push(d);
     return match.length && today === match.at(-1) && match.every(d => covered.includes(d));
   }
+  function muMonth(st, day) {
+    const k = day.slice(0, 7), ms = st.months ||= {};
+    if (!ms[k]) { ms[k] = {plays: 0, secs: 0, songs: {}, artists: {}}; for (const old of Object.keys(ms).sort().slice(0, -13)) delete ms[old]; }
+    return ms[k];
+  }
   function muRecordPlay(t) {
     const st = mu.stats, title = t.display_title || '', artist = t.author || 'Inconnu', now = new Date(), today = muToday(now);
     st.plays = (+st.plays || 0) + 1; st.songs[title] = (+st.songs[title] || 0) + 1; st.artists[artist] = (+st.artists[artist] || 0) + 1; st.daily[today] = (+st.daily[today] || 0) + 1;
     st.history.push({title, artist, playlist: muPlaylistOf(t)?.name || mp.pl, date: muStamp(now)}); st.history = st.history.slice(-100);
+    const M = muMonth(st, today); M.plays++; M.songs[title] = (+M.songs[title] || 0) + 1; M.artists[artist] = (+M.artists[artist] || 0) + 1;
+    for (const k of ['songs', 'artists']) if (Object.keys(M[k]).length > 400) M[k] = Object.fromEntries(Object.entries(M[k]).sort((a, b) => b[1] - a[1]).slice(0, 250));
     t.last_played = Date.now() / 1000;
     const pr = mu.achievements.progress;
     if (st.plays >= 1) muUnlock('first_play'); if (st.plays >= 100) muUnlock('hundred_plays'); if (st.plays >= 1000) muUnlock('thousand_plays');
@@ -2563,7 +2572,7 @@ export default async function (ctx) {
     const mon = new Date(today); mon.setDate(today.getDate() - (today.getDay() + 6) % 7);
     const week = days.filter(d => d >= muToday(mon)).reduce((a, d) => a + +daily[d], 0), month = days.filter(d => d.startsWith(muToday(today).slice(0, 7))).reduce((a, d) => a + +daily[d], 0);
     const bestDay = days.slice().sort((a, x) => daily[x] - daily[a])[0];
-    b.append(mh('div.muWHead', {}, muH('STATISTIQUES D\'ÉCOUTE'), days[0] ? mh('span', {text: 'Depuis le ' + days[0].split('-').reverse().join('/')}) : null));
+    b.append(mh('div.muWHead', {}, muH('STATISTIQUES D\'ÉCOUTE'), days[0] ? mh('span', {text: 'Depuis le ' + days[0].split('-').reverse().join('/')}) : null, muButton('BILAN EN IMAGE', () => muWrapped(), 'accent')));
     b.append(muSec('VUE D\'ENSEMBLE'), mh('div.muStats', {}, ...[[String(plays), 'Lectures totales'], [muTime(secs), 'Temps total écouté'], [String(Object.keys(st.songs).length), 'Titres différents écoutés'],
       [String(Object.keys(st.artists).length), 'Artistes différents écoutés'], [muTime(plays ? secs / plays : 0), 'Durée moyenne par lecture'], [String(days.length), 'Jours d\'activité'],
       [cur + ' jour(s)', 'Série d\'écoute actuelle'], [bestRun + ' jour(s)', 'Meilleure série d\'écoute'], [bestDay ? bestDay.slice(8) + '/' + bestDay.slice(5, 7) + ` (${daily[bestDay]})` : '--', 'Jour le plus actif']].map(([v, l]) => muStatCard(v, l))));
@@ -2582,6 +2591,57 @@ export default async function (ctx) {
     b.append(muSec('NIVEAU'), mh('p.muWNote', {text: `Niveau ${lv.level} — ${Math.floor((+mu.stats.seconds || 0) / 60)} min d'écoute cumulées`}), mh('div.muLevel', {}, mh('i', {style: {width: Math.max(1, lv.progress * 100) + '%'}})));
     b.append(mh('div.muWEnd', {}, muButton('FERMER', w.close, 'accent')));
   }
+
+  /* ---------- Bilan : un mois, ou l'année entière (« NeoWrapped », proposé en décembre et jusqu'au 15 janvier), dessiné en pixel art et copié en image ---------- */
+  const MU_MONTHS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+  function muWrapSum(months, p) {  // p : « 2026-11 » ou « 2026 »
+    const out = {plays: 0, secs: 0, songs: {}, artists: {}, months: {}};
+    for (const [k, M] of Object.entries(months || {})) if (k.startsWith(p)) {
+      out.plays += +M.plays || 0; out.secs += +M.secs || 0; out.months[k] = +M.plays || 0;
+      for (const x of ['songs', 'artists']) for (const [n, c] of Object.entries(M[x] || {})) out[x][n] = (out[x][n] || 0) + c;
+    }
+    return out;
+  }
+  function muWrapDraw(cv, p, W) {
+    const g = cv.getContext('2d'), S = 480, H = 640, font = getComputedStyle(document.documentElement).getPropertyValue('--title').trim() || 'monospace', year = p.length === 4;
+    cv.width = S; cv.height = H; g.imageSmoothingEnabled = false;
+    const txt = (t, x, y, size, col, align = 'left', max = 0) => { g.font = size + 'px ' + font; g.fillStyle = col; g.textAlign = align; g.textBaseline = 'top'; let s = String(t); if (max) while (s.length > 1 && g.measureText(s).width > max) s = s.slice(0, -2) + '…'; g.fillText(s, x, y); };
+    g.fillStyle = T.BG; g.fillRect(0, 0, S, H);
+    for (let y = 0; y < H; y += 8) for (let x = (y / 8) % 2 * 8; x < S; x += 16) { g.fillStyle = T.CARD; g.fillRect(x, y, 8, 8); }  // le damier du fond
+    g.fillStyle = T.ACCENT; g.fillRect(12, 12, S - 24, 4); g.fillRect(12, H - 16, S - 24, 4); g.fillRect(12, 12, 4, H - 24); g.fillRect(S - 16, 12, 4, H - 24);
+    const [y0, m0] = p.split('-');
+    txt(year ? 'NEOWRAPPED' : 'BILAN DU MOIS', S / 2, 34, 26, T.ACCENT, 'center'); txt(year ? y0 : MU_MONTHS[+m0 - 1].toUpperCase() + ' ' + y0, S / 2, 70, 18, T.TEXT, 'center');
+    // le temps et les lectures, en gros
+    const h = W.secs / 3600; txt(h >= 10 ? Math.round(h) + ' h' : h >= 1 ? h.toFixed(1).replace('.', ',') + ' h' : Math.round(W.secs / 60) + ' min', S / 2, 112, 44, T.ACCENT_2, 'center');
+    txt('d\'écoute · ' + W.plays + ' lecture' + (W.plays > 1 ? 's' : '') + ' · ' + Object.keys(W.artists).length + ' artiste' + (Object.keys(W.artists).length > 1 ? 's' : ''), S / 2, 166, 13, T.SUBTEXT, 'center');
+    // le morceau de la période
+    const top = o => Object.entries(o).sort((a, b) => b[1] - a[1]), ts = top(W.songs)[0];
+    txt(year ? 'MORCEAU DE L\'ANNÉE' : 'MORCEAU DU MOIS', 40, 206, 12, T.SUBTEXT); txt(ts ? ts[0] : '—', 40, 226, 18, T.TEXT, 'left', S - 80); if (ts) txt(ts[1] + ' écoute' + (ts[1] > 1 ? 's' : ''), 40, 252, 12, T.ACCENT);
+    // les cinq artistes, en barres
+    txt('TOP ARTISTES', 40, 290, 12, T.SUBTEXT);
+    const ta = top(W.artists).slice(0, 5);
+    ta.forEach(([a, n], i) => { const y = 314 + i * 40, w = Math.max(8, Math.round((S - 200) * n / ta[0][1]) / 4 * 4);
+      txt(i + 1, 40, y + 4, 16, T.ACCENT); g.fillStyle = i ? T.CARD_ALT : T.ACCENT_2; g.fillRect(70, y, w, 26); g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(70, y + 22, w, 4);
+      txt(a, 78, y + 7, 13, i ? T.TEXT : T.BG, 'left', Math.max(w - 16, 260)); txt(n, S - 40, y + 7, 13, T.SUBTEXT, 'right'); });
+    if (!ta.length) txt('Pas encore d\'écoute sur cette période', 40, 318, 13, T.SUBTEXT);
+    // l'année : une barre par mois ; le mois : une petite platine
+    if (year) { const vals = Array.from({length: 12}, (_, i) => W.months[y0 + '-' + String(i + 1).padStart(2, '0')] || 0), mx = Math.max(1, ...vals);
+      vals.forEach((v, i) => { const hh = Math.round(60 * v / mx / 4) * 4; g.fillStyle = v === mx ? T.ACCENT : T.BORDER; g.fillRect(52 + i * 32, 580 - hh, 20, hh || 2); txt('JFMAMJJASOND'[i], 62 + i * 32, 586, 10, T.SUBTEXT, 'center'); }); }
+    else for (let i = 0; i < 24; i++) { const hh = 8 + Math.round(Math.abs(Math.sin(i * 1.3 + W.plays)) * 10) * 4; g.fillStyle = i % 3 ? T.BORDER : T.ACCENT; g.fillRect(48 + i * 16, 590 - hh, 10, hh); }
+    txt('NeoMusic · NeoDex', S / 2, H - 40, 11, T.SUBTEXT, 'center');
+  }
+  function muWrapped(period, st = mu.stats) {
+    const months = st.months || {}, keys = Object.keys(months).sort(), now = new Date(), cur = muToday(now).slice(0, 7);
+    const years = [...new Set(keys.map(k => k.slice(0, 4)))], opts = [...years.map(y => [y, 'NeoWrapped ' + y]), ...keys.slice().reverse().map(k => [k, 'Bilan de ' + MU_MONTHS[+k.slice(5) - 1] + ' ' + k.slice(0, 4)])];
+    if (!period) period = (now.getMonth() === 11 || (now.getMonth() === 0 && now.getDate() <= 15)) && years.length ? String(now.getMonth() === 11 ? now.getFullYear() : now.getFullYear() - 1) : months[cur]?.plays ? cur : keys.at(-1) || cur;
+    const w = muWindow('Bilan', 560), cv = mh('canvas.muWrap'), sel = mh('select.muWrapSel');
+    for (const [v, l] of opts.length ? opts : [[period, 'Bilan de ' + MU_MONTHS[+period.slice(5) - 1] + ' ' + period.slice(0, 4)]]) sel.append(mh('option', {value: v, text: l}));
+    sel.value = period; const draw = () => muWrapDraw(cv, sel.value, muWrapSum(months, sel.value)); sel.onchange = draw; draw();
+    const copy = () => cv.toBlob(b => navigator.clipboard.write([new ClipboardItem({'image/png': b})]).then(() => toast('Image copiée : colle-la où tu veux'), () => toast('Impossible de copier l\'image', true)));
+    w.body.append(mh('div.muWHead', {}, muH('BILAN'), sel), mh('div.muWrapBox', {}, cv), muNote('Compté depuis la version 2.5 de NeoMusic, mois par mois (les 13 derniers).'), mh('div.muWEnd', {}, muButton('COPIER L\'IMAGE', copy, 'accent'), muButton('FERMER', w.close)));
+    return cv;
+  }
+  view.__wrapped = (p, months) => muWrapped(p, {months});  // pour les tests
 
   /* ---------- Succès ---------- */
   function muAchievements() {
