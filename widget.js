@@ -650,7 +650,13 @@ export default function (ctx) {
   document.body.append(box);
 
   // le petit lecteur garde ses proportions et grandit (ou rétrécit) pour remplir la case du widget
-  const fit = () => { box.style.zoom = 1; const k = Math.min((innerWidth - 16) / box.offsetWidth, (innerHeight - 16) / box.offsetHeight); box.style.zoom = Math.max(.5, Math.min(3, k)); };
+  // la hauteur décide de la taille ; s'il reste de la largeur (taille L, toute la ligne), le lecteur s'étire jusqu'aux bords
+  const fit = () => {
+    box.style.zoom = 1; box.style.width = '';
+    const k = Math.max(.5, Math.min(3, (innerWidth - 16) / box.offsetWidth, (innerHeight - 16) / box.offsetHeight));
+    if ((innerWidth - 16) / k > box.offsetWidth + 40) box.style.width = (innerWidth - 16) / k + 'px';
+    box.style.zoom = k;
+  };
   addEventListener('resize', fit);
   let coverKey = null;
   function paint() {

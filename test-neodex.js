@@ -27,6 +27,9 @@ module.exports = async ({ pj, js, sleep, shot = async () => {} }) => {
     if (!r.deck || r.title !== 'Nightcall' || r.btns !== 7 || r.vol !== 'VOL 3 %') throw new Error('widget ' + size + ' : ' + JSON.stringify(r));
     const box = await js(`(() => { const c = document.querySelector('#wGrid .nbWidget[data-id="neodex.music"]'), b = c.getBoundingClientRect(); return { w: Math.round(b.width), h: Math.round(b.height), out: b.right > innerWidth + 1 }; })()`);
     if (box.out) throw new Error('le widget déborde : ' + JSON.stringify(box));
+    // en L, le lecteur prend toute la largeur de la case (2.5.1)
+    const pw = await wj(`(() => { const b = document.querySelector('.muMini').getBoundingClientRect(); return Math.round(b.width); })()`);
+    if (size === 'l' && pw < box.w - 40) throw new Error('widget L : le lecteur fait ' + pw + ' px dans une case de ' + box.w);
     await shot('widget-' + size); out.push(size.toUpperCase() + ' ' + box.w + 'x' + box.h);
   }
   await js(`saveLayout({homeWidgetSizes: {}}).then(() => 0)`);
