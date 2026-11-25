@@ -2504,7 +2504,7 @@ export default async function (ctx) {
   }
   function muUnlock(id) {
     if (mu.achievements.unlocked[id]) return;
-    mu.achievements.unlocked[id] = muStamp(); muSave();
+    mu.achievements.unlocked[id] = muStamp(); muSave(); muTrophy(id);
     muStatus('Succès débloqué : ' + (MU_ACHIEVEMENTS.find(a => a[0] === id)?.[1] || id), T.ACCENT);
   }
   function muMonthDone(year, month, weekdays, covered, today) {  // every Saturday/Sunday (or Sunday) of the month, checked on the last one
@@ -2545,14 +2545,26 @@ export default async function (ctx) {
     if ((+st.songs[title] || 0) >= 50) muUnlock('loyal_fan');
     if (pr.obsession_date !== today) { pr.obsession_date = today; pr.obsession_counts = {}; }
     pr.obsession_counts[title] = (+pr.obsession_counts[title] || 0) + 1; if (pr.obsession_counts[title] >= 10) muUnlock('obsession');
-    muSave();
+    muSave(); muTrophyRecords();
   }
   function muFavAchievements() { const n = muPl('Favoris').tracks.length; if (n >= 1) muUnlock('first_favorite'); if (n >= 50) muUnlock('fifty_favorites'); }
   function muSizeAchievement(p) { if (p.tracks.length >= 100) muUnlock('mega_playlist'); }
   function muPlaylistCreated() { const pr = mu.achievements.progress; pr.playlists_created = (+pr.playlists_created || 0) + 1; if (pr.playlists_created >= 1) muUnlock('architect'); if (pr.playlists_created >= 10) muUnlock('dj_in_training'); muSave(); }
   function muShuffleAchievement(id) { const pr = mu.achievements.progress; if (id && pr.last_shuffle_identity === id) muUnlock('lucky'); pr.last_shuffle_identity = id; muSave(); }
   function muShortcutAchievement() { const pr = mu.achievements.progress; pr.shortcut_uses = (+pr.shortcut_uses || 0) + 1; if (pr.shortcut_uses >= 10) muUnlock('shortcut_pro'); muSave(5000); }
-  function muStartupAchievements() { const f = mu.achievements.progress.first_seen_date; if (f && (Date.now() - new Date(f)) / 864e5 >= 365) muUnlock('one_year'); }
+  // la page Trophées de NeoDex (3.4.8) : les succès et trois records ; un NeoDex plus ancien n'a pas ctx.games
+  function muTrophy(id, quiet) { if (id !== 'hidden_font') ctx.games?.unlock(id, quiet).catch(() => {}); }
+  let muRecAt = 0;
+  function muTrophyRecords(force) {  // au plus une fois par minute : NeoDex garde le plus grand
+    if (!ctx.games || (!force && Date.now() - muRecAt < 60e3)) return; muRecAt = Date.now();
+    for (const [k, v] of [['niveau', muLevel().level], ['lectures', +mu.stats.plays || 0], ['ecoute', Math.floor(+mu.stats.seconds || 0)]]) if (v > 0) ctx.games.record(k, v).catch(() => {});
+  }
+  async function muTrophyCatchUp() {
+    if (!ctx.games) return; const had = (await ctx.games.get().catch(() => null))?.succes || {};
+    for (const id of Object.keys(mu.achievements.unlocked || {})) if (!had[id]) muTrophy(id, true);
+    muTrophyRecords(true);
+  }
+  function muStartupAchievements() { muTrophyCatchUp(); const f = mu.achievements.progress.first_seen_date; if (f && (Date.now() - new Date(f)) / 864e5 >= 365) muUnlock('one_year'); }
 
   /* ---------- Statistiques ---------- */
   function muStatCard(value, label, color) { return mh('div.muStat', {}, mh('b', {text: value, style: {color: color || T.ACCENT}}), mh('span', {text: label})); }

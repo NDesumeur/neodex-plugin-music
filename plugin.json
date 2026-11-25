@@ -1,9 +1,9 @@
 {
   "id": "neodex.music",
   "name": "NeoMusic",
-  "version": "2.5.2",
+  "version": "2.6.0",
   "author": "NDesumeur",
-  "description": "Lecteur de musique : playlists en streaming ou téléchargées, ajout depuis YouTube, SoundCloud, Deezer ou un fichier CSV, favoris, radar des sorties et découvertes chaque semaine. Égaliseur 10 bandes, limiteur, ReplayGain, mode sommeil, réveil, petit lecteur flottant et raccourcis globaux. Statistiques détaillées, 34 succès, niveaux qui débloquent thèmes, visualiseur et platine vinyle.",
+  "description": "Lecteur de musique : playlists en streaming ou téléchargées, ajout depuis YouTube, SoundCloud, Deezer ou un fichier CSV, favoris, radar des sorties et découvertes chaque semaine. Égaliseur 10 bandes, limiteur, ReplayGain, mode sommeil, réveil, petit lecteur flottant et raccourcis globaux. Statistiques détaillées, 33 succès (aussi dans la page Trophées de NeoDex), niveaux qui débloquent thèmes, visualiseur et platine vinyle.",
   "icon": "icon.png",
   "entry": "index.js",
   "view": "music",
@@ -46,6 +46,199 @@
     "music",
     "system:main",
     "widget"
+  ],
+  "succes": [
+    {
+      "id": "first_play",
+      "nom": "Premier pas",
+      "texte": "Écoute ta toute première musique."
+    },
+    {
+      "id": "hundred_plays",
+      "nom": "Centurion",
+      "texte": "Écoute 100 morceaux au total (lectures cumulées)."
+    },
+    {
+      "id": "five_hundred_unique",
+      "nom": "500 nuances de son",
+      "texte": "Écoute 500 morceaux différents."
+    },
+    {
+      "id": "thousand_plays",
+      "nom": "Millénaire sonore",
+      "texte": "Atteins 1000 lectures au total."
+    },
+    {
+      "id": "marathon",
+      "nom": "Marathonien",
+      "texte": "Cumule 24h de temps d'écoute réel."
+    },
+    {
+      "id": "full_week",
+      "nom": "Semaine complète",
+      "texte": "Cumule 168h (une semaine) de temps d'écoute réel."
+    },
+    {
+      "id": "insomniac",
+      "nom": "Insomniaque mélomane",
+      "texte": "Écoute une musique entre 2h et 5h du matin.",
+      "cache": true
+    },
+    {
+      "id": "streak_3",
+      "nom": "3 jours d'affilée",
+      "texte": "Écoute au moins une musique 3 jours de suite."
+    },
+    {
+      "id": "streak_7",
+      "nom": "7 jours d'affilée",
+      "texte": "Écoute au moins une musique 7 jours de suite."
+    },
+    {
+      "id": "streak_30",
+      "nom": "30 jours d'affilée",
+      "texte": "Écoute au moins une musique 30 jours de suite."
+    },
+    {
+      "id": "streak_100",
+      "nom": "100 jours d'affilée",
+      "texte": "Écoute au moins une musique 100 jours de suite."
+    },
+    {
+      "id": "weekend_warrior",
+      "nom": "Weekend warrior",
+      "texte": "Écoute de la musique chaque samedi et dimanche d'un mois complet."
+    },
+    {
+      "id": "explorer_50_artists",
+      "nom": "Explorateur",
+      "texte": "Découvre 50 artistes différents."
+    },
+    {
+      "id": "fresh_out",
+      "nom": "Petit nouveau",
+      "texte": "Écoute un morceau ajouté à ta bibliothèque il y a moins de 24h."
+    },
+    {
+      "id": "first_favorite",
+      "nom": "Coup de cœur",
+      "texte": "Ajoute ton tout premier favori."
+    },
+    {
+      "id": "fifty_favorites",
+      "nom": "Grand collectionneur",
+      "texte": "Ajoute 50 favoris."
+    },
+    {
+      "id": "loyal_fan",
+      "nom": "Fidèle",
+      "texte": "Écoute le même morceau 50 fois."
+    },
+    {
+      "id": "obsession",
+      "nom": "Obsession",
+      "texte": "Écoute le même morceau 10 fois dans la même journée."
+    },
+    {
+      "id": "architect",
+      "nom": "Architecte",
+      "texte": "Crée ta première playlist."
+    },
+    {
+      "id": "dj_in_training",
+      "nom": "DJ en herbe",
+      "texte": "Crée 10 playlists."
+    },
+    {
+      "id": "mega_playlist",
+      "nom": "Méga playlist",
+      "texte": "Construis une playlist de 100 morceaux ou plus."
+    },
+    {
+      "id": "early_bird",
+      "nom": "Lève-tôt",
+      "texte": "Écoute une musique avant 7h du matin."
+    },
+    {
+      "id": "night_owl",
+      "nom": "Oiseau de nuit",
+      "texte": "Écoute une musique après minuit."
+    },
+    {
+      "id": "sunday_ritual",
+      "nom": "Rituel du dimanche",
+      "texte": "Écoute de la musique chaque dimanche d'un mois complet."
+    },
+    {
+      "id": "one_year",
+      "nom": "Un an ensemble",
+      "texte": "Utilise NeoMusic pendant 1 an depuis sa première utilisation."
+    },
+    {
+      "id": "new_years_eve",
+      "nom": "Réveillon musical",
+      "texte": "Écoute de la musique un 31 décembre."
+    },
+    {
+      "id": "christmas",
+      "nom": "Musique de Noël",
+      "texte": "Écoute de la musique un 25 décembre."
+    },
+    {
+      "id": "customizer",
+      "nom": "Personnalisation",
+      "texte": "Change le thème de l'application."
+    },
+    {
+      "id": "shortcut_pro",
+      "nom": "Raccourcis pro",
+      "texte": "Utilise un raccourci clavier 10 fois."
+    },
+    {
+      "id": "lucky",
+      "nom": "Chanceux",
+      "texte": "Retombe deux fois de suite sur le même morceau en lecture aléatoire.",
+      "cache": true
+    },
+    {
+      "id": "friday_13",
+      "nom": "Vendredi 13",
+      "texte": "Écoute de la musique un vendredi 13.",
+      "cache": true
+    },
+    {
+      "id": "palindrome",
+      "nom": "Palindrome",
+      "texte": "Écoute de la musique à une heure miroir (ex: 12:12, 21:21).",
+      "cache": true
+    },
+    {
+      "id": "grand_prince",
+      "nom": "Grand prince",
+      "texte": "Reviens après 30 jours d'absence, ou écoute 30 jours d'affilée.",
+      "cache": true
+    }
+  ],
+  "records": [
+    {
+      "id": "niveau",
+      "nom": "Niveau",
+      "sens": "haut",
+      "format": "nombre"
+    },
+    {
+      "id": "lectures",
+      "nom": "Lectures",
+      "sens": "haut",
+      "format": "nombre",
+      "unite": "lectures"
+    },
+    {
+      "id": "ecoute",
+      "nom": "Temps d'écoute",
+      "sens": "haut",
+      "format": "temps"
+    }
   ],
   "commands": [
     {
